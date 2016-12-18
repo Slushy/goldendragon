@@ -2,7 +2,7 @@ package com.gd.engine;
 
 /**
  *
- * The main loop of the game
+ * Controls the main loop of the game
  *
  * @author brandon.porter
  *
@@ -13,6 +13,7 @@ public class GameEngine {
 	private static final int DEFAULT_HEIGHT = 720;
 
 	private final IGame _game;
+	private final GameWindow _gameWindow;
 
 	/**
 	 * Constructs the game engine
@@ -50,6 +51,7 @@ public class GameEngine {
 	 */
 	public GameEngine(IGame game, String title, int width, int height) {
 		this._game = game;
+		this._gameWindow = new GameWindow(title, width, height);
 		// TODO: Create GameWindow and pass in constructor values
 	}
 
@@ -70,12 +72,14 @@ public class GameEngine {
 	 */
 	public void dispose() {
 		_game.dispose();
+		_gameWindow.dispose();
 	}
 
 	/**
 	 * Initializes all the core components
 	 */
 	protected void init() {
+		_gameWindow.init();
 		_game.init();
 	}
 
