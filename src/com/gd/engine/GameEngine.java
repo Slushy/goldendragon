@@ -8,12 +8,9 @@ package com.gd.engine;
  *
  */
 public class GameEngine {
-	private static final String DEFAULT_TITLE = "Golden Dragon - Game Engine";
-	private static final int DEFAULT_WIDTH = 1280;
-	private static final int DEFAULT_HEIGHT = 720;
-
 	private final IGame _game;
-	private final GameWindow _gameWindow;
+	private final GameWindow _window;
+	private final EngineOptions _options;
 
 	/**
 	 * Constructs the game engine
@@ -22,7 +19,7 @@ public class GameEngine {
 	 *            instance of the game to run on this engine
 	 */
 	public GameEngine(IGame game) {
-		this(game, DEFAULT_TITLE);
+		this(game, EngineDefaults.TITLE);
 	}
 
 	/**
@@ -34,7 +31,7 @@ public class GameEngine {
 	 *            text displayed on the game window
 	 */
 	public GameEngine(IGame game, String title) {
-		this(game, title, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		this(game, title, EngineDefaults.WIDTH, EngineDefaults.HEIGHT);
 	}
 
 	/**
@@ -50,9 +47,27 @@ public class GameEngine {
 	 *            starting height of the game window
 	 */
 	public GameEngine(IGame game, String title, int width, int height) {
+		this(game, title, width, height, new EngineOptions());
+	}
+
+	/**
+	 * Constructs the game engine
+	 * 
+	 * @param game
+	 *            instance of the game to run on this engine
+	 * @param title
+	 *            text displayed on the game window
+	 * @param width
+	 *            starting width of the game window
+	 * @param height
+	 *            starting height of the game window
+	 * @param options
+	 *            set options to initialize the engine with
+	 */
+	public GameEngine(IGame game, String title, int width, int height, EngineOptions options) {
 		this._game = game;
-		this._gameWindow = new GameWindow(title, width, height);
-		// TODO: Create GameWindow and pass in constructor values
+		this._window = new GameWindow(title, width, height);
+		this._options = options;
 	}
 
 	/**
@@ -72,14 +87,14 @@ public class GameEngine {
 	 */
 	public void dispose() {
 		_game.dispose();
-		_gameWindow.dispose();
+		_window.dispose();
 	}
 
 	/**
 	 * Initializes all the core components
 	 */
 	protected void init() {
-		_gameWindow.init();
+		_window.init();
 		_game.init();
 	}
 
@@ -91,5 +106,4 @@ public class GameEngine {
 		while (true) {
 		}
 	}
-
 }
