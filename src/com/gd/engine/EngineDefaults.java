@@ -5,26 +5,12 @@ package com.gd.engine;
  * @author brandon.porter
  *
  */
-public class EngineDefaults {
-	/**
-	 * The default text displayed as the title on the window
-	 */
-	public static final String TITLE = "Golden Dragon - Game Engine";
-	
-	/**
-	 * The default width of the game window
-	 */
-	public static final int WIDTH = 1280;
-	
-	/**
-	 * The default height of the game window
-	 */
-	public static final int HEIGHT = 720;
-	
+public class EngineDefaults {	
 	/**
 	 * The default max frames per second
 	 */
 	public static final int MAX_FPS = 60;
+	
 	/**
 	 * The default max updates per second
 	 */
