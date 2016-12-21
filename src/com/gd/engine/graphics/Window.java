@@ -7,10 +7,9 @@ package com.gd.engine.graphics;
  *
  */
 public abstract class Window {
-	private final long _id;
-	
 	protected final WindowOptions windowOptions;
 	
+	private long _id;
 	protected String title;
 	protected int width;
 	protected int height;
@@ -33,7 +32,12 @@ public abstract class Window {
 		this.width = width;
 		this.height = height;
 		this.windowOptions = options;
-
+	}
+	
+	/**
+	 * Initializes the window
+	 */
+	public void init() {
 		this._id = createWindow(title, width, height);
 	}
 	
@@ -91,6 +95,8 @@ public abstract class Window {
 	public int getHeight() {
 		return height;
 	}
+	
+	public abstract void update();
 
 	/**
 	 * Makes the window visible on screen

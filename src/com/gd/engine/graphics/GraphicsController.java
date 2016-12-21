@@ -19,6 +19,8 @@ public abstract class GraphicsController {
 		this.graphicsOptions = graphicsOptions;
 	}
 
+	public abstract void init();
+
 	/**
 	 * Additional options to initialize the graphics
 	 * 

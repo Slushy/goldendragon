@@ -1,5 +1,9 @@
 package com.gd.engine;
 
+import com.gd.engine.graphics.GraphicsController;
+import com.gd.engine.graphics.Window;
+import com.gd.engine.graphics.WindowDefaults;
+
 /**
  *
  * Controls the main loop of the game
@@ -9,7 +13,7 @@ package com.gd.engine;
  */
 public class GameEngine {
 	private final IGame _game;
-	private final GameWindow _window;
+	private final GameDisplay _display;
 	private final EngineOptions _options;
 
 	/**
@@ -19,7 +23,7 @@ public class GameEngine {
 	 *            instance of the game to run on this engine
 	 */
 	public GameEngine(IGame game) {
-		this(game, EngineDefaults.TITLE);
+		this(game, WindowDefaults.TITLE);
 	}
 
 	/**
@@ -31,7 +35,7 @@ public class GameEngine {
 	 *            text displayed on the game window
 	 */
 	public GameEngine(IGame game, String title) {
-		this(game, title, EngineDefaults.WIDTH, EngineDefaults.HEIGHT);
+		this(game, title, WindowDefaults.WIDTH, WindowDefaults.HEIGHT);
 	}
 
 	/**
@@ -66,8 +70,8 @@ public class GameEngine {
 	 */
 	public GameEngine(IGame game, String title, int width, int height, EngineOptions options) {
 		this._game = game;
-		this._window = new GameWindow(title, width, height);
 		this._options = options;
+		this._display = new GameDisplay(title, width, height, options.windowOptions, options.graphicsOptions);
 	}
 
 	/**
@@ -87,14 +91,14 @@ public class GameEngine {
 	 */
 	public void dispose() {
 		_game.dispose();
-		_window.dispose();
+		_display.dispose();
 	}
 
 	/**
 	 * Initializes all the core components
 	 */
 	protected void init() {
-		_window.init();
+		_display.init();
 		_game.init();
 	}
 
@@ -102,8 +106,8 @@ public class GameEngine {
 	 * Game Loop
 	 */
 	protected void run() {
-
 		while (true) {
+			_display.update();
 		}
 	}
 	
@@ -113,6 +117,16 @@ public class GameEngine {
 	 *
 	 */
 	public static class EngineOptions {
+		/**
+		 * The options for the window
+		 */
+		public final Window.WindowOptions windowOptions = new Window.WindowOptions();
+		
+		/**
+		 * The options for the graphics
+		 */
+		public final GraphicsController.GraphicsOptions graphicsOptions = new GraphicsController.GraphicsOptions();
+		
 		/**
 		 * The max frames per second to render the screen at
 		 */

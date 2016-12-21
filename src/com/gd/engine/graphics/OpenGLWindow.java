@@ -81,15 +81,16 @@ public class OpenGLWindow extends Window {
 		GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwSetWindowPos(windowId, (vidMode.width() - width) / 2, (vidMode.height() - height) / 2);
 
+		// Attach the graphics context to the window
+		glfwMakeContextCurrent(windowId);
+				
 		// Set V-Sync for window if enabled
 		if (isVSync()) {
 			// note: 1 is for full frame rate, 2 is for half, etc.
 			glfwSwapInterval(1);
 		}
 		
-		// Attach the graphics context to the window
-		glfwMakeContextCurrent(getWindowId());
-
+		// Make the window visible
 		return windowId;
 	}
 
@@ -116,7 +117,12 @@ public class OpenGLWindow extends Window {
 		glfwWindowHint(GLFW_RESIZABLE, this.windowOptions.resizable ? GL_TRUE : GL_FALSE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+		if (System.getProperty("os.name").contains("Mac")) {
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		} else {
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+		}
 	}
 
 	/*
@@ -130,6 +136,12 @@ public class OpenGLWindow extends Window {
 					this.height = height;
 					this.resized = true;
 				}));
+	}
+
+	@Override
+	public void update() {
+		glfwSwapBuffers(getWindowId());
+		glfwPollEvents();
 	}
 
 
