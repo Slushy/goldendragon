@@ -96,7 +96,21 @@ public abstract class Window {
 		return height;
 	}
 	
-	public abstract void update();
+	/**
+	 * Closes the current window
+	 */
+	public abstract void close();
+	
+	/**
+	 * Determines if the window should close
+	 * @return true or false if the window should close
+	 */
+	public abstract boolean shouldClose();
+	
+	/**
+	 * Renders the window, continually called from the game loop several times a second
+	 */
+	public abstract void render();
 
 	/**
 	 * Makes the window visible on screen

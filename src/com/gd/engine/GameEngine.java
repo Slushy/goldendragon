@@ -98,7 +98,10 @@ public class GameEngine {
 	 * Initializes all the core components
 	 */
 	protected void init() {
+		// Init and show display
 		_display.init();
+		_display.show();
+		// Init your game
 		_game.init();
 	}
 
@@ -106,8 +109,8 @@ public class GameEngine {
 	 * Game Loop
 	 */
 	protected void run() {
-		while (true) {
-			_display.update();
+		while (!_display.shouldClose()) {
+			_display.render();
 		}
 	}
 	

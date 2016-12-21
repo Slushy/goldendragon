@@ -60,17 +60,53 @@ public class GameDisplay {
 		this._graphicsController = new OpenGLGraphicsController(graphicsOptions);
 	}
 	
+	/**
+	 * Initializes the display window and graphics controller
+	 */
 	public void init() {
-		this._window.init();
-		this._window.show();
-		
-		this._graphicsController.init();
+		_window.init();		
+		_graphicsController.init();
 	}
 	
-	public void update() {
-		this._window.update();
+	/**
+	 * Shows the window
+	 */
+	public void show() {
+		_window.show();
 	}
 	
+	/**
+	 * Hides the window
+	 */
+	public void hide() {
+		_window.hide();
+	}
+	
+	/**
+	 * Closes the window and exits the game
+	 */
+	public void closeAndExit() {
+		_window.close();
+	}
+	
+	/**
+	 * Checks if the window should close
+	 * @return true or false if the window is ready to close (e.g if the user clicks x on the game)
+	 */
+	public boolean shouldClose() {
+		return _window.shouldClose();
+	}
+	
+	/**
+	 * Renders the window, continually called from the game loop several times a second
+	 */
+	public void render() {
+		_window.render();
+	}
+	
+	/**
+	 * Cleans up and destroys the game display
+	 */
 	public void dispose() {
 		_window.dispose();
 	}

@@ -38,7 +38,7 @@ public class OpenGLWindow extends Window {
 	public OpenGLWindow(String title, int width, int height, WindowOptions windowOptions) {
 		super(title, width, height, windowOptions);
 	}
-
+	
 	@Override
 	public void show() {
 		glfwShowWindow(getWindowId());
@@ -47,6 +47,23 @@ public class OpenGLWindow extends Window {
 	@Override
 	public void hide() {
 		glfwHideWindow(getWindowId());
+	}
+	
+	@Override
+	public void render() {
+		// TODO: More Information
+		glfwSwapBuffers(getWindowId());
+		glfwPollEvents();
+	}
+	
+	@Override
+	public boolean shouldClose() {
+		return glfwWindowShouldClose(getWindowId());
+	}
+	
+	@Override
+	public void close() {
+		glfwSetWindowShouldClose(getWindowId(), true);
 	}
 	
 	@Override
@@ -137,14 +154,5 @@ public class OpenGLWindow extends Window {
 					this.resized = true;
 				}));
 	}
-
-	@Override
-	public void update() {
-		glfwSwapBuffers(getWindowId());
-		glfwPollEvents();
-	}
-
-
-
 
 }
