@@ -3,6 +3,7 @@ package com.gd.engine;
 import com.gd.engine.graphics.GraphicsController;
 import com.gd.engine.graphics.Window;
 import com.gd.engine.graphics.WindowDefaults;
+import com.gd.engine.utils.debug.Logger;
 
 /**
  *
@@ -12,6 +13,8 @@ import com.gd.engine.graphics.WindowDefaults;
  *
  */
 public class GameEngine {
+	private static final Logger _log = new Logger("GameEngine");
+
 	private final IGame _game;
 	private final GameDisplay _display;
 	private final EngineOptions _options;
@@ -69,6 +72,8 @@ public class GameEngine {
 	 *            set options to initialize the engine with
 	 */
 	public GameEngine(IGame game, String title, int width, int height, EngineOptions options) {
+		_log.debug("Created GameEngine");
+
 		this._game = game;
 		this._options = options;
 		this._display = new GameDisplay(title, width, height, options.windowOptions, options.graphicsOptions);
@@ -90,6 +95,7 @@ public class GameEngine {
 	 * Cleans up the game engine
 	 */
 	public void dispose() {
+		_log.debug("Disposing engine...");
 		_game.dispose();
 		_display.dispose();
 	}
@@ -98,6 +104,7 @@ public class GameEngine {
 	 * Initializes all the core components
 	 */
 	protected void init() {
+		_log.debug("Initializing engine...");
 		// Init and show display
 		_display.init();
 		_display.show();
@@ -109,13 +116,15 @@ public class GameEngine {
 	 * Game Loop
 	 */
 	protected void run() {
+		_log.debug("Running engine...");
 		while (!_display.shouldClose()) {
 			_display.render();
 		}
 	}
-	
+
 	/**
 	 * Defines the starting values to initialize the engine
+	 * 
 	 * @author brandon.porter
 	 *
 	 */
@@ -124,17 +133,17 @@ public class GameEngine {
 		 * The options for the window
 		 */
 		public final Window.WindowOptions windowOptions = new Window.WindowOptions();
-		
+
 		/**
 		 * The options for the graphics
 		 */
 		public final GraphicsController.GraphicsOptions graphicsOptions = new GraphicsController.GraphicsOptions();
-		
+
 		/**
 		 * The max frames per second to render the screen at
 		 */
 		public int maxFPS = EngineDefaults.MAX_FPS;
-		
+
 		/**
 		 * The max amount of times game state can be updated per second
 		 */

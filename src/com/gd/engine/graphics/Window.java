@@ -8,13 +8,13 @@ package com.gd.engine.graphics;
  */
 public abstract class Window {
 	protected final WindowOptions windowOptions;
-	
+
 	private long _id;
 	protected String title;
 	protected int width;
 	protected int height;
 	protected boolean resized;
-	
+
 	/**
 	 * Constructs a window
 	 * 
@@ -33,16 +33,17 @@ public abstract class Window {
 		this.height = height;
 		this.windowOptions = options;
 	}
-	
+
 	/**
 	 * Initializes the window
 	 */
 	public void init() {
 		this._id = createWindow(title, width, height);
 	}
-	
+
 	/**
 	 * Gets the unique id of the window
+	 * 
 	 * @return window Id
 	 */
 	public final long getWindowId() {
@@ -95,20 +96,22 @@ public abstract class Window {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	/**
 	 * Closes the current window
 	 */
 	public abstract void close();
-	
+
 	/**
 	 * Determines if the window should close
+	 * 
 	 * @return true or false if the window should close
 	 */
 	public abstract boolean shouldClose();
-	
+
 	/**
-	 * Renders the window, continually called from the game loop several times a second
+	 * Renders the window, continually called from the game loop several times a
+	 * second
 	 */
 	public abstract void render();
 
@@ -121,7 +124,7 @@ public abstract class Window {
 	 * Makes the window invisible on screen
 	 */
 	public abstract void hide();
-	
+
 	/**
 	 * Cleans up and destroys the window instance
 	 */

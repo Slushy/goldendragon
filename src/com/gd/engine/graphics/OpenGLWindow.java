@@ -38,7 +38,7 @@ public class OpenGLWindow extends Window {
 	public OpenGLWindow(String title, int width, int height, WindowOptions windowOptions) {
 		super(title, width, height, windowOptions);
 	}
-	
+
 	@Override
 	public void show() {
 		glfwShowWindow(getWindowId());
@@ -48,24 +48,24 @@ public class OpenGLWindow extends Window {
 	public void hide() {
 		glfwHideWindow(getWindowId());
 	}
-	
+
 	@Override
 	public void render() {
 		// TODO: More Information
 		glfwSwapBuffers(getWindowId());
 		glfwPollEvents();
 	}
-	
+
 	@Override
 	public boolean shouldClose() {
 		return glfwWindowShouldClose(getWindowId());
 	}
-	
+
 	@Override
 	public void close() {
 		glfwSetWindowShouldClose(getWindowId(), true);
 	}
-	
+
 	@Override
 	public void dispose() {
 		long windowId = getWindowId();
@@ -100,13 +100,13 @@ public class OpenGLWindow extends Window {
 
 		// Attach the graphics context to the window
 		glfwMakeContextCurrent(windowId);
-				
+
 		// Set V-Sync for window if enabled
 		if (isVSync()) {
 			// note: 1 is for full frame rate, 2 is for half, etc.
 			glfwSwapInterval(1);
 		}
-		
+
 		// Make the window visible
 		return windowId;
 	}

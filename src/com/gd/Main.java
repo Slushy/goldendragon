@@ -9,11 +9,11 @@ public class Main {
 	private static final String GAME_TITLE = "Engine Tester";
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
-	
+
 	public static void main(String[] args) {
 		System.out.println("Starting Game Engine...");
 		GameEngine engine = null;
-		
+
 		try {
 			engine = new GameEngine(new Game(), GAME_TITLE, WIDTH, HEIGHT);
 			engine.initializeAndRun();
@@ -27,5 +27,4 @@ public class Main {
 			}
 		}
 	}
-
 }
