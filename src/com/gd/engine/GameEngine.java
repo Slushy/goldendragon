@@ -1,8 +1,5 @@
 package com.gd.engine;
 
-import com.gd.engine.graphics.GraphicsController;
-import com.gd.engine.graphics.Window;
-import com.gd.engine.graphics.WindowDefaults;
 import com.gd.engine.utils.debug.Logger;
 import com.gd.engine.utils.debug.LoggerLevel;
 

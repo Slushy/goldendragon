@@ -1,10 +1,5 @@
 package com.gd.engine;
 
-import com.gd.engine.graphics.GraphicsController;
-import com.gd.engine.graphics.OpenGLGraphicsController;
-import com.gd.engine.graphics.OpenGLWindow;
-import com.gd.engine.graphics.Window;
-
 /**
  * Our game display that represents a game window and graphics controller
  * 
