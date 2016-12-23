@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 /**
  * Defines default values to be consumed by the game engine

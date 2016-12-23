@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 /**
  * Base implementation of all windows

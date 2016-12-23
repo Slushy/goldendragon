@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 /**
  * Defines the blueprint of every game logic entry point

@@ -1,4 +1,4 @@
-package com.gd.engine.utils.debug;
+package engine.utils.debug;
 
 /**
  * Each class should have an instance of logger used for debugging

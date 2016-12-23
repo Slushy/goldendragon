@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;

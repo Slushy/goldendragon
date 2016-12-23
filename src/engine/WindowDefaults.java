@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 /**
  * Defines default values for the game window

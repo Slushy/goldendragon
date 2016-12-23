@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 /**
  * Keeps track of game time

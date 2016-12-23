@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 /**
  * Our game display that represents a game window and graphics controller

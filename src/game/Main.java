@@ -1,6 +1,6 @@
-package com.gd;
+package game;
 
-import com.gd.engine.GameEngine;
+import engine.GameEngine;
 
 /*
  * Entry point for running the GD game engine by itself

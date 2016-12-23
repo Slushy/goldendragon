@@ -1,7 +1,7 @@
-package com.gd.engine;
+package engine;
 
-import com.gd.engine.utils.debug.Logger;
-import com.gd.engine.utils.debug.LoggerLevel;
+import engine.utils.debug.Logger;
+import engine.utils.debug.LoggerLevel;
 
 /**
  *

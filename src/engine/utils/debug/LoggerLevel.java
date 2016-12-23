@@ -1,4 +1,4 @@
-package com.gd.engine.utils.debug;
+package engine.utils.debug;
 
 /**
  * The different levels a logger can print out a message for

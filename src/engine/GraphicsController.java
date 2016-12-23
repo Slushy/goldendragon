@@ -1,4 +1,4 @@
-package com.gd.engine;
+package engine;
 
 /**
  * Base class for controlling the graphics on displays

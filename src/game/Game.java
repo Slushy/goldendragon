@@ -1,7 +1,7 @@
-package com.gd;
+package game;
 
-import com.gd.engine.IGame;
-import com.gd.engine.utils.debug.Logger;
+import engine.IGame;
+import engine.utils.debug.Logger;
 
 /**
  * Our game entry point
