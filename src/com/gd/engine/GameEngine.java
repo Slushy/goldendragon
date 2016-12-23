@@ -4,6 +4,7 @@ import com.gd.engine.graphics.GraphicsController;
 import com.gd.engine.graphics.Window;
 import com.gd.engine.graphics.WindowDefaults;
 import com.gd.engine.utils.debug.Logger;
+import com.gd.engine.utils.debug.LoggerLevel;
 
 /**
  *
@@ -16,6 +17,7 @@ public class GameEngine {
 	private static final Logger _log = new Logger("GameEngine");
 
 	private final IGame _game;
+	private final Timer _timer;
 	private final GameDisplay _display;
 	private final EngineOptions _options;
 
@@ -76,6 +78,7 @@ public class GameEngine {
 
 		this._game = game;
 		this._options = options;
+		this._timer = new Timer();
 		this._display = new GameDisplay(title, width, height, options.windowOptions, options.graphicsOptions);
 	}
 
@@ -108,6 +111,10 @@ public class GameEngine {
 		// Init and show display
 		_display.init();
 		_display.show();
+		// Clear the screen
+		_display.getGraphicsController().clearColor(0, 0, 0, 0);
+		// Init the game timer
+		_timer.init();
 		// Init your game
 		_game.init();
 	}
@@ -116,10 +123,52 @@ public class GameEngine {
 	 * Game Loop
 	 */
 	protected void run() {
+		float runTime = 0f;
+		// TODO: Move interval to timer
+		float interval = 1f / _options.maxUPS;
+		
 		_log.debug("Running engine...");
+
 		while (!_display.shouldClose()) {
-			_display.render();
+			// 1. Process user input
+			processInput();
+			
+			// 2. Update game state
+			runTime += _timer.getElapsedTime();
+			for (; runTime >= interval; runTime -= interval) {
+				update();
+			}
+			
+			// 3. Render game
+			render();
+			
+			// TODO: Limit FPS if window is not V-Sync
 		}
+	}
+	
+	/**
+	 * Game processes input
+	 */
+	protected void processInput() {
+		// TODO: Implement input processing
+		_game.processInput();
+	}
+	
+	/**
+	 * Update game state
+	 */
+	protected void update() {
+		// TODO: Implement update
+		_game.update();
+	}
+	
+	/**
+	 * Render updated game state to screen
+	 */
+	protected void render() {
+		// TODO: Implement rendering
+		_game.render();
+		_display.render();
 	}
 
 	/**

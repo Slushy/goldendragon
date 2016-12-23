@@ -25,8 +25,8 @@ public class OpenGLGraphicsController extends GraphicsController {
 	public void init() {
 		GL.createCapabilities();
 
-		// Set the clear color
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		// Clear the screen
+		clearColor(0, 0, 0, 0);
 
 		// Enable depth test - this allows pixels that are far away
 		// to be drawn first so our 3D objects do not look wack
@@ -41,5 +41,10 @@ public class OpenGLGraphicsController extends GraphicsController {
 		// Support for transparencies
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	@Override
+	public void clearColor(float r, float g, float b, float a) {
+		GL11.glClearColor(r, g, b, a);
 	}
 }

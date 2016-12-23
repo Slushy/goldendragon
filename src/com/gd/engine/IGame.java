@@ -8,5 +8,12 @@ package com.gd.engine;
  */
 public interface IGame {
 	void init();
+
+	void processInput();
+
+	void update();
+
+	void render();
+
 	void dispose();
 }

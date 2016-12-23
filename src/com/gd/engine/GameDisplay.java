@@ -64,7 +64,7 @@ public class GameDisplay {
 		this._window = new OpenGLWindow(title, width, height, windowOptions);
 		this._graphicsController = new OpenGLGraphicsController(graphicsOptions);
 	}
-
+	
 	/**
 	 * Initializes the display window and graphics controller
 	 */
@@ -86,6 +86,14 @@ public class GameDisplay {
 	public void hide() {
 		_window.hide();
 	}
+	
+	/**
+	 * Renders the window, continually called from the game loop several times a
+	 * second
+	 */
+	public void render() {
+		_window.render();
+	}
 
 	/**
 	 * Closes the window and exits the game
@@ -103,13 +111,13 @@ public class GameDisplay {
 	public boolean shouldClose() {
 		return _window.shouldClose();
 	}
-
+	
 	/**
-	 * Renders the window, continually called from the game loop several times a
-	 * second
+	 * Gets the graphics controller for this display
+	 * @return graphics controller
 	 */
-	public void render() {
-		_window.render();
+	public GraphicsController getGraphicsController() {
+		return _graphicsController;
 	}
 
 	/**

@@ -18,6 +18,23 @@ public class Game implements IGame {
 	}
 
 	@Override
+	public void processInput() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void dispose() {
 		_log.debug("Disposing game");
 	}

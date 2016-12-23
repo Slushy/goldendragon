@@ -10,6 +10,9 @@ public class Main {
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
 
+	/*
+	 * Entry point 
+	 */
 	public static void main(String[] args) {
 		System.out.println("Starting Game Engine...");
 		GameEngine engine = null;
@@ -26,5 +29,7 @@ public class Main {
 				engine.dispose();
 			}
 		}
+		
+		System.out.println("Stopping Game Engine...");
 	}
 }
