@@ -2,6 +2,7 @@ package game;
 
 import engine.GameDisplay;
 import engine.IGame;
+import engine.game.objects.GameObject;
 import engine.graphics.Renderer;
 import engine.utils.debug.Logger;
 
@@ -16,10 +17,19 @@ public class Game implements IGame {
 
 	private final Renderer _renderer = new Renderer();
 	
+	private GameObject _gameObject;
 	@Override
 	public void init() throws Exception {
 		_log.debug("Initializing game");
 		_renderer.init();
+		
+		float[] vertices = new float[] {
+			0.0f, 0.5f, 0.0f,
+			-0.5f, -0.5f, 0.0f,
+			0.5f, -0.5f, 0.0f
+		};
+		
+		this._gameObject = new GameObject(vertices);
 	}
 
 	@Override
@@ -36,12 +46,13 @@ public class Game implements IGame {
 
 	@Override
 	public void render(GameDisplay display) {
-		_renderer.render(display);
+		_renderer.render(display, _gameObject);
 	}
 	
 	@Override
 	public void dispose() {
 		_log.debug("Disposing game");
+		_gameObject.dispose();
 		_renderer.dispose();
 	}
 

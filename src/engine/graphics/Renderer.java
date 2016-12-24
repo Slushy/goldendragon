@@ -1,6 +1,9 @@
 package engine.graphics;
 
+import org.joml.Vector3f;
+
 import engine.GameDisplay;
+import engine.game.objects.GameObject;
 import engine.utils.debug.Logger;
 
 /**
@@ -30,10 +33,18 @@ public class Renderer {
 	 * @param display
 	 *            the visual window the user can see and interact with for the game
 	 */
-	public void render(GameDisplay display) {
+	public void render(GameDisplay display, GameObject gameObject) {
 		_log.debug("Rendering...");
 		// Clear the current frame before we render the next frame
 		display.getGraphicsController().clearGraphics();
+		
+		_sceneShaderProgram.bind();
+		
+		_sceneShaderProgram.setColor(new Vector3f(1, 1, 1));
+		// Render Scene
+		gameObject.render();
+		
+		_sceneShaderProgram.unbind();
 	}
 
 	/**
