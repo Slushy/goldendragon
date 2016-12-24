@@ -177,7 +177,7 @@ public class OpenGLWindow extends Window {
 		// Set a scale that we can use to get the actual width/height
 		if (actualWidth[0] != setWidth && setWidth != 0) {
 			this.sizeScale = actualWidth[0] / setWidth;
-			_log.warn("Window resolution is different by a scale of %d", sizeScale);
+			_log.warn("OS window resolution is different by a scale of %.2f", sizeScale);
 		}
 	}
 }
