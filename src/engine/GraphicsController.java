@@ -8,7 +8,7 @@ package engine;
  */
 public abstract class GraphicsController {
 	protected final GraphicsOptions graphicsOptions;
-	
+
 	/**
 	 * Construct a graphics controller
 	 * 
@@ -26,26 +26,45 @@ public abstract class GraphicsController {
 
 	/**
 	 * Clears the display window of any graphics with the specified color
-	 * @param r 0-1 value (1 for full red, 0 for no red)
-	 * @param g 0-1 value (1 for full green, 0 for no green)
-	 * @param b 0-1 value (1 for full blue, 0 for no blue)
-	 * @param a 0-1 value (1 for fully transparent, 0 for no transparency)
+	 * 
+	 * @param r
+	 *            0-1 value (1 for full red, 0 for no red)
+	 * @param g
+	 *            0-1 value (1 for full green, 0 for no green)
+	 * @param b
+	 *            0-1 value (1 for full blue, 0 for no blue)
+	 * @param a
+	 *            0-1 value (1 for fully transparent, 0 for no transparency)
 	 */
 	public abstract void clearColor(float r, float g, float b, float a);
-	
+
 	/**
-	 * Clears the graphics for another render frame
-	 * TODO: MORE INFORMATION
+	 * Clears the graphics for another render frame TODO: MORE INFORMATION
 	 */
 	public abstract void clearGraphics();
-	
+
 	/**
 	 * Clears the graphics for another render frame
-	 * @param bits the bits of graphics to clear
-	 * TODO: MORE INFORMATION
+	 * 
+	 * @param bits
+	 *            the bits of graphics to clear TODO: MORE INFORMATION
 	 */
 	public abstract void clearGraphics(int bits);
-	
+
+	/**
+	 * Resets the viewport to the specified size
+	 * 
+	 * @param x
+	 *            x point on the screen
+	 * @param y
+	 *            y point on the screen
+	 * @param width
+	 *            width of the viewport
+	 * @param height
+	 *            height of the viewport
+	 */
+	public abstract void setViewport(int x, int y, int width, int height);
+
 	/**
 	 * Additional options to initialize the graphics
 	 * 

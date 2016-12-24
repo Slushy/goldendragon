@@ -59,7 +59,7 @@ public class GameDisplay {
 		this._window = new OpenGLWindow(title, width, height, windowOptions);
 		this._graphicsController = new OpenGLGraphicsController(graphicsOptions);
 	}
-	
+
 	/**
 	 * Initializes the display window and graphics controller
 	 */
@@ -80,6 +80,21 @@ public class GameDisplay {
 	 */
 	public void hide() {
 		_window.hide();
+	}
+
+	/**
+	 * Checks if the window has been resized manually
+	 * @return true/false if window resized
+	 */
+	public boolean hasResized() {
+		return _window.hasResized();
+	}
+	
+	/**
+	 * Tell the window that the game has finished updating state to be resized
+	 */
+	public void resetResized() {
+		_window.setResized(false);
 	}
 	
 	/**
@@ -108,7 +123,25 @@ public class GameDisplay {
 	}
 	
 	/**
+	 * Helper function to update the graphics viewport to the size of the window
+	 */
+	public void fixViewportToWindow() {
+		getGraphicsController().setViewport(0, 0, _window.getWidthScaled(), _window.getHeightScaled());
+	}
+	
+	/**
+	 * Helper function to update the graphics viewport ONLY IF the window has been resized (more performant)
+	 */
+	public void fixViewportToWindowIfResized() {
+		if (hasResized()) {
+			fixViewportToWindow();
+			resetResized();
+		}
+	}
+
+	/**
 	 * Gets the graphics controller for this display
+	 * 
 	 * @return graphics controller
 	 */
 	public GraphicsController getGraphicsController() {

@@ -8,6 +8,7 @@ package engine;
  */
 public abstract class Window {
 	protected final WindowOptions windowOptions;
+	protected float sizeScale = 1;
 
 	private long _id;
 	protected String title;
@@ -51,6 +52,25 @@ public abstract class Window {
 	}
 
 	/**
+	 * Checks if the window has been resized recently
+	 * 
+	 * @return
+	 */
+	public boolean hasResized() {
+		return resized;
+	}
+
+	/**
+	 * Sets the resized boolean
+	 * 
+	 * @param resized
+	 *            true or false
+	 */
+	public void setResized(boolean resized) {
+		this.resized = resized;
+	}
+
+	/**
 	 * Gets the window title
 	 * 
 	 * @return text displayed on the game window
@@ -89,12 +109,36 @@ public abstract class Window {
 	}
 
 	/**
+	 * Gets the scaled version of the window width. This will be different from
+	 * normal width on systems where window coordinates are not the same
+	 * resolution as how we represent our window size. This should be used to
+	 * update viewport correctly.
+	 * 
+	 * @return scaled width of the window
+	 */
+	public int getWidthScaled() {
+		return (int) (getWidth() * sizeScale);
+	}
+
+	/**
 	 * Gets the window height
 	 * 
 	 * @return windows height in pixels
 	 */
 	public int getHeight() {
 		return height;
+	}
+	
+	/**
+	 * Gets the scaled version of the window height. This will be different from
+	 * normal height on systems where window coordinates are not the same
+	 * resolution as how we represent our window size. This should be used to
+	 * update viewport correctly.
+	 * 
+	 * @return scaled height of the window
+	 */
+	public int getHeightScaled() {
+		return (int) (getHeight() * sizeScale);
 	}
 
 	/**

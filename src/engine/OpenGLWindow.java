@@ -10,6 +10,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
+import engine.utils.debug.Logger;
+
 /**
  * An OpenGL window that the user sees when interacting with the game
  * 
@@ -17,6 +19,8 @@ import org.lwjgl.glfw.GLFWWindowSizeCallback;
  *
  */
 public class OpenGLWindow extends Window {
+	private static final Logger _log = new Logger("OpenGLWindow", Logger.LoggerLevel.DEBUG);
+	
 	// Store references to callbacks to prevent java from doing any
 	// garbage collection on them while they are still in use
 	private GLFWErrorCallback _errorCallback;
@@ -101,6 +105,10 @@ public class OpenGLWindow extends Window {
 		// Attach the graphics context to the window
 		glfwMakeContextCurrent(windowId);
 
+		// Check and update our size scale if the window coordinates on the OS are not the
+		// same resolution as how we represent our window size
+		checkIfWindowCoordinatesDifferFromPixels(windowId, width, height);
+
 		// Set V-Sync for window if enabled
 		if (isVSync()) {
 			// note: 1 is for full frame rate, 2 is for half, etc.
@@ -147,6 +155,7 @@ public class OpenGLWindow extends Window {
 	 */
 	private void setupCallbacks(long windowId) {
 		// Resize callback - gets fired when this window is resized
+
 		glfwSetWindowSizeCallback(windowId,
 				this._windowSizeCallback = GLFWWindowSizeCallback.create((long window, int width, int height) -> {
 					this.width = width;
@@ -155,4 +164,20 @@ public class OpenGLWindow extends Window {
 				}));
 	}
 
+	/*
+	 * Sets the size scale to a number if the ACTUAL window size is different
+	 * then what the size is in pixels. This is a problem for macs with retina
+	 * resolution that for example may show a 1280px width as 2560px
+	 */
+	private void checkIfWindowCoordinatesDifferFromPixels(long windowId, int setWidth, int setHeight) {
+		int[] actualWidth = new int[1];
+		int[] actualHeight = new int[1];
+		glfwGetFramebufferSize(windowId, actualWidth, actualHeight);
+
+		// Set a scale that we can use to get the actual width/height
+		if (actualWidth[0] != setWidth && setWidth != 0) {
+			this.sizeScale = actualWidth[0] / setWidth;
+			_log.warn("Window resolution is different by a scale of %d", sizeScale);
+		}
+	}
 }

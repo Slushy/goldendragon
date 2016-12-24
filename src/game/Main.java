@@ -16,9 +16,11 @@ public class Main {
 	public static void main(String[] args) {
 		System.out.println("Starting Game Engine...");
 		GameEngine engine = null;
-
 		try {
-			engine = new GameEngine(new Game(), GAME_TITLE, WIDTH, HEIGHT);
+			GameEngine.EngineOptions options = new GameEngine.EngineOptions();
+			options.windowOptions.resizable = true;
+			
+			engine = new GameEngine(new Game(), GAME_TITLE, WIDTH, HEIGHT, options);
 			engine.initializeAndRun();
 		} catch (Exception e) {
 			// TODO: Catch a specific exception, possibly implement a restart

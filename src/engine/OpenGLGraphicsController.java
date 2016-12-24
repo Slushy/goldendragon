@@ -6,6 +6,8 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
+import engine.utils.debug.Logger;
+
 /**
  * Controls the graphics for an OpenGL display
  * 
@@ -13,7 +15,8 @@ import org.lwjgl.opengl.GL11;
  *
  */
 public class OpenGLGraphicsController extends GraphicsController {
-
+	private static final Logger _log = new Logger("OpenGLGraphicsController");
+	
 	/**
 	 * Construct an OpenGL graphics controller
 	 * 
@@ -39,7 +42,7 @@ public class OpenGLGraphicsController extends GraphicsController {
 		// Enables polygon mode, so we can see all the triangles that compose a
 		// model
 		// if (_opts.showTriangles) {
-		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		// }
 
 		// Support for transparencies
@@ -60,5 +63,11 @@ public class OpenGLGraphicsController extends GraphicsController {
 	@Override
 	public void clearGraphics(int bits) {
 		GL11.glClear(bits);
+	}
+
+	@Override
+	public void setViewport(int x, int y, int width, int height) {
+		_log.debug("Setting viewport to x: %d, y: %d, width: %d, height: %d", x, y, width, height);
+		GL11.glViewport(x, y, width, height);
 	}
 }
