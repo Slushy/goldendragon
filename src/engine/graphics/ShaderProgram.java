@@ -3,6 +3,7 @@ package engine.graphics;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 
 import engine.utils.ResourceManager;
@@ -122,7 +123,20 @@ public abstract class ShaderProgram {
 		_uniforms.put(uniform, uniformLocation);
 		_log.debug("Registered uniform '%s' at location %d for program %d", uniform, uniformLocation, _programId);
 	}
-
+	
+	/**
+	 * Sets a vector uniform
+	 * @param uniform
+	 * @param value
+	 */
+	protected void setUniform(String uniform, Vector3f value) {
+		int location = _uniforms.get(uniform);
+		if (!_uniforms.containsKey(uniform) || location < 0) {
+			throw new RuntimeException("Uniform [" + uniform + "] has not been created");
+		}
+		GL20.glUniform3f(location, value.x, value.y, value.z);
+	}
+	
 	/**
 	 * Loads and compiles the vertex shader for this program
 	 * @throws Exception

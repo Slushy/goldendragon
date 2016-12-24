@@ -1,5 +1,7 @@
 package engine.graphics;
 
+import org.joml.Vector3f;
+
 import engine.utils.debug.Logger;
 
 /**
@@ -31,6 +33,14 @@ public class SceneShaderProgram extends ShaderProgram {
 	@Override
 	protected void registerUniforms() throws Exception {
 		super.registerUniform(COLOR);
+	}
+	
+	/**
+	 * Sets the color uniform for the object
+	 * @param color
+	 */
+	public void setColor(Vector3f color) {
+		super.setUniform(COLOR, color);
 	}
 
 }
