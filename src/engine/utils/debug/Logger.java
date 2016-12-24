@@ -90,4 +90,14 @@ public class Logger {
 		String identifier = String.format("%s [%s]: ", _className, messageLevel);
 		return identifier + String.format(message, args);
 	}
+	
+	/**
+	 * The different levels a logger can print out a message for
+	 * 
+	 * @author brandon.porter
+	 *
+	 */
+	public static enum LoggerLevel {
+		DEBUG, WARN, IGNORE
+	}
 }
