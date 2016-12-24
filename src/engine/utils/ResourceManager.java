@@ -12,8 +12,8 @@ import java.util.Scanner;
  *
  */
 public class ResourceManager {
-	private final static String RESOURCES_PATH = "/resources";
-	private final static String SHADERS_PATH = RESOURCES_PATH + "/shaders";
+	private final static String RESOURCES_PATH = "resources/";
+	private final static String SHADERS_PATH = RESOURCES_PATH + "shaders/";
 	
 	/**
 	 * Loads the found shader file as a String
@@ -23,7 +23,7 @@ public class ResourceManager {
 	 * @throws IOException
 	 */
 	public static String loadShaderFile(String fileName) throws FileNotFoundException, IOException {
-		return loadFileAsString(SHADERS_PATH + "/" + fileName);
+		return loadFileAsString(SHADERS_PATH + fileName);
 	}
 	
 	/*

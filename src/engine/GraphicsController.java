@@ -34,6 +34,19 @@ public abstract class GraphicsController {
 	public abstract void clearColor(float r, float g, float b, float a);
 	
 	/**
+	 * Clears the graphics for another render frame
+	 * TODO: MORE INFORMATION
+	 */
+	public abstract void clearGraphics();
+	
+	/**
+	 * Clears the graphics for another render frame
+	 * @param bits the bits of graphics to clear
+	 * TODO: MORE INFORMATION
+	 */
+	public abstract void clearGraphics(int bits);
+	
+	/**
 	 * Additional options to initialize the graphics
 	 * 
 	 * @author brandon.porter

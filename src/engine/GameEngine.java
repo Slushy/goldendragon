@@ -102,8 +102,9 @@ public class GameEngine {
 
 	/**
 	 * Initializes all the core components
+	 * @throws Exception 
 	 */
-	protected void init() {
+	protected void init() throws Exception {
 		_log.debug("Initializing engine...");
 		// Init and show display
 		_display.init();
@@ -164,7 +165,7 @@ public class GameEngine {
 	 */
 	protected void render() {
 		// TODO: Implement rendering
-		_game.render();
+		_game.render(_display);
 		_display.render();
 	}
 

@@ -1,5 +1,8 @@
 package engine;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
@@ -23,6 +26,7 @@ public class OpenGLGraphicsController extends GraphicsController {
 
 	@Override
 	public void init() {
+		// Must be done first thing before any OpenGL function is called
 		GL.createCapabilities();
 
 		// Clear the screen
@@ -46,5 +50,15 @@ public class OpenGLGraphicsController extends GraphicsController {
 	@Override
 	public void clearColor(float r, float g, float b, float a) {
 		GL11.glClearColor(r, g, b, a);
+	}
+
+	@Override
+	public void clearGraphics() {
+		clearGraphics(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	@Override
+	public void clearGraphics(int bits) {
+		GL11.glClear(bits);
 	}
 }

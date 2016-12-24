@@ -7,13 +7,13 @@ package engine;
  *
  */
 public interface IGame {
-	void init();
+	void init() throws Exception;
 
 	void processInput();
 
 	void update();
 
-	void render();
+	void render(GameDisplay display);
 
 	void dispose();
 }

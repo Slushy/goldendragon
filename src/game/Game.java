@@ -1,6 +1,8 @@
 package game;
 
+import engine.GameDisplay;
 import engine.IGame;
+import engine.graphics.Renderer;
 import engine.utils.debug.Logger;
 
 /**
@@ -12,9 +14,12 @@ import engine.utils.debug.Logger;
 public class Game implements IGame {
 	private static final Logger _log = new Logger("Game");
 
+	private final Renderer _renderer = new Renderer();
+	
 	@Override
-	public void init() {
+	public void init() throws Exception {
 		_log.debug("Initializing game");
+		_renderer.init();
 	}
 
 	@Override
@@ -30,13 +35,14 @@ public class Game implements IGame {
 	}
 
 	@Override
-	public void render() {
-		// TODO Auto-generated method stub
+	public void render(GameDisplay display) {
+		_renderer.render(display);
 	}
 	
 	@Override
 	public void dispose() {
 		_log.debug("Disposing game");
+		_renderer.dispose();
 	}
 
 }
