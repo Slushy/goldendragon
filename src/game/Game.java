@@ -24,12 +24,17 @@ public class Game implements IGame {
 		_renderer.init();
 		
 		float[] vertices = new float[] {
-			0.0f, 0.5f, 0.0f,
+			-0.5f, 0.5f, 0.0f,
 			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f
+			0.5f, -0.5f, 0.0f,
+			0.5f, 0.5f, 0.0f
 		};
 		
-		this._gameObject = new GameObject(vertices);
+		int[] indices = new int[] {
+				0, 1, 3, 3, 1, 2
+		};
+		
+		this._gameObject = new GameObject(vertices, indices);
 	}
 
 	@Override
