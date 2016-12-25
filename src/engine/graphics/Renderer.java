@@ -3,7 +3,7 @@ package engine.graphics;
 import org.joml.Vector3f;
 
 import engine.GameDisplay;
-import engine.game.objects.GameObject;
+import engine.graphics.geo.Mesh;
 import engine.utils.debug.Logger;
 
 /**
@@ -34,7 +34,7 @@ public class Renderer {
 	 *            the visual window the user can see and interact with for the
 	 *            game
 	 */
-	public void render(GameDisplay display, GameObject gameObject) {
+	public void render(GameDisplay display, Mesh gameObject) {
 		// Update viewport to window ONLY IF the window has been resized
 		_log.debug("Rendering...");
 		

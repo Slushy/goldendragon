@@ -2,8 +2,8 @@ package game;
 
 import engine.GameDisplay;
 import engine.IGame;
-import engine.game.objects.GameObject;
 import engine.graphics.Renderer;
+import engine.graphics.geo.Mesh;
 import engine.utils.debug.Logger;
 
 /**
@@ -17,7 +17,7 @@ public class Game implements IGame {
 
 	private final Renderer _renderer = new Renderer();
 	
-	private GameObject _gameObject;
+	private Mesh _gameObject;
 	@Override
 	public void init() throws Exception {
 		_log.debug("Initializing game");
@@ -34,7 +34,7 @@ public class Game implements IGame {
 				0, 1, 3, 3, 1, 2
 		};
 		
-		this._gameObject = new GameObject(vertices, indices);
+		this._gameObject = new Mesh(vertices, indices);
 	}
 
 	@Override
