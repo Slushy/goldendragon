@@ -3,7 +3,7 @@ package engine.graphics;
 import org.joml.Vector3f;
 
 import engine.GameDisplay;
-import engine.graphics.geo.Mesh;
+import engine.game.objects.GameObject;
 import engine.utils.debug.Logger;
 
 /**
@@ -34,10 +34,10 @@ public class Renderer {
 	 *            the visual window the user can see and interact with for the
 	 *            game
 	 */
-	public void render(GameDisplay display, Mesh gameObject) {
+	public void render(GameDisplay display, GameObject gameObject) {
 		// Update viewport to window ONLY IF the window has been resized
 		_log.debug("Rendering...");
-		
+
 		// Clear the current frame before we render the next frame
 		display.getGraphicsController().clearGraphics();
 
@@ -46,9 +46,9 @@ public class Renderer {
 		// Set uniforms
 		_sceneShaderProgram.setColor(new Vector3f(1, 1, 1));
 		_sceneShaderProgram.setProjectionMatrix(display.getCamera().getProjectionMatrix());
-		
-		// Render Scene
-		gameObject.render();
+
+		// Render game object
+		gameObject.getMesh().render();
 
 		_sceneShaderProgram.unbind();
 
