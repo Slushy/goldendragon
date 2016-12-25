@@ -113,7 +113,7 @@ public class GameEngine {
 		// Init the game timer
 		_timer.init();
 		// Init your game
-		_game.init();
+		_game.init(_display);
 	}
 
 	/**

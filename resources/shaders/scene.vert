@@ -2,7 +2,9 @@
 
 layout (location = 0) in vec3 position;
 
+uniform mat4 projectionMatrix;
+
 void main() {
 	// Set the position for each vertex
-	gl_Position = vec4(position, 1.0);
+	gl_Position = projectionMatrix * vec4(position, 1.0);
 }

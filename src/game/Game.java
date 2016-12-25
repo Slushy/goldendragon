@@ -2,6 +2,7 @@ package game;
 
 import engine.GameDisplay;
 import engine.IGame;
+import engine.game.objects.Camera;
 import engine.graphics.Renderer;
 import engine.graphics.geo.Mesh;
 import engine.utils.debug.Logger;
@@ -19,15 +20,20 @@ public class Game implements IGame {
 	private Mesh _gameObject;
 	
 	@Override
-	public void init() throws Exception {
+	public void init(GameDisplay display) throws Exception {
 		_log.debug("Initializing game");
+		// Register new camera to display
+		display.registerCamera(new Camera());
+		
+		// Init renderer
 		_renderer.init();
 		
+		float z = -3f;
 		float[] vertices = new float[] {
-			-0.5f, 0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.5f, 0.5f, 0.0f
+			-0.5f, 0.5f, z,
+			-0.5f, -0.5f, z,
+			0.5f, -0.5f, z,
+			0.5f, 0.5f, z
 		};
 		
 		int[] indices = new int[] {

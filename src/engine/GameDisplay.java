@@ -97,6 +97,7 @@ public class GameDisplay {
 	 */
 	public void registerCamera(Camera camera) {
 		this._camera = camera;
+		updateCameraProjectionMatrix();
 	}
 
 	/**
@@ -178,6 +179,10 @@ public class GameDisplay {
 	protected void onWindowResized() {
 		_log.debug("Window is resized");
 		fixViewportToWindow();
+		updateCameraProjectionMatrix();
+	}
+	
+	protected void updateCameraProjectionMatrix() {
 		if (_camera != null) {
 			float aspectRatio = (float) _window.getWidth() / (float) _window.getHeight();
 			_camera.updateProjectionMatrix(aspectRatio);

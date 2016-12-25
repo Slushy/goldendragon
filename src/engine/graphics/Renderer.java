@@ -43,7 +43,10 @@ public class Renderer {
 
 		_sceneShaderProgram.bind();
 
+		// Set uniforms
 		_sceneShaderProgram.setColor(new Vector3f(1, 1, 1));
+		_sceneShaderProgram.setProjectionMatrix(display.getCamera().getProjectionMatrix());
+		
 		// Render Scene
 		gameObject.render();
 

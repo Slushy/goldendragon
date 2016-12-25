@@ -1,9 +1,12 @@
 package engine.graphics;
 
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
 import engine.utils.ResourceManager;
@@ -124,17 +127,32 @@ public abstract class ShaderProgram {
 		_log.debug("Registered uniform '%s' at location %d for program %d", uniform, uniformLocation, _programId);
 	}
 	
+	protected int getUniform(String uniform) {
+		int location = _uniforms.get(uniform);
+		if (!_uniforms.containsKey(uniform) || location < 0) {
+			throw new RuntimeException("Uniform [" + uniform + "] has not been created");
+		}
+		return location;
+	}
+	
 	/**
 	 * Sets a vector uniform
 	 * @param uniform
 	 * @param value
 	 */
 	protected void setUniform(String uniform, Vector3f value) {
-		int location = _uniforms.get(uniform);
-		if (!_uniforms.containsKey(uniform) || location < 0) {
-			throw new RuntimeException("Uniform [" + uniform + "] has not been created");
-		}
-		GL20.glUniform3f(location, value.x, value.y, value.z);
+		GL20.glUniform3f(getUniform(uniform), value.x, value.y, value.z);
+	}
+	
+	/**
+	 * Sets a matrix uniform
+	 * @param uniform
+	 * @param value
+	 */
+	protected void setUniform(String uniform, Matrix4f value) {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+		value.get(buffer);
+		GL20.glUniformMatrix4fv(getUniform(uniform), false, buffer);
 	}
 	
 	/**
