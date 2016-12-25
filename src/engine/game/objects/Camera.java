@@ -1,6 +1,7 @@
 package engine.game.objects;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import engine.EngineDefaults;
@@ -20,11 +21,13 @@ public class Camera extends Entity {
 	private final Matrix4f _projectionMatrix = new Matrix4f();
 	private final Matrix4f _viewMatrix = new Matrix4f();
 
+	// TODO: Allow roll, pitch & yaw changes to rotation
+	
 	/**
 	 * Constructs a camera object
 	 */
 	public Camera() {
-		this(new Vector3f(), new Vector3f());
+		this(new Vector3f(), new Quaternionf());
 	}
 
 	/**
@@ -33,7 +36,7 @@ public class Camera extends Entity {
 	 * @param position
 	 * @param rotation
 	 */
-	public Camera(Vector3f position, Vector3f rotation) {
+	public Camera(Vector3f position, Quaternionf rotation) {
 		super(position, rotation);
 	}
 

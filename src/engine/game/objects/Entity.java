@@ -1,7 +1,9 @@
 package engine.game.objects;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import engine.utils.math.QuaternionUtils;
 import engine.utils.math.VectorUtils;
 
 /**
@@ -10,10 +12,9 @@ import engine.utils.math.VectorUtils;
  *
  */
 public abstract class Entity {
-	// Keeps track of camera movements
-	// TODO: Change to quaternion & allow roll, pitch & yaw changes
+	// Keeps track of entity movements
 	private final Vector3f _position;
-	private final Vector3f _rotation;
+	private final Quaternionf _rotation;
 
 	/**
 	 * Constructs a new entity
@@ -23,7 +24,7 @@ public abstract class Entity {
 	 * @param rotation
 	 *            default starting rotation
 	 */
-	public Entity(Vector3f position, Vector3f rotation) {
+	public Entity(Vector3f position, Quaternionf rotation) {
 		this._position = position;
 		this._rotation = rotation;
 	}
@@ -56,7 +57,7 @@ public abstract class Entity {
 	 * 
 	 * @return current rotation
 	 */
-	public Vector3f getRotation() {
+	public Quaternionf getRotation() {
 		return _rotation;
 	}
 
@@ -70,7 +71,7 @@ public abstract class Entity {
 	 * @param z
 	 *            z-coordinate
 	 */
-	public void setRotation(float x, float y, float z) {
-		VectorUtils.setVector(_rotation, x, y, z);
+	public void setRotation(float x, float y, float z, float w) {
+		QuaternionUtils.setQuaternion(_rotation, x, y, z, w);
 	}
 }

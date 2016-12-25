@@ -1,5 +1,6 @@
 package engine.game.objects;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import engine.graphics.geo.Mesh;
@@ -18,7 +19,7 @@ public class GameObject extends Entity {
 	 * Constructs a new game object
 	 */
 	public GameObject() {
-		super(new Vector3f(), new Vector3f());
+		super(new Vector3f(), new Quaternionf());
 	}
 
 	/**
