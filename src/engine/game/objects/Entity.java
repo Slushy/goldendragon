@@ -2,7 +2,7 @@ package engine.game.objects;
 
 import org.joml.Vector3f;
 
-import engine.utils.VectorUtils;
+import engine.utils.math.VectorUtils;
 
 /**
  * A base class for every object with position & rotation

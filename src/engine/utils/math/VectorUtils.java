@@ -1,4 +1,4 @@
-package engine.utils;
+package engine.utils.math;
 
 import org.joml.Vector3f;
 
