@@ -156,7 +156,7 @@ public class GameEngine {
 	 */
 	protected void update() {
 		// TODO: Implement update
-		_game.update();
+		_game.update(_display);
 	}
 	
 	/**

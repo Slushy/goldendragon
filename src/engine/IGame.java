@@ -11,7 +11,7 @@ public interface IGame {
 
 	void processInput();
 
-	void update();
+	void update(GameDisplay display);
 
 	void render(GameDisplay display);
 

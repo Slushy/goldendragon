@@ -1,10 +1,12 @@
 package engine.graphics;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import engine.GameDisplay;
 import engine.game.objects.GameObject;
 import engine.utils.debug.Logger;
+import engine.utils.math.Transformation;
 
 /**
  * Our renderer, TODO: Abstract out to separate class to be inherited by
@@ -42,11 +44,12 @@ public class Renderer {
 		display.getGraphicsController().clearGraphics();
 
 		_sceneShaderProgram.bind();
-
+		
 		// Set uniforms
 		_sceneShaderProgram.setColor(new Vector3f(1, 1, 1));
 		_sceneShaderProgram.setProjectionMatrix(display.getCamera().getProjectionMatrix());
-
+		_sceneShaderProgram.setWorldViewMatrix(Transformation.buildWorldViewMatrix(gameObject, display.getCamera()));
+		
 		// Render game object
 		gameObject.getMesh().render();
 

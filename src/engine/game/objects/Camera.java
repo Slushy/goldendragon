@@ -5,6 +5,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import engine.EngineDefaults;
+import engine.utils.math.MatrixUtils;
 
 /**
  * A camera is just a way to view the 3D world through a 2D screen
@@ -38,6 +39,7 @@ public class Camera extends Entity {
 	 */
 	public Camera(Vector3f position, Quaternionf rotation) {
 		super(position, rotation);
+		this.updateViewMatrix();
 	}
 
 	/**
@@ -76,7 +78,6 @@ public class Camera extends Entity {
 	 * @return updated view matrix
 	 */
 	public Matrix4f updateViewMatrix() {
-		// TODO: Implement me
-		return _viewMatrix;
+		return MatrixUtils.setViewMatrix(_viewMatrix, getPosition(), getRotation());
 	}
 }
