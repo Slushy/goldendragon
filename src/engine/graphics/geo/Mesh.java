@@ -12,14 +12,23 @@ public class Mesh {
 	private final VAO _vao;
 	private final int _vertexCount;
 
+	/**
+	 * Construct a new mesh
+	 * 
+	 * @param vertexPositions
+	 * @param indices
+	 * @throws Exception
+	 */
 	public Mesh(float[] vertexPositions, int[] indices) throws Exception {
-		this._vao = new VAO();
 		this._vertexCount = indices.length;
 
-		// Bind all VBOS
+		// Create and bind the VAO
+		this._vao = new VAO();
 		_vao.use();
-		_vao.bindVBO(VBO.Index, indices);
+
+		// Bind all VBOS
 		_vao.bindVBO(VBO.Position, vertexPositions);
+		_vao.bindVBO(VBO.Index, indices);
 		// Done binding
 		_vao.done();
 	}

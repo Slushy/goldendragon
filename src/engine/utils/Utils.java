@@ -7,6 +7,7 @@ import org.lwjgl.BufferUtils;
 
 /**
  * A bunch of utility methods
+ * 
  * @author brandon.porter
  *
  */
@@ -14,7 +15,8 @@ public class Utils {
 
 	/**
 	 * Loads an array of floats into a float buffer
-	 * @param data 
+	 * 
+	 * @param data
 	 * @return
 	 */
 	public static FloatBuffer loadBuffer(float[] data) {
@@ -22,9 +24,10 @@ public class Utils {
 		buffer.put(data).flip();
 		return buffer;
 	}
-	
+
 	/**
 	 * Loads an array of ints into an integer buffer
+	 * 
 	 * @param data
 	 * @return
 	 */
