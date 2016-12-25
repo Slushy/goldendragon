@@ -1,5 +1,8 @@
 package engine;
 
+import engine.game.objects.Camera;
+import engine.utils.debug.Logger;
+
 /**
  * Our game display that represents a game window and graphics controller
  * 
@@ -7,8 +10,12 @@ package engine;
  *
  */
 public class GameDisplay {
+	private static final Logger _log = new Logger("GameDisplay");
+
 	private final Window _window;
 	private final GraphicsController _graphicsController;
+
+	private Camera _camera;
 
 	/**
 	 * Constructs a game display
@@ -65,6 +72,7 @@ public class GameDisplay {
 	 */
 	public void init() {
 		_window.init();
+		_window.setWindowResizedCallback(this::onWindowResized);
 		_graphicsController.init();
 	}
 
@@ -83,20 +91,39 @@ public class GameDisplay {
 	}
 
 	/**
+	 * Sets the camera as the default camera for the display
+	 * 
+	 * @param camera
+	 */
+	public void registerCamera(Camera camera) {
+		this._camera = camera;
+	}
+
+	/**
+	 * Gets the camera being used for the current display
+	 * 
+	 * @return current camera
+	 */
+	public Camera getCamera() {
+		return _camera;
+	}
+
+	/**
 	 * Checks if the window has been resized manually
+	 * 
 	 * @return true/false if window resized
 	 */
 	public boolean hasResized() {
 		return _window.hasResized();
 	}
-	
+
 	/**
 	 * Tell the window that the game has finished updating state to be resized
 	 */
 	public void resetResized() {
 		_window.setResized(false);
 	}
-	
+
 	/**
 	 * Renders the window, continually called from the game loop several times a
 	 * second
@@ -121,22 +148,12 @@ public class GameDisplay {
 	public boolean shouldClose() {
 		return _window.shouldClose();
 	}
-	
+
 	/**
 	 * Helper function to update the graphics viewport to the size of the window
 	 */
 	public void fixViewportToWindow() {
 		getGraphicsController().setViewport(0, 0, _window.getWidthScaled(), _window.getHeightScaled());
-	}
-	
-	/**
-	 * Helper function to update the graphics viewport ONLY IF the window has been resized (more performant)
-	 */
-	public void fixViewportToWindowIfResized() {
-		if (hasResized()) {
-			fixViewportToWindow();
-			resetResized();
-		}
 	}
 
 	/**
@@ -153,5 +170,17 @@ public class GameDisplay {
 	 */
 	public void dispose() {
 		_window.dispose();
+	}
+
+	/**
+	 * Callback called when the window has been resized
+	 */
+	protected void onWindowResized() {
+		_log.debug("Window is resized");
+		fixViewportToWindow();
+		if (_camera != null) {
+			float aspectRatio = (float) _window.getWidth() / (float) _window.getHeight();
+			_camera.updateProjectionMatrix(aspectRatio);
+		}
 	}
 }

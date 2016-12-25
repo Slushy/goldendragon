@@ -40,10 +40,7 @@ public class Renderer {
 		
 		// Clear the current frame before we render the next frame
 		display.getGraphicsController().clearGraphics();
-		
-		// set viewport if resized
-		display.fixViewportToWindowIfResized();
-		
+
 		_sceneShaderProgram.bind();
 
 		_sceneShaderProgram.setColor(new Vector3f(1, 1, 1));

@@ -20,7 +20,7 @@ import engine.utils.debug.Logger;
  */
 public class OpenGLWindow extends Window {
 	private static final Logger _log = new Logger("OpenGLWindow", Logger.LoggerLevel.DEBUG);
-	
+
 	// Store references to callbacks to prevent java from doing any
 	// garbage collection on them while they are still in use
 	private GLFWErrorCallback _errorCallback;
@@ -105,7 +105,8 @@ public class OpenGLWindow extends Window {
 		// Attach the graphics context to the window
 		glfwMakeContextCurrent(windowId);
 
-		// Check and update our size scale if the window coordinates on the OS are not the
+		// Check and update our size scale if the window coordinates on the OS
+		// are not the
 		// same resolution as how we represent our window size
 		checkIfWindowCoordinatesDifferFromPixels(windowId, width, height);
 
@@ -161,6 +162,8 @@ public class OpenGLWindow extends Window {
 					this.width = width;
 					this.height = height;
 					this.resized = true;
+					if (this.onWindowResizedCallback != null)
+						this.onWindowResizedCallback.run();
 				}));
 	}
 

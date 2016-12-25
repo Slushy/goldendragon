@@ -10,11 +10,13 @@ public abstract class Window {
 	protected final WindowOptions windowOptions;
 	protected float sizeScale = 1;
 
-	private long _id;
 	protected String title;
 	protected int width;
 	protected int height;
 	protected boolean resized;
+	protected Runnable onWindowResizedCallback = null;
+
+	private long _id;
 
 	/**
 	 * Constructs a window
@@ -91,6 +93,16 @@ public abstract class Window {
 	}
 
 	/**
+	 * Sets a callback for when the window is resized
+	 * 
+	 * @param callback
+	 *            function that accepts and returns void
+	 */
+	public void setWindowResizedCallback(Runnable callback) {
+		this.onWindowResizedCallback = callback;
+	}
+
+	/**
 	 * Checks if the window is enabled for vSync
 	 * 
 	 * @return true or false if the window is vSync enabled
@@ -128,7 +140,7 @@ public abstract class Window {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	/**
 	 * Gets the scaled version of the window height. This will be different from
 	 * normal height on systems where window coordinates are not the same

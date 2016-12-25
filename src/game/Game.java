@@ -16,8 +16,8 @@ public class Game implements IGame {
 	private static final Logger _log = new Logger("Game");
 
 	private final Renderer _renderer = new Renderer();
-	
 	private Mesh _gameObject;
+	
 	@Override
 	public void init() throws Exception {
 		_log.debug("Initializing game");
