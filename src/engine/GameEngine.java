@@ -148,7 +148,7 @@ public class GameEngine {
 	 */
 	protected void processInput() {
 		// TODO: Implement input processing
-		_game.processInput();
+		_game.processInput(_display.getInputHandler());
 	}
 	
 	/**

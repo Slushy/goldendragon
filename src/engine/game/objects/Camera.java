@@ -22,13 +22,13 @@ public class Camera extends Entity {
 	private final Matrix4f _projectionMatrix = new Matrix4f();
 	private final Matrix4f _viewMatrix = new Matrix4f();
 
-	// TODO: Allow roll, pitch & yaw changes to rotation
+	// TODO: Allow roll, pitch & yaw changes to rotation 
 	
 	/**
 	 * Constructs a camera object
 	 */
 	public Camera() {
-		this(new Vector3f(), new Quaternionf());
+		this(new Vector3f(), new Vector3f());
 	}
 
 	/**
@@ -37,9 +37,43 @@ public class Camera extends Entity {
 	 * @param position
 	 * @param rotation
 	 */
-	public Camera(Vector3f position, Quaternionf rotation) {
+	public Camera(Vector3f position, Vector3f rotation) {
 		super(position, rotation);
 		this.updateViewMatrix();
+	}
+	
+	/**
+	 * Move offset position in relation to current position
+	 * @param offsetX
+	 * @param offsetY
+	 * @param offsetZ
+	 */
+	public void movePosition(float offsetX, float offsetY, float offsetZ) {
+		float deg90Rad = 90;
+		if (offsetZ != 0) {
+			getPosition().x += (float)Math.sin(Math.toRadians(getRotation().y))* -1.0f * offsetZ;
+			getPosition().z += (float)Math.cos(Math.toRadians(getRotation().y)) * offsetZ;
+		}
+		if (offsetX != 0) {
+			getPosition().x += (float)Math.sin(Math.toRadians(getRotation().y - deg90Rad))* -1.0f * offsetX;
+			getPosition().z += (float)Math.cos(Math.toRadians(getRotation().y - deg90Rad)) * offsetX;
+		}
+		if (offsetY != 0) {
+			getPosition().y += offsetY;
+		}
+		
+	}
+	
+	/**
+	 * Move camera rotation by the offset (in radians)
+	 * @param offsetX
+	 * @param offsetY
+	 * @param offsetZ
+	 */
+	public void moveRotation(float offsetX, float offsetY, float offsetZ) {
+		getRotation().x += offsetX;
+		getRotation().y += offsetY;
+		getRotation().z += offsetZ;
 	}
 
 	/**
@@ -72,8 +106,7 @@ public class Camera extends Entity {
 	}
 
 	/**
-	 * Updates the view matrix to the current camera position/rotation TODO:
-	 * IMPLEMENT ME
+	 * Updates the view matrix to the current camera position/rotation
 	 * 
 	 * @return updated view matrix
 	 */

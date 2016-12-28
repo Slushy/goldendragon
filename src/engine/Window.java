@@ -14,6 +14,8 @@ public abstract class Window {
 	protected int width;
 	protected int height;
 	protected boolean resized;
+
+	protected WindowKeyCallback onWindowKeyStateChanged = null;
 	protected Runnable onWindowResizedCallback = null;
 
 	private long _id;
@@ -100,6 +102,17 @@ public abstract class Window {
 	 */
 	public void setWindowResizedCallback(Runnable callback) {
 		this.onWindowResizedCallback = callback;
+	}
+
+	/**
+	 * Sets a callback for when a key on the window has a state change (i.e.
+	 * pressed, released)
+	 * 
+	 * @param callback
+	 *            function that accepts keycode, keystate, mods
+	 */
+	public void setKeyStateChangedCallback(WindowKeyCallback callback) {
+		this.onWindowKeyStateChanged = callback;
 	}
 
 	/**
@@ -225,5 +238,10 @@ public abstract class Window {
 		 * introduce minor input lag.
 		 */
 		public boolean vSync = WindowDefaults.VSYNC;
+	}
+
+	@FunctionalInterface
+	public static interface WindowKeyCallback {
+		public void apply(int keyCode, int keyState, int mods);
 	}
 }

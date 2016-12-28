@@ -42,7 +42,7 @@ public class OpenGLGraphicsController extends GraphicsController {
 		// Enables polygon mode, so we can see all the triangles that compose a
 		// model
 		// if (_opts.showTriangles) {
-		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		// }
 
 		// Support for transparencies

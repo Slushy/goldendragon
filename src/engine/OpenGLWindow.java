@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
+import engine.input.Key;
 import engine.utils.debug.Logger;
 
 /**
@@ -26,7 +27,7 @@ public class OpenGLWindow extends Window {
 	private GLFWErrorCallback _errorCallback;
 	private GLFWKeyCallback _keyCallback;
 	private GLFWWindowSizeCallback _windowSizeCallback;
-
+	
 	/**
 	 * Constructs an OpenGL window
 	 * 
@@ -156,7 +157,6 @@ public class OpenGLWindow extends Window {
 	 */
 	private void setupCallbacks(long windowId) {
 		// Resize callback - gets fired when this window is resized
-
 		glfwSetWindowSizeCallback(windowId,
 				this._windowSizeCallback = GLFWWindowSizeCallback.create((long window, int width, int height) -> {
 					this.width = width;
@@ -164,6 +164,14 @@ public class OpenGLWindow extends Window {
 					this.resized = true;
 					if (this.onWindowResizedCallback != null)
 						this.onWindowResizedCallback.run();
+				}));
+		
+		// Key press callback - gets fired when a key is pressed
+		glfwSetKeyCallback(windowId,
+				this._keyCallback = GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
+					if (this.onWindowKeyStateChanged != null) {
+						this.onWindowKeyStateChanged.apply(key, action, mods);
+					}
 				}));
 	}
 

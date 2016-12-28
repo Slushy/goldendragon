@@ -14,7 +14,8 @@ import engine.utils.math.VectorUtils;
 public abstract class Entity {
 	// Keeps track of entity movements
 	private final Vector3f _position;
-	private final Quaternionf _rotation;
+	// TODO: Change rotation to be a quaternion instead of vector
+	private final Vector3f _rotation;
 
 	/**
 	 * Constructs a new entity
@@ -24,7 +25,7 @@ public abstract class Entity {
 	 * @param rotation
 	 *            default starting rotation
 	 */
-	public Entity(Vector3f position, Quaternionf rotation) {
+	public Entity(Vector3f position, Vector3f rotation) {
 		this._position = position;
 		this._rotation = rotation;
 	}
@@ -57,7 +58,7 @@ public abstract class Entity {
 	 * 
 	 * @return current rotation
 	 */
-	public Quaternionf getRotation() {
+	public Vector3f getRotation() {
 		return _rotation;
 	}
 
@@ -72,6 +73,6 @@ public abstract class Entity {
 	 *            z-coordinate
 	 */
 	public void setRotation(float x, float y, float z, float w) {
-		QuaternionUtils.setQuaternion(_rotation, x, y, z, w);
+		VectorUtils.setVector(_rotation, x, y, z);
 	}
 }

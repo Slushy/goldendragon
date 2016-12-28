@@ -19,7 +19,7 @@ public class GameObject extends Entity {
 	 * Constructs a new game object
 	 */
 	public GameObject() {
-		super(new Vector3f(), new Quaternionf());
+		super(new Vector3f(), new Vector3f());
 	}
 
 	/**

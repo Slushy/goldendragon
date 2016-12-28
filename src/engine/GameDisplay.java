@@ -1,6 +1,7 @@
 package engine;
 
 import engine.game.objects.Camera;
+import engine.input.InputHandler;
 import engine.utils.debug.Logger;
 
 /**
@@ -11,11 +12,13 @@ import engine.utils.debug.Logger;
  */
 public class GameDisplay {
 	private static final Logger _log = new Logger("GameDisplay");
-
+	
 	private final Window _window;
 	private final GraphicsController _graphicsController;
-
+	private final InputHandler _inputHandler;
+	
 	private Camera _camera;
+	
 
 	/**
 	 * Constructs a game display
@@ -65,6 +68,7 @@ public class GameDisplay {
 			GraphicsController.GraphicsOptions graphicsOptions) {
 		this._window = new OpenGLWindow(title, width, height, windowOptions);
 		this._graphicsController = new OpenGLGraphicsController(graphicsOptions);
+		this._inputHandler = new InputHandler(_window);
 	}
 
 	/**
@@ -182,10 +186,21 @@ public class GameDisplay {
 		updateCameraProjectionMatrix();
 	}
 	
+	/**
+	 * Updates the camera projection to the aspect ratio change of the window
+	 */
 	protected void updateCameraProjectionMatrix() {
 		if (_camera != null) {
 			float aspectRatio = (float) _window.getWidth() / (float) _window.getHeight();
 			_camera.updateProjectionMatrix(aspectRatio);
 		}
+	}
+	
+	/**
+	 * Gets the input handler, to be used by the engine to pass to the game
+	 * @return input handler for the display
+	 */
+	protected InputHandler getInputHandler() {
+		return _inputHandler;
 	}
 }

@@ -16,7 +16,8 @@ import engine.game.objects.GameObject;
  */
 public class Transformation {
 	private static final Matrix4f WORLD_MATRIX = new Matrix4f();
-
+	private static final Matrix4f WORLD_VIEW_MATRIX = new Matrix4f();
+	
 	/*
 	 * Prevent manual instantiation
 	 */
@@ -31,10 +32,15 @@ public class Transformation {
 	 * @param scale
 	 * @return transformed matrix
 	 */
-	public static Matrix4f buildWorldMatrix(Vector3f position, Quaternionf rotation, float scale) {
-		return WORLD_MATRIX.translationRotateScale(position.x, position.y, position.z, rotation.x, rotation.y, rotation.z,
-				rotation.w, scale, scale, scale);
-	}
+	public static Matrix4f buildWorldMatrix(Vector3f position, Vector3f rotation, float scale) {
+//		return WORLD_MATRIX.translationRotateScale(position.x, position.y, position.z, rotation.x, rotation.y, rotation.z,
+//			rotation.w, scale, scale, scale);
+		return WORLD_MATRIX.translation(position)
+				.rotateX((float)Math.toRadians(-rotation.x))
+				.rotateY((float)Math.toRadians(-rotation.y))
+				.rotateZ((float)Math.toRadians(-rotation.z))
+				.scale(scale);
+	}                                                                                                                                                                                                                                     
 
 	/**
 	 * Returns a matrix representing the position, rotation and scale of the
@@ -56,7 +62,7 @@ public class Transformation {
 	 * @return
 	 */
 	public static Matrix4f buildWorldViewMatrix(GameObject gameObject, Matrix4f viewMatrix) {
-		return viewMatrix.mulAffine(buildWorldMatrix(gameObject), WORLD_MATRIX);
+		return viewMatrix.mul(buildWorldMatrix(gameObject), WORLD_VIEW_MATRIX);
 	}
 
 	/**

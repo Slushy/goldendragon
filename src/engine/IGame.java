@@ -1,5 +1,7 @@
 package engine;
 
+import engine.input.InputHandler;
+
 /**
  * Defines the blueprint of every game logic entry point
  * 
@@ -9,7 +11,7 @@ package engine;
 public interface IGame {
 	void init(GameDisplay display) throws Exception;
 
-	void processInput();
+	void processInput(InputHandler inputHandler);
 
 	void update(GameDisplay display);
 
