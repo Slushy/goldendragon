@@ -1,6 +1,5 @@
 package engine.game.objects;
 
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import engine.graphics.geo.Mesh;

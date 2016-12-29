@@ -72,7 +72,7 @@ public abstract class Entity {
 	 * @param z
 	 *            z-coordinate
 	 */
-	public void setRotation(float x, float y, float z, float w) {
+	public void setRotation(float x, float y, float z) {
 		VectorUtils.setVector(_rotation, x, y, z);
 	}
 }

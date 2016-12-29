@@ -19,6 +19,7 @@ public class Main {
 		try {
 			GameEngine.EngineOptions options = new GameEngine.EngineOptions();
 			options.windowOptions.resizable = true;
+			options.graphicsOptions.polygonMode = false;
 			
 			engine = new GameEngine(new Game(), GAME_TITLE, WIDTH, HEIGHT, options);
 			engine.initializeAndRun();

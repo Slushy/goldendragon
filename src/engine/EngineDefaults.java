@@ -31,6 +31,11 @@ public class EngineDefaults {
 	 * The default max updates per second
 	 */
 	public static final int MAX_UPS = 30;
+	
+	/**
+	 * Whether to display every model's vertex without applied texturing
+	 */
+	public static final boolean POLYGON_MODE = false;
 
 	/*
 	 * Prevent outside classes from creating an instance

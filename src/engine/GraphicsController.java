@@ -72,5 +72,9 @@ public abstract class GraphicsController {
 	 *
 	 */
 	public static class GraphicsOptions {
+		/**
+		 * Whether to display every model's vertex without applied texturing
+		 */
+		public boolean polygonMode = EngineDefaults.POLYGON_MODE;
 	}
 }
