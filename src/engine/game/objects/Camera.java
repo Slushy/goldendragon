@@ -42,38 +42,29 @@ public class Camera extends Entity {
 		this.updateViewMatrix();
 	}
 	
-	/**
-	 * Move offset position in relation to current position
-	 * @param offsetX
-	 * @param offsetY
-	 * @param offsetZ
-	 */
-	public void movePosition(float offsetX, float offsetY, float offsetZ) {
+	@Override
+	public void move(float dx, float dy, float dz) {
 		float deg90Rad = 90;
-		if (offsetZ != 0) {
-			getPosition().x += (float)Math.sin(Math.toRadians(getRotation().y))* -1.0f * offsetZ;
-			getPosition().z += (float)Math.cos(Math.toRadians(getRotation().y)) * offsetZ;
-		}
-		if (offsetX != 0) {
-			getPosition().x += (float)Math.sin(Math.toRadians(getRotation().y - deg90Rad))* -1.0f * offsetX;
-			getPosition().z += (float)Math.cos(Math.toRadians(getRotation().y - deg90Rad)) * offsetX;
-		}
-		if (offsetY != 0) {
-			getPosition().y += offsetY;
+		
+		float offsetX = 0;
+		float offsetY = 0;
+		float offsetZ = 0;
+		
+		if (dz != 0) {
+			offsetX += (float)Math.sin(Math.toRadians(getRotation().y))* -1.0f * dz;
+			offsetZ += (float)Math.cos(Math.toRadians(getRotation().y)) * dz;
 		}
 		
-	}
-	
-	/**
-	 * Move camera rotation by the offset (in radians)
-	 * @param offsetX
-	 * @param offsetY
-	 * @param offsetZ
-	 */
-	public void moveRotation(float offsetX, float offsetY, float offsetZ) {
-		getRotation().x += offsetX;
-		getRotation().y += offsetY;
-		getRotation().z += offsetZ;
+		if (dx != 0) {
+			offsetX += (float)Math.sin(Math.toRadians(getRotation().y - deg90Rad))* -1.0f * dx;
+			offsetZ += (float)Math.cos(Math.toRadians(getRotation().y - deg90Rad)) * dx;
+		}
+		
+		if (dy != 0) {
+			offsetY += dy;
+		}
+		
+		super.move(offsetX, offsetY, offsetZ);
 	}
 
 	/**

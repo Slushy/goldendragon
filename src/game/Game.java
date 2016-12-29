@@ -77,7 +77,7 @@ public class Game implements IGame {
 
 		this._gameObject = new GameObject(new Mesh(vertices, null, null, indices));
 
-		display.getCamera().getPosition().z = 3f;
+		display.getCamera().setPosZ(3f);
 		display.getCamera().updateViewMatrix();
 	}
 
@@ -118,16 +118,12 @@ public class Game implements IGame {
 
 	@Override
 	public void update(GameDisplay display) {
-		display.getCamera().movePosition(_cameraInc.x * CAMERA_POS_STEP, _cameraInc.y * CAMERA_POS_STEP,
+		display.getCamera().move(_cameraInc.x * CAMERA_POS_STEP, _cameraInc.y * CAMERA_POS_STEP,
 				_cameraInc.z * CAMERA_POS_STEP);
-		display.getCamera().moveRotation(_cameraRot.x * CAMERA_ROT_STEP, _cameraRot.y * CAMERA_ROT_STEP, 0);
+		display.getCamera().rotate(_cameraRot.x * CAMERA_ROT_STEP, _cameraRot.y * CAMERA_ROT_STEP, 0);
 		display.getCamera().updateViewMatrix();
 
-		float rotation = _gameObject.getRotation().x + 1.5f;
-		if (rotation > 360) {
-			rotation = 0;
-		}
-		_gameObject.setRotation(rotation, rotation, rotation);
+		_gameObject.rotate(1.5f, 1.5f, 1.5f);
 	}
 
 	@Override
