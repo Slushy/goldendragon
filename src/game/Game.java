@@ -46,7 +46,7 @@ public class Game implements IGame {
 
 		int[] indices = new int[] { 0, 1, 3, 3, 1, 2 };
 
-		this._gameObject = new GameObject(new Mesh(vertices, indices));
+		this._gameObject = new GameObject(new Mesh(vertices, null, null, indices));
 		//this._gameObject.getRotation().rotateZ((float) Math.toRadians(45));
 		
 		display.getCamera().getPosition().z = 3f;

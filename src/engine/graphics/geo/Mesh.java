@@ -19,7 +19,7 @@ public class Mesh {
 	 * @param indices
 	 * @throws Exception
 	 */
-	public Mesh(float[] vertexPositions, int[] indices) throws Exception {
+	public Mesh(float[] vertexPositions, float[] textureCoords, float[] normals, int[] indices) throws Exception {
 		this._vertexCount = indices.length;
 
 		// Create and bind the VAO
@@ -27,8 +27,10 @@ public class Mesh {
 		_vao.use();
 
 		// Bind all VBOS
-		_vao.bindVBO(VBO.Position, vertexPositions);
-		_vao.bindVBO(VBO.Index, indices);
+		_vao.bindVBO(VBO.POSITION, vertexPositions);
+		//_vao.bindVBO(VBO.TEXTURE, textureCoords);
+		//_vao.bindVBO(VBO.NORMAL, normals);
+		_vao.bindVBO(VBO.INDEX, indices);
 		// Done binding
 		_vao.done();
 	}

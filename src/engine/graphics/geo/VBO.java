@@ -2,6 +2,9 @@ package engine.graphics.geo;
 
 import org.lwjgl.opengl.GL15;
 
+import static engine.utils.math.VectorUtils.VECTOR_3D_SIZE;
+import static engine.utils.math.VectorUtils.VECTOR_2D_SIZE;
+
 import engine.utils.Utils;
 
 /**
@@ -12,7 +15,10 @@ import engine.utils.Utils;
  *
  */
 public enum VBO {
-	Position(GL15.GL_ARRAY_BUFFER, 3), Index(GL15.GL_ELEMENT_ARRAY_BUFFER, -1);
+	POSITION(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE), 
+	TEXTURE(GL15.GL_ARRAY_BUFFER, VECTOR_2D_SIZE),
+	NORMAL(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE),
+	INDEX(GL15.GL_ELEMENT_ARRAY_BUFFER, -1);
 
 	private final int _bufferTarget;
 	private final int _attrSize;

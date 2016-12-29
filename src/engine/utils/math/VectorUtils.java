@@ -9,7 +9,9 @@ import org.joml.Vector3f;
  *
  */
 public class VectorUtils {
-
+	public static final int VECTOR_3D_SIZE = 3;
+	public static final int VECTOR_2D_SIZE = 2;
+	
 	/*
 	 * Prevent manual instantiation
 	 */
