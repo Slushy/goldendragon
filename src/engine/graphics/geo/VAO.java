@@ -16,7 +16,7 @@ import engine.utils.debug.Logger;
  * @author brandon.porter
  *
  */
-public class VAO {
+public class VAO implements IBindable {
 	private static final Logger _log = new Logger("VAO");
 
 	private final int _vaoId;
@@ -33,9 +33,8 @@ public class VAO {
 
 	/**
 	 * Sets this as the active VAO for openGL
-	 * 
-	 * @throws Exception
 	 */
+	@Override
 	public void use() {
 		// Bind the VAO
 		GL30.glBindVertexArray(_vaoId);
@@ -74,6 +73,7 @@ public class VAO {
 	/**
 	 * Tell OpenGL that we are done rendering this VAO
 	 */
+	@Override
 	public void done() {
 		// Unbind each attribute
 		for (int i = 0; i < _attributeCount; i++) {
@@ -87,6 +87,7 @@ public class VAO {
 	/**
 	 * Disposes the VAO and any attached VBOS
 	 */
+	@Override
 	public void dispose() {
 		_log.debug("Disposing VAO");
 

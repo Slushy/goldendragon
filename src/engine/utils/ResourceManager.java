@@ -18,9 +18,10 @@ public class ResourceManager {
 	 */
 	public static final FileType[] SUPPORTED_FILE_TYPES = FileType.values();
 
-	private static final String RESOURCES_PATH = "resources/";
-	private static final String SHADERS_PATH = RESOURCES_PATH + "shaders/";
-	private static final String MODELS_PATH = RESOURCES_PATH + "models/";
+	public static final String RESOURCES_PATH = "resources/";
+	public static final String SHADERS_PATH = RESOURCES_PATH + "shaders/";
+	public static final String MODELS_PATH = RESOURCES_PATH + "models/";
+	public static final String TEXTURES_PATH = RESOURCES_PATH + "textures/";
 
 	/*
 	 * Prevent instantiation
@@ -87,8 +88,13 @@ public class ResourceManager {
 	 *
 	 */
 	public static enum FileType {
-		UNKNOWN(""), OBJ(".obj"), VERTEX_SHADER(".vert"), FRAGMENT_SHADER(".frag");
-
+		UNKNOWN(""), 
+		// Game Objects
+		OBJ(".obj"), 
+		// Images
+		PNG(".png"),
+		// Shaders
+		VERTEX_SHADER(".vert"), FRAGMENT_SHADER(".frag");
 		private final String[] _extensions;
 
 		/*

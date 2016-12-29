@@ -2,10 +2,12 @@ package engine.utils.loaders;
 
 import engine.game.objects.GameObject;
 import engine.graphics.geo.Mesh;
+import engine.graphics.geo.Texture;
 import engine.utils.ResourceManager;
 
 /**
- * Parses game object files of supported types and loads them into memory as a new game object
+ * Parses resource files of supported types and loads them into memory as new
+ * engine objects
  * 
  * @author brandon.porter
  *
@@ -19,22 +21,23 @@ public class GameObjectLoader {
 	}
 
 	/**
-	 * Loads the specified file into a game object
+	 * Loads the specified file as a game object
 	 * 
 	 * @param fileName
-	 * @return
+	 *            file name of the game object
+	 * @return new game object
 	 * @throws Exception
 	 */
-	public static GameObject load(String fileName) throws Exception {
+	public static GameObject loadGameObject(String fileName) throws Exception {
 		Mesh mesh = null;
 
-		// Parses the file type so we can support multiple loads
+		// Parses the file type so we can support multiple types
 		switch (ResourceManager.getFileType(fileName)) {
 		case OBJ:
 			mesh = OBJLoader.loadMesh(fileName);
 			break;
 		default:
-			throw new Exception(String.format("Trying to load an invalid file type: %s as a game object", fileName));
+			throw new Exception(String.format("Trying to load an invalid file type: %s as a game object.", fileName));
 		}
 
 		return new GameObject(mesh);
