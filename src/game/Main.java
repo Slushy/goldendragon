@@ -7,8 +7,8 @@ import engine.GameEngine;
  */
 public class Main {
 	private static final String GAME_TITLE = "Engine Tester";
-	private static final int WIDTH = 1280;//1280;
-	private static final int HEIGHT = 720;//720;
+	private static final int WIDTH = 1280;
+	private static final int HEIGHT = 720;
 
 	/*
 	 * Entry point 

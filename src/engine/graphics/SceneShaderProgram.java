@@ -15,6 +15,7 @@ public class SceneShaderProgram extends ShaderProgram {
 	private static final Logger _log = new Logger("SceneShaderProgram");
 
 	private static final String COLOR = "color";
+	private static final String USE_TEXTURE = "useTexture";
 	private static final String PROJECTION_MATRIX = "projectionMatrix";
 	private static final String WORLD_VIEW_MATRIX = "worldViewMatrix";
 
@@ -36,6 +37,7 @@ public class SceneShaderProgram extends ShaderProgram {
 	@Override
 	protected void registerUniforms() throws Exception {
 		super.registerUniform(COLOR);
+		super.registerUniform(USE_TEXTURE);
 		super.registerUniform(PROJECTION_MATRIX);
 		super.registerUniform(WORLD_VIEW_MATRIX);
 	}
@@ -47,6 +49,7 @@ public class SceneShaderProgram extends ShaderProgram {
 	 */
 	public void setColor(Vector3f color) {
 		super.setUniform(COLOR, color);
+		super.setUniform(USE_TEXTURE, true);
 	}
 
 	/**

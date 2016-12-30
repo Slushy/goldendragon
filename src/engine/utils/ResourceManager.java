@@ -95,6 +95,7 @@ public class ResourceManager {
 		PNG(".png"),
 		// Shaders
 		VERTEX_SHADER(".vert"), FRAGMENT_SHADER(".frag");
+		
 		private final String[] _extensions;
 
 		/*
