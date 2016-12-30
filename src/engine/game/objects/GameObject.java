@@ -25,7 +25,7 @@ public class GameObject extends Entity {
 	 * Constructs a new game object
 	 * 
 	 * @param mesh
-	 *            geometric mesh representing this game object
+	 *            entity that holds all vertices representing this game object
 	 */
 	public GameObject(Mesh mesh) {
 		this();

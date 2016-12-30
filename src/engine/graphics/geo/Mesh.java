@@ -3,6 +3,9 @@ package engine.graphics.geo;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import engine.GraphicsController;
+import engine.utils.debug.Logger;
+
 /**
  * Represents our geometric vertices of a game object
  * 
@@ -10,10 +13,11 @@ import org.lwjgl.opengl.GL13;
  *
  */
 public class Mesh {
+	private static final Logger _log = new Logger("Mesh", Logger.LoggerLevel.DEBUG);
+
 	private final VAO _vao;
 	private final int _vertexCount;
-
-	private Texture _texture = null;
+	private Material _material = new Material();
 
 	/**
 	 * Construct a new mesh
@@ -40,30 +44,25 @@ public class Mesh {
 	}
 
 	/**
-	 * Sets the texture of the mesh
+	 * First disposes any existing material before setting the new one
 	 * 
-	 * @param texture
-	 *            texture to display on mesh, or null to clear
+	 * @param material
+	 *            material to display on mesh, or null to clear
 	 */
-	public void setTexture(Texture texture) {
-		if (hasTexture())
-			_texture.dispose();
-
-		this._texture = texture;
+	public void setMaterial(Material material) {
+		if (material == null) {
+			_log.warn("Shouldn't be setting a mesh's material to null, using default material");
+			material = new Material();
+		}
+		_material.dispose();
+		this._material = material;
 	}
 
 	/**
-	 * @return texture of the mesh
+	 * @return copy of the current material of the mesh
 	 */
-	public Texture getTexture() {
-		return _texture;
-	}
-
-	/**
-	 * @return true if the mesh has a texture, false otherwise
-	 */
-	public boolean hasTexture() {
-		return _texture != null;
+	public Material cloneMaterial() {
+		return new Material(_material);
 	}
 
 	/**
@@ -72,20 +71,20 @@ public class Mesh {
 	public void render() {
 		_vao.use();
 
-		// Activate any textures
-		if (hasTexture()) {
+		// set active material
+		if (_material.hasTexture()) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			_texture.use();
+			_material.getTexture().use();
 		}
 
 		// Draw game object
 		GL11.glDrawElements(GL11.GL_TRIANGLES, _vertexCount, GL11.GL_UNSIGNED_INT, 0);
 
-		// Deactivate any textures
-		if (hasTexture()) {
-			_texture.done();
+		// Clear active material
+		if (_material.hasTexture()) {
+			_material.getTexture().done();
 		}
-		
+
 		_vao.done();
 	}
 
@@ -93,10 +92,7 @@ public class Mesh {
 	 * Disposes VAO/VBOS and any other entities relating to this mesh
 	 */
 	public void dispose() {
-		if (hasTexture()) {
-			_texture.dispose();
-		}
-		
+		_material.dispose();
 		_vao.dispose();
 	}
 }

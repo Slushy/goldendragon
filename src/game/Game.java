@@ -8,6 +8,7 @@ import engine.IGame;
 import engine.game.objects.Camera;
 import engine.game.objects.GameObject;
 import engine.graphics.Renderer;
+import engine.graphics.geo.Material;
 import engine.graphics.geo.Mesh;
 import engine.graphics.geo.Texture;
 import engine.input.InputHandler;
@@ -33,7 +34,7 @@ public class Game implements IGame {
 
 	private Vector3f _cameraInc = new Vector3f();
 	private Vector2f _cameraRot = new Vector2f();
-
+	
 	@Override
 	public void init(GameDisplay display) throws Exception {
 		_log.debug("Initializing game");
@@ -126,7 +127,7 @@ public class Game implements IGame {
 		Texture texture = TextureLoader.loadTexture("grassblock.png");
 
 		this._gameObject = new GameObject(new Mesh(vertices, texCoords, indices));
-		this._gameObject.getMesh().setTexture(texture);
+		this._gameObject.getMesh().setMaterial(new Material(texture));
 
 		display.getCamera().setPosZ(3f);
 		display.getCamera().updateViewMatrix();
@@ -164,7 +165,6 @@ public class Game implements IGame {
 			_cameraRot.x = -1;
 		else if (keyboard.keyDown(Key.DOWN))
 			_cameraRot.x = 1;
-
 	}
 
 	@Override

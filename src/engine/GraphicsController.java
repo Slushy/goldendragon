@@ -8,7 +8,8 @@ package engine;
  */
 public abstract class GraphicsController {
 	protected final GraphicsOptions graphicsOptions;
-
+	protected boolean inPolygonMode = false;
+	
 	/**
 	 * Construct a graphics controller
 	 * 
@@ -64,6 +65,22 @@ public abstract class GraphicsController {
 	 *            height of the viewport
 	 */
 	public abstract void setViewport(int x, int y, int width, int height);
+
+	/**
+	 * Enables/disables polygon mode
+	 * 
+	 * @param polygonMode true to enable polygon mode, false to disable
+	 */
+	public void setPolygonMode(boolean polygonMode) {
+		this.inPolygonMode = polygonMode;
+	}
+	
+	/**
+	 * @return true if we are in polygon mode, false if not
+	 */
+	public boolean inPolygonMode() {
+		return inPolygonMode;
+	}
 
 	/**
 	 * Additional options to initialize the graphics

@@ -15,7 +15,7 @@ import engine.utils.debug.Logger;
  *
  */
 public class OpenGLGraphicsController extends GraphicsController {
-	private static final Logger _log = new Logger("OpenGLGraphicsController");
+	private static final Logger _log = new Logger("OpenGLGraphicsController", Logger.LoggerLevel.DEBUG);
 	
 	/**
 	 * Construct an OpenGL graphics controller
@@ -39,10 +39,9 @@ public class OpenGLGraphicsController extends GraphicsController {
 		// to be drawn first so our 3D objects do not look wack
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-		// Enables polygon mode, so we can see all the triangles that compose a
+		// Enabling polygon mode shows all the lines that compose a
 		// model
-		if (graphicsOptions.polygonMode)
-			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		setPolygonMode(graphicsOptions.polygonMode);
 
 		// Support for transparencies
 		GL11.glEnable(GL11.GL_BLEND);
@@ -68,5 +67,14 @@ public class OpenGLGraphicsController extends GraphicsController {
 	public void setViewport(int x, int y, int width, int height) {
 		_log.debug("Setting viewport to x: %d, y: %d, width: %d, height: %d", x, y, width, height);
 		GL11.glViewport(x, y, width, height);
+	}
+
+	@Override
+	public void setPolygonMode(boolean polygonMode) {
+		_log.debug("Setting polygonMode to %b", polygonMode);
+		int glMode = polygonMode ? GL11.GL_LINE : GL11.GL_FILL;
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, glMode);
+		
+		super.setPolygonMode(polygonMode);
 	}
 }
