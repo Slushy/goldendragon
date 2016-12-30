@@ -3,10 +3,10 @@ package game;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import engine.GameDisplay;
 import engine.IGame;
-import engine.game.objects.Camera;
+import engine.common.components.Camera;
 import engine.game.objects.GameObject;
-import engine.graphics.GameDisplay;
 import engine.graphics.components.Renderer;
 import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;

@@ -10,7 +10,6 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
-import engine.input.Key;
 import engine.utils.Logger;
 
 /**

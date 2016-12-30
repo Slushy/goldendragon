@@ -1,9 +1,10 @@
-package engine.game.objects;
+package engine.common.components;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import engine.common.Defaults;
+import engine.game.objects.Entity;
 import engine.utils.math.MatrixUtils;
 
 /**

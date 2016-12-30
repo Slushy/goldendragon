@@ -3,7 +3,7 @@ package engine.utils.math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.game.objects.Camera;
+import engine.common.components.Camera;
 import engine.game.objects.GameObject;
 
 /**

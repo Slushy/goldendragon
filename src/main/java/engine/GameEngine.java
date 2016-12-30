@@ -1,7 +1,6 @@
 package engine;
 
 import engine.common.Defaults;
-import engine.graphics.GameDisplay;
 import engine.graphics.GraphicsController;
 import engine.graphics.Window;
 import engine.utils.Logger;

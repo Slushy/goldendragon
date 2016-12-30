@@ -1,6 +1,10 @@
-package engine.graphics;
+package engine;
 
-import engine.game.objects.Camera;
+import engine.common.components.Camera;
+import engine.graphics.GraphicsController;
+import engine.graphics.OpenGLGraphicsController;
+import engine.graphics.OpenGLWindow;
+import engine.graphics.Window;
 import engine.input.InputHandler;
 import engine.utils.Logger;
 
