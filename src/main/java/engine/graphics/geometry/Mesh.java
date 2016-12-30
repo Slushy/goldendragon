@@ -1,9 +1,9 @@
-package engine.graphics.geo;
+package engine.graphics.geometry;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-import engine.utils.debug.Logger;
+import engine.utils.Logger;
 
 /**
  * Represents our geometric vertices of a game object

@@ -1,4 +1,4 @@
-package engine;
+package engine.graphics;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-import engine.utils.debug.Logger;
+import engine.utils.Logger;
 
 /**
  * Controls the graphics for an OpenGL display

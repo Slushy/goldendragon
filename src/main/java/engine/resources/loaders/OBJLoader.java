@@ -1,6 +1,6 @@
-package engine.utils.loaders;
+package engine.resources.loaders;
 
-import engine.graphics.geo.Mesh;
+import engine.graphics.geometry.Mesh;
 
 /**
  * Specific game object loader to load OBJ file types

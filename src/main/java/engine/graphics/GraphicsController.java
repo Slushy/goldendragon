@@ -1,4 +1,6 @@
-package engine;
+package engine.graphics;
+
+import engine.common.Defaults;
 
 /**
  * Base class for controlling the graphics on displays
@@ -92,6 +94,6 @@ public abstract class GraphicsController {
 		/**
 		 * Whether to display every model's vertex without applied texturing
 		 */
-		public boolean polygonMode = EngineDefaults.POLYGON_MODE;
+		public boolean polygonMode = Defaults.Graphics.POLYGON_MODE;
 	}
 }

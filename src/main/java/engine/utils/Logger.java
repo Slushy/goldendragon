@@ -1,4 +1,4 @@
-package engine.utils.debug;
+package engine.utils;
 
 /**
  * Each class should have an instance of logger used for debugging

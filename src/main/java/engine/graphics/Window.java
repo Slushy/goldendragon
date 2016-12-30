@@ -1,4 +1,6 @@
-package engine;
+package engine.graphics;
+
+import engine.common.Defaults;
 
 /**
  * Base implementation of all windows
@@ -230,14 +232,14 @@ public abstract class Window {
 		/**
 		 * Whether the window is resizable
 		 */
-		public boolean resizable = WindowDefaults.RESIZABLE;
+		public boolean resizable = Defaults.Window.RESIZABLE;
 
 		/**
 		 * Whether to limit the GPU to output frames as high as the refresh rate
 		 * of the monitor. If enabled it prevents screen tearing but can also
 		 * introduce minor input lag.
 		 */
-		public boolean vSync = WindowDefaults.VSYNC;
+		public boolean vSync = Defaults.Window.VSYNC;
 	}
 
 	@FunctionalInterface

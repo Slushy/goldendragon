@@ -1,4 +1,4 @@
-package engine.utils.loaders;
+package engine.resources.loaders;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,8 +6,8 @@ import java.nio.ByteBuffer;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import engine.graphics.geo.Texture;
-import engine.utils.ResourceManager;
+import engine.graphics.geometry.Texture;
+import engine.resources.ResourceManager;
 
 /**
  * Parses texture files of supported types and loads them into memory as new

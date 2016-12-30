@@ -1,5 +1,6 @@
 package engine;
 
+import engine.graphics.GameDisplay;
 import engine.input.InputHandler;
 
 /**

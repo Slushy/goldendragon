@@ -1,8 +1,8 @@
-package engine;
+package engine.graphics;
 
 import engine.game.objects.Camera;
 import engine.input.InputHandler;
-import engine.utils.debug.Logger;
+import engine.utils.Logger;
 
 /**
  * Our game display that represents a game window and graphics controller
@@ -200,7 +200,7 @@ public class GameDisplay {
 	 * Gets the input handler, to be used by the engine to pass to the game
 	 * @return input handler for the display
 	 */
-	protected InputHandler getInputHandler() {
+	public InputHandler getInputHandler() {
 		return _inputHandler;
 	}
 }

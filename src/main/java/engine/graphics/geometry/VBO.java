@@ -1,4 +1,4 @@
-package engine.graphics.geo;
+package engine.graphics.geometry;
 
 import org.lwjgl.opengl.GL15;
 

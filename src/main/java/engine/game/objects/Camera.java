@@ -3,7 +3,7 @@ package engine.game.objects;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.EngineDefaults;
+import engine.common.Defaults;
 import engine.utils.math.MatrixUtils;
 
 /**
@@ -13,9 +13,9 @@ import engine.utils.math.MatrixUtils;
  *
  */
 public class Camera extends Entity {
-	public static float FIELD_OF_VIEW = EngineDefaults.FIELD_OF_VIEW;
-	public static float Z_NEAR = EngineDefaults.Z_NEAR;
-	public static float Z_FAR = EngineDefaults.Z_FAR;
+	public static float FIELD_OF_VIEW = Defaults.Camera.FIELD_OF_VIEW;
+	public static float FRUSTUM_NEAR = Defaults.Camera.FRUSTUM_NEAR;
+	public static float FRUSTUM_FAR = Defaults.Camera.FRUSTUM_FAR;
 
 	// Matrices to deal with view and projection within the world
 	private final Matrix4f _projectionMatrix = new Matrix4f();
@@ -83,7 +83,7 @@ public class Camera extends Entity {
 	 * @return updated projection matrix
 	 */
 	public Matrix4f updateProjectionMatrix(float aspectRatio) {
-		return _projectionMatrix.setPerspective(FIELD_OF_VIEW, aspectRatio, Z_NEAR, Z_FAR);
+		return _projectionMatrix.setPerspective(FIELD_OF_VIEW, aspectRatio, FRUSTUM_NEAR, FRUSTUM_FAR);
 	}
 
 	/**

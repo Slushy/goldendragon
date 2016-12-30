@@ -1,8 +1,8 @@
-package engine.utils.loaders;
+package engine.resources.loaders;
 
 import engine.game.objects.GameObject;
-import engine.graphics.geo.Mesh;
-import engine.utils.ResourceManager;
+import engine.graphics.geometry.Mesh;
+import engine.resources.ResourceManager;
 
 /**
  * Parses resource files of supported types and loads them into memory as new

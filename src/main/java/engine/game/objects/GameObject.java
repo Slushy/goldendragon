@@ -2,7 +2,7 @@ package engine.game.objects;
 
 import org.joml.Vector3f;
 
-import engine.graphics.geo.Mesh;
+import engine.graphics.geometry.Mesh;
 
 /**
  * Our base game object represents a renderable item in the game

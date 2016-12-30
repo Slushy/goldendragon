@@ -3,19 +3,19 @@ package game;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import engine.GameDisplay;
 import engine.IGame;
 import engine.game.objects.Camera;
 import engine.game.objects.GameObject;
-import engine.graphics.Renderer;
-import engine.graphics.geo.Material;
-import engine.graphics.geo.Mesh;
-import engine.graphics.geo.Texture;
+import engine.graphics.GameDisplay;
+import engine.graphics.components.Renderer;
+import engine.graphics.geometry.Material;
+import engine.graphics.geometry.Mesh;
+import engine.graphics.geometry.Texture;
 import engine.input.InputHandler;
 import engine.input.Key;
 import engine.input.KeyboardInput;
-import engine.utils.debug.Logger;
-import engine.utils.loaders.TextureLoader;
+import engine.resources.loaders.TextureLoader;
+import engine.utils.Logger;
 
 /**
  * Our game entry point

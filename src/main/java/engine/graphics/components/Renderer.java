@@ -1,10 +1,11 @@
-package engine.graphics;
+package engine.graphics.components;
 
 import org.joml.Vector3f;
 
-import engine.GameDisplay;
 import engine.game.objects.GameObject;
-import engine.utils.debug.Logger;
+import engine.graphics.GameDisplay;
+import engine.graphics.shaders.SceneShaderProgram;
+import engine.utils.Logger;
 import engine.utils.math.Transformation;
 
 /**

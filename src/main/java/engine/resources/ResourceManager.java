@@ -1,4 +1,4 @@
-package engine.utils;
+package engine.resources;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

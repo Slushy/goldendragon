@@ -1,4 +1,4 @@
-package engine.graphics;
+package engine.graphics.shaders;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -9,8 +9,8 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
-import engine.utils.ResourceManager;
-import engine.utils.debug.Logger;
+import engine.resources.ResourceManager;
+import engine.utils.Logger;
 
 /**
  * Hooks up data from our renderers to our shader code. Every instance of

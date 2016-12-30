@@ -1,6 +1,10 @@
 package engine;
 
-import engine.utils.debug.Logger;
+import engine.common.Defaults;
+import engine.graphics.GameDisplay;
+import engine.graphics.GraphicsController;
+import engine.graphics.Window;
+import engine.utils.Logger;
 
 /**
  *
@@ -24,7 +28,7 @@ public class GameEngine {
 	 *            instance of the game to run on this engine
 	 */
 	public GameEngine(IGame game) {
-		this(game, WindowDefaults.TITLE);
+		this(game, Defaults.Window.TITLE);
 	}
 
 	/**
@@ -36,7 +40,7 @@ public class GameEngine {
 	 *            text displayed on the game window
 	 */
 	public GameEngine(IGame game, String title) {
-		this(game, title, WindowDefaults.WIDTH, WindowDefaults.HEIGHT);
+		this(game, title, Defaults.Window.WIDTH, Defaults.Window.HEIGHT);
 	}
 
 	/**
@@ -188,11 +192,11 @@ public class GameEngine {
 		/**
 		 * The max frames per second to render the screen at
 		 */
-		public int maxFPS = EngineDefaults.MAX_FPS;
+		public int maxFPS = Defaults.Engine.MAX_FPS;
 
 		/**
 		 * The max amount of times game state can be updated per second
 		 */
-		public int maxUPS = EngineDefaults.MAX_UPS;
+		public int maxUPS = Defaults.Engine.MAX_UPS;
 	}
 }

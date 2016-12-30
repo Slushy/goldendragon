@@ -1,7 +1,7 @@
 package engine.input;
 
-import engine.Window;
-import engine.utils.debug.Logger;
+import engine.graphics.Window;
+import engine.utils.Logger;
 
 /**
  * Handles any keyboard/mouse/gamepad input for our game engine

@@ -7,7 +7,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import java.util.HashMap;
 import java.util.Map;
 
-import engine.utils.debug.Logger;
+import engine.utils.Logger;
 
 /**
  * Keeps track of our keyboard keys and their current states

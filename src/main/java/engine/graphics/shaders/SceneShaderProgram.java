@@ -1,9 +1,9 @@
-package engine.graphics;
+package engine.graphics.shaders;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.utils.debug.Logger;
+import engine.utils.Logger;
 
 /**
  * A Scene shader program to hold all of the scene uniforms and shader data

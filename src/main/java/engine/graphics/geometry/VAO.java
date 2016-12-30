@@ -1,4 +1,4 @@
-package engine.graphics.geo;
+package engine.graphics.geometry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import engine.utils.debug.Logger;
+import engine.utils.Logger;
 
 /**
  * A VAO (Vertex Array Object) holds all of our VBO's (Vertex Buffer Object) for

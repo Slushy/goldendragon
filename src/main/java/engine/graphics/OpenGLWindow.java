@@ -1,4 +1,4 @@
-package engine;
+package engine.graphics;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
@@ -11,7 +11,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
 import engine.input.Key;
-import engine.utils.debug.Logger;
+import engine.utils.Logger;
 
 /**
  * An OpenGL window that the user sees when interacting with the game
