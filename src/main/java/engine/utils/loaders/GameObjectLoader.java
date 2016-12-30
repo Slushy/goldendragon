@@ -2,7 +2,6 @@ package engine.utils.loaders;
 
 import engine.game.objects.GameObject;
 import engine.graphics.geo.Mesh;
-import engine.graphics.geo.Texture;
 import engine.utils.ResourceManager;
 
 /**

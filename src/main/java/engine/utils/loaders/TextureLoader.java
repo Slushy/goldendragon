@@ -1,7 +1,7 @@
 package engine.utils.loaders;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -42,7 +42,7 @@ public class TextureLoader {
 		// Parses the file type so we can support multiple types
 		switch (ResourceManager.getFileType(fileName)) {
 		case PNG:
-			data = decodePNGTexture(new FileInputStream(pathToFile));
+			data = decodePNGTexture(ResourceManager.loadResourceAsStream(pathToFile));
 			break;
 		default:
 			throw new Exception(String.format("Trying to load an invalid file type: %s as a texture.", fileName));
@@ -55,7 +55,7 @@ public class TextureLoader {
 	/*
 	 * Helper function to load a png file
 	 */
-	private static TextureData decodePNGTexture(FileInputStream inputStream) throws IOException {
+	private static TextureData decodePNGTexture(InputStream inputStream) throws IOException {
 		// Load png file into decoder instance
 		PNGDecoder decoder = new PNGDecoder(inputStream);
 

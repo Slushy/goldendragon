@@ -1,6 +1,7 @@
-package game;
+
 
 import engine.GameEngine;
+import game.Game;
 
 /*
  * Entry point for running the GD game engine by itself
