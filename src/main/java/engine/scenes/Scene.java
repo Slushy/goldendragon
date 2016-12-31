@@ -135,7 +135,8 @@ public class Scene {
 				// Check if the component is setup for rendering
 				if ((comp.getCapabilities() & Component.RENDER) == Component.RENDER) {
 					// Invoke the render method
-					Method method = comp.getClass().getMethod("render", _sceneRenderer.getClass());
+					Method method = comp.getClass().getDeclaredMethod("render", _sceneRenderer.getClass());
+					method.setAccessible(true);
 					method.invoke(comp, _sceneRenderer);
 				}
 			}

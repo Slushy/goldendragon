@@ -36,7 +36,7 @@ public class MeshRenderer extends Component {
 	 * 
 	 * @param sceneRenderer
 	 */
-	public void render(SceneRenderer sceneRenderer) {
+	private void render(SceneRenderer sceneRenderer) {
 		if (_mesh == null)
 			return;
 

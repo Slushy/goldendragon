@@ -1,4 +1,4 @@
-package engine.graphics.shaders;
+package engine.graphics.rendering;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;

@@ -6,7 +6,6 @@ import engine.common.GameObject;
 import engine.common.gameObjects.Camera;
 import engine.graphics.GraphicsController;
 import engine.graphics.geometry.Mesh;
-import engine.graphics.shaders.SceneShaderProgram;
 import engine.scenes.Scene;
 import engine.utils.Logger;
 import engine.utils.math.Transformation;

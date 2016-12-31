@@ -1,4 +1,4 @@
-package engine.graphics.shaders;
+package engine.graphics.rendering;
 
 /**
  * Our different types of shaders
