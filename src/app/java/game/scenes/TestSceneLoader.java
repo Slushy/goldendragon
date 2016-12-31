@@ -17,12 +17,12 @@ import engine.scenes.SceneLoader;
  *
  */
 public class TestSceneLoader extends SceneLoader {
-
+	public static final String NAME = "Test Scene";
 	/**
 	 * Constructs a new Test Scene loader
 	 */
 	public TestSceneLoader() {
-		super("TestScene");
+		super(NAME);
 	}
 
 	/**
@@ -31,13 +31,7 @@ public class TestSceneLoader extends SceneLoader {
 	@Override
 	protected List<GameObject> loadGameObjectsForScene() throws Exception {
 		List<GameObject> gameObjects = new ArrayList<>();
-		
-		// Register new camera to display
-//		CameraProjection proj = _scene.getCamera().getComponentByType(CameraProjection.class);
-//		_log.debug("Camera Projection class: %s", proj);
-//
-//		display.registerCamera(proj);
-		
+	
 		float[] vertices = new float[] {
 				// V0
 				-0.5f, 0.5f, 0.5f,
@@ -127,7 +121,12 @@ public class TestSceneLoader extends SceneLoader {
 		cube.addComponent(new MeshRenderer(mesh));
 		cube.getTransform().setPosZ(-5);
 		
+		GameObject script = new GameObject("Scene Behavior");
+		script.addComponent(new TestSceneBehavior());
+		
 		gameObjects.add(cube);
+		gameObjects.add(script);
+		
 		return gameObjects;
 	}
 }

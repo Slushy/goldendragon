@@ -40,18 +40,9 @@ public class MeshRenderer extends Component {
 		if (_mesh == null)
 			return;
 
-		
 		sceneRenderer.drawMesh(_mesh, this.getGameObject());
 	}
 
-	/**
-	 * A mesh renderer can render
-	 */
-	@Override
-	protected int loadCapabilities() {
-		return RENDER;
-	}
-	
 	/**
 	 * Disposes the attached mesh
 	 */
@@ -59,7 +50,7 @@ public class MeshRenderer extends Component {
 	protected void onDispose() {
 		if (_mesh != null)
 			_mesh.dispose();
-		
+
 		super.onDispose();
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import engine.common.components.Transform;
+import engine.scenes.Scene;
 
 /**
  * A game object simply combines multiple components
@@ -17,11 +18,30 @@ public class GameObject extends Entity {
 	// Special components that can be referenced individually
 	private final Transform _transform = new Transform();
 
+	private Scene _scene = null;
+
 	/**
 	 * Constructs a new game object entity
 	 */
 	public GameObject() {
 		this("GameObject");
+	}
+
+	/**
+	 * Called when this game object is added to a scene
+	 * 
+	 * @param scene
+	 *            the scene this object was added to
+	 */
+	public void addedToScene(Scene scene) {
+		this._scene = scene;
+	}
+
+	/**
+	 * @return the scene this game object belongs to
+	 */
+	public Scene getScene() {
+		return _scene;
 	}
 
 	/**

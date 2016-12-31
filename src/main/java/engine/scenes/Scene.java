@@ -17,6 +17,7 @@ import engine.graphics.rendering.SceneRenderer;
 import engine.input.InputHandler;
 import engine.input.Key;
 import engine.input.KeyboardInput;
+import engine.scenes.EventDispatcher.ExecutionEvent;
 import engine.utils.Logger;
 
 /**
@@ -30,20 +31,13 @@ import engine.utils.Logger;
 public class Scene {
 	private static final Logger _log = new Logger("Scene", Logger.LoggerLevel.DEBUG);
 
-	private static final float CAMERA_POS_STEP = 0.3f;
-	private static final float CAMERA_ROT_STEP = 5;
-
-	private final String _name;
-
+	private final EventDispatcher _eventDispatcher = new EventDispatcher();
 	private final List<GameObject> _gameObjects = new ArrayList<>();
 	private final SceneRenderer _sceneRenderer = new SceneRenderer();
 
 	private final Camera _camera = new Camera();
+	private final String _name;
 
-	private Vector3f _cameraInc = new Vector3f();
-	private Vector2f _cameraRot = new Vector2f();
-
-	private GameObject _gameObject;
 	private boolean _isReady = false;
 
 	/**
@@ -59,19 +53,59 @@ public class Scene {
 	}
 
 	/**
+	 * Finds a game object in the scene by name
+	 * 
+	 * @param name
+	 *            of the game object to locate
+	 * @return the found game object or null
+	 */
+	public GameObject findGameObject(String name) {
+		for (GameObject obj : _gameObjects) {
+			if (obj.getName().equalsIgnoreCase(name))
+				return obj;
+		}
+		return null;
+	}
+
+	/**
+	 * Adds the game object to the scene
+	 * 
+	 * @param gameObject
+	 */
+	public void addGameObject(GameObject gameObject) {
+		// Adds object to scene
+		_gameObjects.add(gameObject);
+		gameObject.addedToScene(this);
+
+		// TODO: Fix to only check classes we have not previously checked before
+		List<EventDispatcher.ExecutionEvent> compEvents = new ArrayList<>();
+		for (Component comp : gameObject.getComponents()) {
+			for (Method m : comp.getClass().getDeclaredMethods()) {
+
+				// Loop over every execution method a component can have
+				for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
+					if (m.getName().equals(evt.methodName()) && evt.paramsMatch(m.getParameterTypes())) {
+						m.setAccessible(true);
+						compEvents.add(evt);
+					}
+				}
+			}
+
+			// Subscribe the component to the events
+			_eventDispatcher.subscribeComponent(comp, compEvents);
+			compEvents.clear();
+		}
+	}
+
+	/**
 	 * Initializes the scene
 	 * 
 	 * @throws Exception
 	 */
 	public void init() throws Exception {
 		_sceneRenderer.init(this);
-		// TODO: initialize game objects?
-
-		for (GameObject gameObject : _gameObjects) {
-			if (gameObject.getName().equals("Cube"))
-				this._gameObject = gameObject;
-		}
-
+		// Initializes any components that require it
+		_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
 		this._isReady = true;
 	}
 
@@ -79,74 +113,23 @@ public class Scene {
 	 * When the scene becomes active this is fired
 	 */
 	public void onForeground() {
-		_log.debug("Scene Start");
+		_log.debug("Scene foregrounded");
+		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
 	}
 
 	/**
 	 * When the currently active scene is no longer active, this is fired
 	 */
 	public void onBackground() {
-		_log.debug("Scene is backgrounded");
+		_log.debug("Scene backgrounded");
+		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_BACKGROUND);
 	}
 
 	/**
 	 * Updates the scene
 	 */
 	public void update(InputHandler input) {
-		processInput(input);
-
-		_camera.move(_cameraInc.x * CAMERA_POS_STEP, _cameraInc.y * CAMERA_POS_STEP, _cameraInc.z * CAMERA_POS_STEP);
-		_camera.getTransform().rotate(_cameraRot.x * CAMERA_ROT_STEP, _cameraRot.y * CAMERA_ROT_STEP, 0);
-		_camera.updateViewMatrix();
-
-		if (_gameObject != null) {
-			_gameObject.getTransform().rotate(1.5f, 1.5f, 1.5f);
-		}
-	}
-
-	/**
-	 * TODO: REMOVE, Temporary only processing input similar to game class
-	 * 
-	 * @param handler
-	 */
-	private void processInput(InputHandler handler) {
-		KeyboardInput keyboard = handler.getKeyboard();
-		_cameraInc.set(0, 0, 0);
-		_cameraRot.set(0, 0);
-
-		// Position updates
-		if (keyboard.keyDown(Key.W))
-			_cameraInc.z = -1;
-		else if (keyboard.keyDown(Key.S))
-			_cameraInc.z = 1;
-
-		if (keyboard.keyDown(Key.A))
-			_cameraInc.x = -1;
-		else if (keyboard.keyDown(Key.D))
-			_cameraInc.x = 1;
-
-		if (keyboard.keyDown(Key.Z))
-			_cameraInc.y = -1;
-		else if (keyboard.keyDown(Key.X))
-			_cameraInc.y = 1;
-
-		// Rotation updates
-		if (keyboard.keyDown(Key.LEFT))
-			_cameraRot.y = -1;
-		else if (keyboard.keyDown(Key.RIGHT))
-			_cameraRot.y = 1;
-
-		if (keyboard.keyDown(Key.UP))
-			_cameraRot.x = -1;
-		else if (keyboard.keyDown(Key.DOWN))
-			_cameraRot.x = 1;
-	}
-
-	/**
-	 * @return true if the scene is ready to show, false otherwise
-	 */
-	protected final boolean isReady() {
-		return _isReady;
+		_eventDispatcher.dispatchEvent(ExecutionEvent.UPDATE, input);
 	}
 
 	/**
@@ -164,37 +147,10 @@ public class Scene {
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		_sceneRenderer.preRender(graphics);
 
-		// TODO: Event dispatcher to render game objects
-		// For now we will just do it manually
-		for (GameObject gameObject : _gameObjects) {
-			for (Component comp : gameObject.getComponents()) {
-				// Check if the component is setup for rendering
-				if ((comp.getCapabilities() & Component.RENDER) == Component.RENDER) {
-					// Invoke the render method
-					Method method = comp.getClass().getDeclaredMethod("render", _sceneRenderer.getClass());
-					method.setAccessible(true);
-					method.invoke(comp, _sceneRenderer);
-				}
-			}
-		}
+		// Renders the necessary components
+		_eventDispatcher.dispatchEvent(ExecutionEvent.RENDER, _sceneRenderer);
 
 		_sceneRenderer.endRender(graphics);
-	}
-
-	/**
-	 * Adds the game object to the scene
-	 * 
-	 * @param gameObject
-	 */
-	public void addGameObject(GameObject gameObject) {
-		_gameObjects.add(gameObject);
-	}
-
-	/**
-	 * @return the camera for the scene
-	 */
-	public Camera getCamera() {
-		return _camera;
 	}
 
 	/**
@@ -205,6 +161,13 @@ public class Scene {
 	}
 
 	/**
+	 * @return the camera for the scene
+	 */
+	public Camera getCamera() {
+		return _camera;
+	}
+
+	/**
 	 * Disposes the scene
 	 */
 	public void dispose() {
@@ -212,5 +175,12 @@ public class Scene {
 		for (GameObject gameObject : _gameObjects) {
 			gameObject.dispose();
 		}
+	}
+
+	/**
+	 * @return true if the scene is ready to show, false otherwise
+	 */
+	protected final boolean isReady() {
+		return _isReady;
 	}
 }
