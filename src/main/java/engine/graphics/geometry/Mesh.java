@@ -14,8 +14,9 @@ import engine.utils.Logger;
 public class Mesh {
 	private static final Logger _log = new Logger("Mesh", Logger.LoggerLevel.DEBUG);
 
-	private final VAO _vao;
-	private final int _vertexCount;
+	private VAO _vao;
+	private int _vertexCount;
+
 	private Material _material = new Material();
 
 	/**
@@ -26,17 +27,27 @@ public class Mesh {
 	 * @param indices
 	 * @throws Exception
 	 */
-	public Mesh(float[] vertexPositions, float[] textureCoords, int[] indices) throws Exception {
-		this._vertexCount = indices.length;
+	public Mesh(MeshVBOData vboData) throws Exception {
+		// We'll do this from here for now
+		init(vboData);
+	}
+
+	/**
+	 * Initializes the Mesh (must be done on main thread)
+	 * 
+	 * @throws Exception
+	 */
+	public void init(MeshVBOData vboData) throws Exception {
+		this._vertexCount = vboData.indices.length;
 
 		// Create and bind the VAO
 		this._vao = new VAO();
 		_vao.use();
 
 		// Bind all VBOS
-		_vao.bindVBO(VBO.POSITION, vertexPositions);
-		_vao.bindVBO(VBO.TEXTURE, textureCoords);
-		_vao.bindVBO(VBO.INDEX, indices);
+		_vao.bindVBO(VBO.POSITION, vboData.vertexPositions);
+		_vao.bindVBO(VBO.TEXTURE, vboData.textureCoords);
+		_vao.bindVBO(VBO.INDEX, vboData.indices);
 
 		// Done binding
 		_vao.done();
@@ -93,5 +104,30 @@ public class Mesh {
 	public void dispose() {
 		_material.dispose();
 		_vao.dispose();
+	}
+
+	/**
+	 * Used to hold mesh vertices data while creating a new mesh
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	public static class MeshVBOData {
+		public final float[] vertexPositions;
+		public final float[] textureCoords;
+		public final int[] indices;
+
+		/**
+		 * Constructs a new mesh vbo data wrapper
+		 * 
+		 * @param vertexPositions
+		 * @param textureCoords
+		 * @param indices
+		 */
+		public MeshVBOData(float[] vertexPositions, float[] textureCoords, int[] indices) {
+			this.vertexPositions = vertexPositions;
+			this.textureCoords = textureCoords;
+			this.indices = indices;
+		}
 	}
 }

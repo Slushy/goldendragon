@@ -1,11 +1,14 @@
 package engine;
 
 import engine.common.components.CameraProjection;
+import engine.common.gameObjects.Camera;
 import engine.graphics.GraphicsController;
 import engine.graphics.OpenGLGraphicsController;
 import engine.graphics.OpenGLWindow;
 import engine.graphics.Window;
 import engine.input.InputHandler;
+import engine.scenes.Scene;
+import engine.scenes.SceneManager;
 import engine.utils.Logger;
 
 /**
@@ -20,9 +23,6 @@ public class GameDisplay {
 	private final Window _window;
 	private final GraphicsController _graphicsController;
 	private final InputHandler _inputHandler;
-	
-	private CameraProjection _camera;
-	
 
 	/**
 	 * Constructs a game display
@@ -96,25 +96,6 @@ public class GameDisplay {
 	 */
 	public void hide() {
 		_window.hide();
-	}
-
-	/**
-	 * Sets the camera as the default camera for the display
-	 * 
-	 * @param camera
-	 */
-	public void registerCamera(CameraProjection camera) {
-		this._camera = camera;
-		updateCameraProjectionMatrix();
-	}
-
-	/**
-	 * Gets the camera being used for the current display
-	 * 
-	 * @return current camera
-	 */
-	public CameraProjection getCamera() {
-		return _camera;
 	}
 
 	/**
@@ -194,9 +175,10 @@ public class GameDisplay {
 	 * Updates the camera projection to the aspect ratio change of the window
 	 */
 	protected void updateCameraProjectionMatrix() {
-		if (_camera != null) {
+		Scene activeScene = SceneManager.getActiveScene();
+		if (activeScene != null && activeScene.getCamera() != null) {
 			float aspectRatio = (float) _window.getWidth() / (float) _window.getHeight();
-			_camera.updateProjectionMatrix(aspectRatio);
+			activeScene.getCamera().updateProjectionMatrix(aspectRatio);
 		}
 	}
 	

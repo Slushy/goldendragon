@@ -125,13 +125,9 @@ public class GameEngine {
 	/**
 	 * Game Loop
 	 * 
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
+	 * @throws Exception
 	 */
-	protected void run() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	protected void run() throws Exception {
 		float runTime = 0f;
 		// TODO: Move interval to timer
 		float interval = 1f / _options.maxUPS;
@@ -160,15 +156,16 @@ public class GameEngine {
 	 */
 	protected void processInput() {
 		// TODO: Implement input processing
-		//_game.processInput(_display.getInputHandler());
 	}
 
 	/**
 	 * Update game state
+	 * 
+	 * @throws Exception
 	 */
-	protected void update() {
+	protected void update() throws Exception {
 		// TODO: Implement update
-		_gameManager.update();
+		_gameManager.update(_display);
 	}
 
 	/**
@@ -183,7 +180,7 @@ public class GameEngine {
 	protected void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		// TODO: Implement rendering
-		_gameManager.render();
+		_gameManager.render(_display);
 		_display.render();
 	}
 

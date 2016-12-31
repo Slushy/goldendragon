@@ -1,7 +1,7 @@
 
 
 import engine.GameEngine;
-import game.Game;
+import game.GameInitializer;
 
 /*
  * Entry point for running the GD game engine by itself
@@ -22,7 +22,7 @@ public class Main {
 			options.windowOptions.resizable = true;
 			options.graphicsOptions.polygonMode = false;
 			
-			engine = new GameEngine(new Game(), GAME_TITLE, WIDTH, HEIGHT, options);
+			engine = new GameEngine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, options);
 			engine.initializeAndRun();
 		} catch (Exception e) {
 			// TODO: Catch a specific exception, possibly implement a restart

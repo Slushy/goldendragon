@@ -17,6 +17,7 @@ import engine.graphics.rendering.SceneRenderer;
 import engine.input.InputHandler;
 import engine.input.Key;
 import engine.input.KeyboardInput;
+import engine.utils.Logger;
 
 /**
  * Each "screen" of the game will be a type of scene that holds onto all of the
@@ -27,8 +28,12 @@ import engine.input.KeyboardInput;
  *
  */
 public class Scene {
+	private static final Logger _log = new Logger("Scene", Logger.LoggerLevel.DEBUG);
+
 	private static final float CAMERA_POS_STEP = 0.3f;
 	private static final float CAMERA_ROT_STEP = 5;
+
+	private final String _name;
 
 	private final List<GameObject> _gameObjects = new ArrayList<>();
 	private final SceneRenderer _sceneRenderer = new SceneRenderer();
@@ -39,8 +44,16 @@ public class Scene {
 	private Vector2f _cameraRot = new Vector2f();
 
 	private GameObject _gameObject;
+	private boolean _isReady = false;
 
-	public Scene() {
+	/**
+	 * Constructs a new scene with the specified name
+	 * 
+	 * @param name
+	 *            unique name of the scene
+	 */
+	public Scene(String name) {
+		this._name = name;
 		// For now every scene will have a default camera
 		this.addGameObject(_camera);
 	}
@@ -58,6 +71,22 @@ public class Scene {
 			if (gameObject.getName().equals("Cube"))
 				this._gameObject = gameObject;
 		}
+
+		this._isReady = true;
+	}
+
+	/**
+	 * When the scene becomes active this is fired
+	 */
+	public void onForeground() {
+		_log.debug("Scene Start");
+	}
+
+	/**
+	 * When the currently active scene is no longer active, this is fired
+	 */
+	public void onBackground() {
+		_log.debug("Scene is backgrounded");
 	}
 
 	/**
@@ -114,6 +143,13 @@ public class Scene {
 	}
 
 	/**
+	 * @return true if the scene is ready to show, false otherwise
+	 */
+	protected final boolean isReady() {
+		return _isReady;
+	}
+
+	/**
 	 * Renders the scene
 	 * 
 	 * @param graphics
@@ -162,9 +198,17 @@ public class Scene {
 	}
 
 	/**
+	 * @return name of this scene
+	 */
+	public String getName() {
+		return _name;
+	}
+
+	/**
 	 * Disposes the scene
 	 */
 	public void dispose() {
+		this._isReady = false;
 		for (GameObject gameObject : _gameObjects) {
 			gameObject.dispose();
 		}

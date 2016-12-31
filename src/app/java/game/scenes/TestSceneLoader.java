@@ -1,41 +1,43 @@
-package game;
+package game.scenes;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-
-import engine.GameDisplay;
-import engine.IGameInitializer;
 import engine.common.GameObject;
-import engine.common.components.CameraProjection;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
-import engine.input.InputHandler;
 import engine.resources.loaders.TextureLoader;
-import engine.scenes.Scene;
-import engine.utils.Logger;
+import engine.scenes.SceneLoader;
 
 /**
- * Our game entry point
+ * Loads the test scene
  * 
- * @author brandon.porter
+ * @author Brandon Porter
  *
  */
-public class Game implements IGameInitializer {
-	private static final Logger _log = new Logger("Game", Logger.LoggerLevel.DEBUG);
-	private Scene _scene = new Scene();
+public class TestSceneLoader extends SceneLoader {
 
+	/**
+	 * Constructs a new Test Scene loader
+	 */
+	public TestSceneLoader() {
+		super("TestScene");
+	}
+
+	/**
+	 * Loads the game objects for the Test Scene
+	 */
 	@Override
-	public void init(GameDisplay display) throws Exception {
-		_log.debug("Initializing game");
+	protected List<GameObject> loadGameObjectsForScene() throws Exception {
+		List<GameObject> gameObjects = new ArrayList<>();
+		
 		// Register new camera to display
-
-		CameraProjection proj = _scene.getCamera().getComponentByType(CameraProjection.class);
-		_log.debug("Camera Projection class: %s", proj);
-
-		display.registerCamera(proj);
+//		CameraProjection proj = _scene.getCamera().getComponentByType(CameraProjection.class);
+//		_log.debug("Camera Projection class: %s", proj);
+//
+//		display.registerCamera(proj);
+		
 		float[] vertices = new float[] {
 				// V0
 				-0.5f, 0.5f, 0.5f,
@@ -117,41 +119,15 @@ public class Game implements IGameInitializer {
 				0.5f, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, 1.0f, 0.5f };
 
 		// Create mesh and set texture material
-		Mesh mesh = new Mesh(vertices, texCoords, indices);
+		Mesh mesh = new Mesh(new Mesh.MeshVBOData(vertices, texCoords, indices));
 		mesh.setMaterial(new Material(TextureLoader.loadTexture("grassblock.png")));
 
 		// Create game object with mesh renderer
 		GameObject cube = new GameObject("Cube");
 		cube.addComponent(new MeshRenderer(mesh));
 		cube.getTransform().setPosZ(-5);
-
-		// Add that game object to scene
-		_scene.addGameObject(cube);
-
-		// Init renderer
-		_scene.init();
+		
+		gameObjects.add(cube);
+		return gameObjects;
 	}
-
-	@Override
-	public void processInput(InputHandler handler) {
-		// TODO: Remove
-	}
-
-	@Override
-	public void update(GameDisplay display) {
-		_scene.update(display.getInputHandler());
-	}
-
-	@Override
-	public void render(GameDisplay display) throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		_scene.render(display.getGraphicsController());
-	}
-
-	@Override
-	public void dispose() {
-		_log.debug("Disposing game");
-		_scene.dispose();
-	}
-
 }
