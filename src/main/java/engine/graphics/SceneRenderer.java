@@ -1,10 +1,10 @@
-package engine.graphics.rendering;
+package engine.graphics;
 
 import org.joml.Vector3f;
 
+import engine.GraphicsController;
 import engine.common.GameObject;
 import engine.common.gameObjects.Camera;
-import engine.graphics.GraphicsController;
 import engine.graphics.geometry.Mesh;
 import engine.scenes.Scene;
 import engine.utils.Logger;

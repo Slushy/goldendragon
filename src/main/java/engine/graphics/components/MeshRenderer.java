@@ -1,8 +1,8 @@
 package engine.graphics.components;
 
 import engine.common.Component;
+import engine.graphics.SceneRenderer;
 import engine.graphics.geometry.Mesh;
-import engine.graphics.rendering.SceneRenderer;
 
 /**
  * Component that renders a mesh

@@ -1,6 +1,6 @@
 package engine.input;
 
-import engine.graphics.Window;
+import engine.Window;
 import engine.utils.Logger;
 
 /**

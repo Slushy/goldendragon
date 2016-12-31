@@ -3,8 +3,6 @@ package engine;
 import java.lang.reflect.InvocationTargetException;
 
 import engine.common.Defaults;
-import engine.graphics.GraphicsController;
-import engine.graphics.Window;
 import engine.utils.Logger;
 
 /**

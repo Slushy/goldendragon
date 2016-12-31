@@ -2,10 +2,6 @@ package engine;
 
 import engine.common.components.CameraProjection;
 import engine.common.gameObjects.Camera;
-import engine.graphics.GraphicsController;
-import engine.graphics.OpenGLGraphicsController;
-import engine.graphics.OpenGLWindow;
-import engine.graphics.Window;
 import engine.input.InputHandler;
 import engine.scenes.Scene;
 import engine.scenes.SceneManager;

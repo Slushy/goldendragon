@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import engine.common.Component;
-import engine.graphics.rendering.SceneRenderer;
+import engine.graphics.SceneRenderer;
 import engine.input.InputHandler;
 import engine.utils.Logger;
 

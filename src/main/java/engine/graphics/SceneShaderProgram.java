@@ -1,4 +1,4 @@
-package engine.graphics.rendering;
+package engine.graphics;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

@@ -1,4 +1,4 @@
-package engine.graphics;
+package engine;
 
 import engine.common.Defaults;
 
