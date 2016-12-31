@@ -15,12 +15,13 @@ import engine.utils.math.VectorUtils;
 public class Transform extends Component {
 	private final Vector3f _position = new Vector3f();
 	private final Vector3f _rotation = new Vector3f();
-	private final Vector3f _scale = new Vector3f();
+	private final Vector3f _scale = new Vector3f(1, 1, 1);
 
 	/**
 	 * Constructs a transform component
 	 */
 	public Transform() {
+		super("Transform");
 	}
 
 	/**
@@ -222,5 +223,10 @@ public class Transform extends Component {
 	 */
 	public void setScaleZ(float z) {
 		_scale.z = z;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Translation: %s, Rotation: %s, Scale: %s", _position, _rotation, _scale);
 	}
 }

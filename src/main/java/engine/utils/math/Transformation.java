@@ -3,8 +3,7 @@ package engine.utils.math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.common.components.Camera;
-import engine.game.objects.GameObject;
+import engine.common.components.Transform;
 
 /**
  * Holds instances of matrices for calculations to reduce the amount of
@@ -31,7 +30,7 @@ public class Transformation {
 	 * @param scale
 	 * @return transformed matrix
 	 */
-	public static Matrix4f buildWorldMatrix(Vector3f position, Vector3f rotation, float scale) {
+	public static Matrix4f buildWorldMatrix(Vector3f position, Vector3f rotation, Vector3f scale) {
 //		return WORLD_MATRIX.translationRotateScale(position.x, position.y, position.z, rotation.x, rotation.y, rotation.z,
 //			rotation.w, scale, scale, scale);
 		return WORLD_MATRIX.translation(position)
@@ -45,34 +44,22 @@ public class Transformation {
 	 * Returns a matrix representing the position, rotation and scale of the
 	 * game object
 	 * 
-	 * @param gameObject
+	 * @param transform
 	 * @return transformed matrix
 	 */
-	public static Matrix4f buildWorldMatrix(GameObject gameObject) {
-		return buildWorldMatrix(gameObject.getPosition(), gameObject.getRotation(), gameObject.getScale());
+	public static Matrix4f buildWorldMatrix(Transform transform) {
+		return buildWorldMatrix(transform.getPosition(), transform.getRotation(), transform.getScale());
 	}
 
 	/**
 	 * Returns a matrix representing the position, rotation and scale of the
 	 * game object in relation to the passed in view matrix
 	 * 
-	 * @param gameObject
+	 * @param transform
 	 * @param viewMatrix
 	 * @return
 	 */
-	public static Matrix4f buildWorldViewMatrix(GameObject gameObject, Matrix4f viewMatrix) {
-		return viewMatrix.mul(buildWorldMatrix(gameObject), WORLD_VIEW_MATRIX);
-	}
-
-	/**
-	 * Returns a matrix representing the position, rotation and scale of the
-	 * game object in relation to the camera position
-	 * 
-	 * @param gameObject
-	 * @param camera
-	 * @return
-	 */
-	public static Matrix4f buildWorldViewMatrix(GameObject gameObject, Camera camera) {
-		return buildWorldViewMatrix(gameObject, camera.getViewMatrix());
+	public static Matrix4f buildWorldViewMatrix(Transform transform, Matrix4f viewMatrix) {
+		return viewMatrix.mul(buildWorldMatrix(transform), WORLD_VIEW_MATRIX);
 	}
 }

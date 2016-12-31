@@ -1,5 +1,7 @@
 package engine;
 
+import java.lang.reflect.InvocationTargetException;
+
 import engine.common.Defaults;
 import engine.graphics.GraphicsController;
 import engine.graphics.Window;
@@ -104,7 +106,8 @@ public class GameEngine {
 
 	/**
 	 * Initializes all the core components
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	protected void init() throws Exception {
 		_log.debug("Initializing engine...");
@@ -121,31 +124,37 @@ public class GameEngine {
 
 	/**
 	 * Game Loop
+	 * 
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
 	 */
-	protected void run() {
+	protected void run() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		float runTime = 0f;
 		// TODO: Move interval to timer
 		float interval = 1f / _options.maxUPS;
-		
+
 		_log.debug("Running engine...");
 
 		while (!_display.shouldClose()) {
 			// 1. Process user input
 			processInput();
-			
+
 			// 2. Update game state
 			runTime += _timer.getElapsedTime();
 			for (; runTime >= interval; runTime -= interval) {
 				update();
 			}
-			
+
 			// 3. Render game
 			render();
-			
+
 			// TODO: Limit FPS if window is not V-Sync
 		}
 	}
-	
+
 	/**
 	 * Game processes input
 	 */
@@ -153,7 +162,7 @@ public class GameEngine {
 		// TODO: Implement input processing
 		_game.processInput(_display.getInputHandler());
 	}
-	
+
 	/**
 	 * Update game state
 	 */
@@ -161,11 +170,18 @@ public class GameEngine {
 		// TODO: Implement update
 		_game.update(_display);
 	}
-	
+
 	/**
 	 * Render updated game state to screen
+	 * 
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
 	 */
-	protected void render() {
+	protected void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		// TODO: Implement rendering
 		_game.render(_display);
 		_display.render();

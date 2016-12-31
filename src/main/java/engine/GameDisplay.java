@@ -1,6 +1,6 @@
 package engine;
 
-import engine.common.components.Camera;
+import engine.common.components.CameraProjection;
 import engine.graphics.GraphicsController;
 import engine.graphics.OpenGLGraphicsController;
 import engine.graphics.OpenGLWindow;
@@ -21,7 +21,7 @@ public class GameDisplay {
 	private final GraphicsController _graphicsController;
 	private final InputHandler _inputHandler;
 	
-	private Camera _camera;
+	private CameraProjection _camera;
 	
 
 	/**
@@ -103,7 +103,7 @@ public class GameDisplay {
 	 * 
 	 * @param camera
 	 */
-	public void registerCamera(Camera camera) {
+	public void registerCamera(CameraProjection camera) {
 		this._camera = camera;
 		updateCameraProjectionMatrix();
 	}
@@ -113,7 +113,7 @@ public class GameDisplay {
 	 * 
 	 * @return current camera
 	 */
-	public Camera getCamera() {
+	public CameraProjection getCamera() {
 		return _camera;
 	}
 

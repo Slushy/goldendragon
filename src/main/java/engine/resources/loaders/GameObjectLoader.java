@@ -1,6 +1,7 @@
 package engine.resources.loaders;
 
-import engine.game.objects.GameObject;
+import engine.common.GameObject;
+import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Mesh;
 import engine.resources.ResourceManager;
 
@@ -39,6 +40,11 @@ public class GameObjectLoader {
 			throw new Exception(String.format("Trying to load an invalid file type: %s as a game object.", fileName));
 		}
 
-		return new GameObject(mesh);
+		// Create a new game object and attach a
+		// mesh renderer component to render the mesh
+		GameObject gameObject = new GameObject();
+		gameObject.addComponent(new MeshRenderer(mesh));
+
+		return gameObject;
 	}
 }

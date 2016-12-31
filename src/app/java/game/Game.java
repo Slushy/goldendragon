@@ -1,20 +1,20 @@
 package game;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import engine.GameDisplay;
 import engine.IGame;
-import engine.common.components.Camera;
-import engine.game.objects.GameObject;
-import engine.graphics.components.Renderer;
+import engine.common.GameObject;
+import engine.common.components.CameraProjection;
+import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
-import engine.graphics.geometry.Texture;
 import engine.input.InputHandler;
-import engine.input.Key;
-import engine.input.KeyboardInput;
 import engine.resources.loaders.TextureLoader;
+import engine.scenes.Scene;
 import engine.utils.Logger;
 
 /**
@@ -24,26 +24,18 @@ import engine.utils.Logger;
  *
  */
 public class Game implements IGame {
-	private static final float CAMERA_POS_STEP = 0.3f;
-	private static final float CAMERA_ROT_STEP = 5;
-
 	private static final Logger _log = new Logger("Game", Logger.LoggerLevel.DEBUG);
+	private Scene _scene = new Scene();
 
-	private final Renderer _renderer = new Renderer();
-	private GameObject _gameObject;
-
-	private Vector3f _cameraInc = new Vector3f();
-	private Vector2f _cameraRot = new Vector2f();
-	
 	@Override
 	public void init(GameDisplay display) throws Exception {
 		_log.debug("Initializing game");
 		// Register new camera to display
-		display.registerCamera(new Camera());
 
-		// Init renderer
-		_renderer.init();
+		CameraProjection proj = _scene.getCamera().getComponentByType(CameraProjection.class);
+		_log.debug("Camera Projection class: %s", proj);
 
+		display.registerCamera(proj);
 		float[] vertices = new float[] {
 				// V0
 				-0.5f, 0.5f, 0.5f,
@@ -124,69 +116,42 @@ public class Game implements IGame {
 				// For text coords in bottom face
 				0.5f, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, 1.0f, 0.5f };
 
-		Texture texture = TextureLoader.loadTexture("grassblock.png");
+		// Create mesh and set texture material
+		Mesh mesh = new Mesh(vertices, texCoords, indices);
+		mesh.setMaterial(new Material(TextureLoader.loadTexture("grassblock.png")));
 
-		this._gameObject = new GameObject(new Mesh(vertices, texCoords, indices));
-		this._gameObject.getMesh().setMaterial(new Material(texture));
+		// Create game object with mesh renderer
+		GameObject cube = new GameObject("Cube");
+		cube.addComponent(new MeshRenderer(mesh));
+		cube.getTransform().setPosZ(-5);
 
-		display.getCamera().setPosZ(3f);
-		display.getCamera().updateViewMatrix();
+		// Add that game object to scene
+		_scene.addGameObject(cube);
+
+		// Init renderer
+		_scene.init();
 	}
 
 	@Override
 	public void processInput(InputHandler handler) {
-		KeyboardInput keyboard = handler.getKeyboard();
-		_cameraInc.set(0, 0, 0);
-		_cameraRot.set(0, 0);
-
-		// Position updates
-		if (keyboard.keyDown(Key.W))
-			_cameraInc.z = -1;
-		else if (keyboard.keyDown(Key.S))
-			_cameraInc.z = 1;
-
-		if (keyboard.keyDown(Key.A))
-			_cameraInc.x = -1;
-		else if (keyboard.keyDown(Key.D))
-			_cameraInc.x = 1;
-
-		if (keyboard.keyDown(Key.Z))
-			_cameraInc.y = -1;
-		else if (keyboard.keyDown(Key.X))
-			_cameraInc.y = 1;
-
-		// Rotation updates
-		if (keyboard.keyDown(Key.LEFT))
-			_cameraRot.y = -1;
-		else if (keyboard.keyDown(Key.RIGHT))
-			_cameraRot.y = 1;
-
-		if (keyboard.keyDown(Key.UP))
-			_cameraRot.x = -1;
-		else if (keyboard.keyDown(Key.DOWN))
-			_cameraRot.x = 1;
+		// TODO: Remove
 	}
 
 	@Override
 	public void update(GameDisplay display) {
-		display.getCamera().move(_cameraInc.x * CAMERA_POS_STEP, _cameraInc.y * CAMERA_POS_STEP,
-				_cameraInc.z * CAMERA_POS_STEP);
-		display.getCamera().rotate(_cameraRot.x * CAMERA_ROT_STEP, _cameraRot.y * CAMERA_ROT_STEP, 0);
-		display.getCamera().updateViewMatrix();
-
-		_gameObject.rotate(1.5f, 1.5f, 1.5f);
+		_scene.update(display.getInputHandler());
 	}
 
 	@Override
-	public void render(GameDisplay display) {
-		_renderer.render(display, _gameObject);
+	public void render(GameDisplay display) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		_scene.render(display.getGraphicsController());
 	}
 
 	@Override
 	public void dispose() {
 		_log.debug("Disposing game");
-		_gameObject.dispose();
-		_renderer.dispose();
+		_scene.dispose();
 	}
 
 }

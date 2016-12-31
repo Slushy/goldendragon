@@ -1,5 +1,7 @@
 package engine;
 
+import java.lang.reflect.InvocationTargetException;
+
 import engine.input.InputHandler;
 
 /**
@@ -15,7 +17,8 @@ public interface IGame {
 
 	void update(GameDisplay display);
 
-	void render(GameDisplay display);
+	void render(GameDisplay display) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException;
 
 	void dispose();
 }
