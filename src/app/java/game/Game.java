@@ -6,7 +6,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import engine.GameDisplay;
-import engine.IGame;
+import engine.IGameInitializer;
 import engine.common.GameObject;
 import engine.common.components.CameraProjection;
 import engine.graphics.components.MeshRenderer;
@@ -23,7 +23,7 @@ import engine.utils.Logger;
  * @author brandon.porter
  *
  */
-public class Game implements IGame {
+public class Game implements IGameInitializer {
 	private static final Logger _log = new Logger("Game", Logger.LoggerLevel.DEBUG);
 	private Scene _scene = new Scene();
 

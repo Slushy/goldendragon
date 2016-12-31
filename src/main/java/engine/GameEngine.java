@@ -17,7 +17,7 @@ import engine.utils.Logger;
 public class GameEngine {
 	private static final Logger _log = new Logger("GameEngine");
 
-	private final IGame _game;
+	private final GameManager _gameManager;
 	private final Timer _timer;
 	private final GameDisplay _display;
 	private final EngineOptions _options;
@@ -25,30 +25,30 @@ public class GameEngine {
 	/**
 	 * Constructs the game engine
 	 * 
-	 * @param game
-	 *            instance of the game to run on this engine
+	 * @param gameInitializer
+	 *            instance of the initializer that loads the game
 	 */
-	public GameEngine(IGame game) {
+	public GameEngine(IGameInitializer game) {
 		this(game, Defaults.Window.TITLE);
 	}
 
 	/**
 	 * Constructs the game engine
 	 * 
-	 * @param game
-	 *            instance of the game to run on this engine
+	 * @param gameInitializer
+	 *            instance of the initializer that loads the game
 	 * @param title
 	 *            text displayed on the game window
 	 */
-	public GameEngine(IGame game, String title) {
+	public GameEngine(IGameInitializer game, String title) {
 		this(game, title, Defaults.Window.WIDTH, Defaults.Window.HEIGHT);
 	}
 
 	/**
 	 * Constructs the game engine
 	 * 
-	 * @param game
-	 *            instance of the game to run on this engine
+	 * @param gameInitializer
+	 *            instance of the initializer that loads the game
 	 * @param title
 	 *            text displayed on the game window
 	 * @param width
@@ -56,15 +56,15 @@ public class GameEngine {
 	 * @param height
 	 *            starting height of the game window
 	 */
-	public GameEngine(IGame game, String title, int width, int height) {
+	public GameEngine(IGameInitializer game, String title, int width, int height) {
 		this(game, title, width, height, new EngineOptions());
 	}
 
 	/**
 	 * Constructs the game engine
 	 * 
-	 * @param game
-	 *            instance of the game to run on this engine
+	 * @param gameInitializer
+	 *            instance of the initializer that loads the game
 	 * @param title
 	 *            text displayed on the game window
 	 * @param width
@@ -74,10 +74,10 @@ public class GameEngine {
 	 * @param options
 	 *            set options to initialize the engine with
 	 */
-	public GameEngine(IGame game, String title, int width, int height, EngineOptions options) {
+	public GameEngine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options) {
 		_log.debug("Created GameEngine");
 
-		this._game = game;
+		this._gameManager = new GameManager(gameInitializer);
 		this._options = options;
 		this._timer = new Timer();
 		this._display = new GameDisplay(title, width, height, options.windowOptions, options.graphicsOptions);
@@ -100,7 +100,7 @@ public class GameEngine {
 	 */
 	public void dispose() {
 		_log.debug("Disposing engine...");
-		_game.dispose();
+		_gameManager.dispose();
 		_display.dispose();
 	}
 
@@ -119,7 +119,7 @@ public class GameEngine {
 		// Init the game timer
 		_timer.init();
 		// Init your game
-		_game.init(_display);
+		_gameManager.init();
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class GameEngine {
 	 */
 	protected void processInput() {
 		// TODO: Implement input processing
-		_game.processInput(_display.getInputHandler());
+		//_game.processInput(_display.getInputHandler());
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class GameEngine {
 	 */
 	protected void update() {
 		// TODO: Implement update
-		_game.update(_display);
+		_gameManager.update();
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class GameEngine {
 	protected void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		// TODO: Implement rendering
-		_game.render(_display);
+		_gameManager.render();
 		_display.render();
 	}
 
