@@ -15,7 +15,7 @@ import engine.utils.Logger;
  */
 public class GameDisplay {
 	private static final Logger _log = new Logger("GameDisplay");
-	
+
 	private final Window _window;
 	private final GraphicsController _graphicsController;
 	private final InputHandler _inputHandler;
@@ -152,6 +152,15 @@ public class GameDisplay {
 	}
 
 	/**
+	 * Gets the input handler, to be used by the engine to pass to the game
+	 * 
+	 * @return input handler for the display
+	 */
+	public InputHandler getInputHandler() {
+		return _inputHandler;
+	}
+
+	/**
 	 * Cleans up and destroys the game display
 	 */
 	public void dispose() {
@@ -166,7 +175,7 @@ public class GameDisplay {
 		fixViewportToWindow();
 		updateCameraProjectionMatrix();
 	}
-	
+
 	/**
 	 * Updates the camera projection to the aspect ratio change of the window
 	 */
@@ -177,12 +186,14 @@ public class GameDisplay {
 			activeScene.getCamera().updateProjectionMatrix(aspectRatio);
 		}
 	}
-	
+
 	/**
-	 * Gets the input handler, to be used by the engine to pass to the game
-	 * @return input handler for the display
+	 * Sets the new window title
+	 * 
+	 * @param newTitle
+	 *            title to be displayed on the display window
 	 */
-	public InputHandler getInputHandler() {
-		return _inputHandler;
+	protected void setNewTitle(String newTitle) {
+		_window.setTitle(newTitle);
 	}
 }

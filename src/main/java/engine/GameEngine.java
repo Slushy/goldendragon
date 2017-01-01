@@ -19,6 +19,10 @@ public class GameEngine {
 	private final Timer _timer;
 	private final GameDisplay _display;
 	private final EngineOptions _options;
+	private final String _titleWithFPS;
+
+	private double _lastFPSCheck = 0;
+	private int _fps = 0;
 
 	/**
 	 * Constructs the game engine
@@ -79,6 +83,8 @@ public class GameEngine {
 		this._options = options;
 		this._timer = new Timer();
 		this._display = new GameDisplay(title, width, height, options.windowOptions, options.graphicsOptions);
+
+		this._titleWithFPS = title + " - %d FPS";
 	}
 
 	/**
@@ -118,6 +124,9 @@ public class GameEngine {
 		_timer.init();
 		// Init your game
 		_gameManager.init();
+
+		// init our fps counter
+		this._lastFPSCheck = _timer.getTime();
 	}
 
 	/**
@@ -162,7 +171,6 @@ public class GameEngine {
 	 * @throws Exception
 	 */
 	protected void update() throws Exception {
-		// TODO: Implement update
 		_gameManager.update(_display);
 	}
 
@@ -177,7 +185,18 @@ public class GameEngine {
 	 */
 	protected void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
-		// TODO: Implement rendering
+		_timer.getLastLoopTime();
+
+		// Render FPS counter in title (Hardcoded here while devving)
+		if (_timer.getLastLoopTime() - _lastFPSCheck > 1.0) {
+			this._lastFPSCheck = _timer.getLastLoopTime();
+			_display.setNewTitle(String.format(_titleWithFPS, _fps));
+			this._fps = 0;
+		}
+
+		// FPS Counter
+		_fps++;
+
 		_gameManager.render(_display);
 		_display.render();
 	}
