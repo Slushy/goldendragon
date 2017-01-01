@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import engine.Input;
 import engine.common.GameObject;
 import engine.common.components.Behavior;
 import engine.common.gameObjects.Camera;
@@ -32,7 +33,7 @@ public class TestSceneBehavior extends Behavior {
 
 	private List<GameObject> _gameObjects = new ArrayList<>();
 	private Mesh _mesh;
-	
+
 	private boolean _addNewObject = false;
 
 	/**
@@ -41,40 +42,12 @@ public class TestSceneBehavior extends Behavior {
 	public TestSceneBehavior() {
 		super(TestSceneLoader.NAME);
 	}
-	
+
 	private void init() {
 		GameObject cube = this.getScene().findGameObject("Cube");
 		_gameObjects.add(cube);
-		
+
 		this._mesh = cube.getComponentByType(MeshRenderer.class).getMesh();
-	}
-
-	private void update() {
-		//processInput(input);
-		
-		Camera camera = this.getScene().getCamera();
-		
-		camera.move(_cameraInc.x * CAMERA_POS_STEP, _cameraInc.y * CAMERA_POS_STEP, _cameraInc.z * CAMERA_POS_STEP);
-		camera.getTransform().rotate(_cameraRot.x * CAMERA_ROT_STEP, _cameraRot.y * CAMERA_ROT_STEP, 0);
-		camera.updateViewMatrix();
-
-		for (GameObject obj : _gameObjects) {
-			obj.getTransform().rotate(1.5f, 1.5f, 1.5f);
-		}
-		
-		// Add new game object
-//		if (input.getKeyboard().keyDown(Key.SPACE)) {
-//			GameObject cube = new GameObject("Cube");
-//			cube.addComponent(new MeshRenderer(_mesh));
-//			
-//			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
-//			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
-//			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
-//			cube.getTransform().setPosition(randomX, randomY, randomZ);
-//			
-//			getScene().addGameObject(cube);
-//			_gameObjects.add(cube);
-//		}
 	}
 
 	/**
@@ -82,36 +55,63 @@ public class TestSceneBehavior extends Behavior {
 	 * 
 	 * @param handler
 	 */
-	private void processInput(InputHandler handler) {
-		KeyboardInput keyboard = handler.getKeyboard();
+	private void processInput() {
 		_cameraInc.set(0, 0, 0);
 		_cameraRot.set(0, 0);
 
 		// Position updates
-		if (keyboard.keyDown(Key.W))
+		if (Input.keyDown(Key.W))
 			_cameraInc.z = -1;
-		else if (keyboard.keyDown(Key.S))
+		else if (Input.keyDown(Key.S))
 			_cameraInc.z = 1;
 
-		if (keyboard.keyDown(Key.A))
+		if (Input.keyDown(Key.A))
 			_cameraInc.x = -1;
-		else if (keyboard.keyDown(Key.D))
+		else if (Input.keyDown(Key.D))
 			_cameraInc.x = 1;
 
-		if (keyboard.keyDown(Key.Z))
+		if (Input.keyDown(Key.Z))
 			_cameraInc.y = -1;
-		else if (keyboard.keyDown(Key.X))
+		else if (Input.keyDown(Key.X))
 			_cameraInc.y = 1;
 
 		// Rotation updates
-		if (keyboard.keyDown(Key.LEFT))
+		if (Input.keyDown(Key.LEFT))
 			_cameraRot.y = -1;
-		else if (keyboard.keyDown(Key.RIGHT))
+		else if (Input.keyDown(Key.RIGHT))
 			_cameraRot.y = 1;
 
-		if (keyboard.keyDown(Key.UP))
+		if (Input.keyDown(Key.UP))
 			_cameraRot.x = -1;
-		else if (keyboard.keyDown(Key.DOWN))
+		else if (Input.keyDown(Key.DOWN))
 			_cameraRot.x = 1;
+	}
+
+	private void update() {
+		processInput();
+
+		Camera camera = this.getScene().getCamera();
+
+		camera.move(_cameraInc.x * CAMERA_POS_STEP, _cameraInc.y * CAMERA_POS_STEP, _cameraInc.z * CAMERA_POS_STEP);
+		camera.getTransform().rotate(_cameraRot.x * CAMERA_ROT_STEP, _cameraRot.y * CAMERA_ROT_STEP, 0);
+		camera.updateViewMatrix();
+
+		for (GameObject obj : _gameObjects) {
+			obj.getTransform().rotate(1.5f, 1.5f, 1.5f);
+		}
+
+		// Add new game object
+		if (Input.keyDown(Key.SPACE)) {
+			GameObject cube = new GameObject("Cube");
+			cube.addComponent(new MeshRenderer(_mesh));
+
+			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
+			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
+			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
+			cube.getTransform().setPosition(randomX, randomY, randomZ);
+
+			getScene().addGameObject(cube);
+			_gameObjects.add(cube);
+		}
 	}
 }

@@ -31,8 +31,9 @@ public class MeshRenderer extends Component {
 	}
 
 	/**
-	 * Initializes the renderer by submitting it to the graphics renderer
+	 * Add the mesh to the scene renderer
 	 */
+	@SuppressWarnings("unused")
 	private void init() {
 		this.getScene().getRenderer().addMesh(_mesh, this.getGameObject());
 	}
@@ -42,9 +43,6 @@ public class MeshRenderer extends Component {
 	 */
 	@Override
 	protected void onDispose() {
-		if (_mesh != null)
-			_mesh.dispose();
-
 		super.onDispose();
 	}
 }

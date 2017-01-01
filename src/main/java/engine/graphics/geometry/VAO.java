@@ -7,8 +7,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import engine.utils.Debug;
-
 /**
  * A VAO (Vertex Array Object) holds all of our VBO's (Vertex Buffer Object) for
  * each mesh. These "lists" of vbos are typically called attribute lists

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import engine.common.Component;
 import engine.input.InputHandler;
+import engine.utils.Debug;
 
 /**
  * The scene uses an event dispatcher to send events to any of its applicable
@@ -57,18 +58,26 @@ final class EventDispatcher {
 			if (comp.isDisposed())
 				continue;
 
-			try {
-				compMethod.method.invoke(comp);
-				// if (event == ExecutionEvent.INITIALIZE) {
-				// comp.init();
-				// } else if (event == ExecutionEvent.RENDER) {
-				// comp.render((SceneRenderer) args[0]);
-				// } else if (event == ExecutionEvent.UPDATE) {
-				// comp.update((InputHandler) args[0]);
-				// }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			// Invoke the event method on the component
+			invokeMethod(comp, compMethod.method);
+		}
+	}
+
+	/**
+	 * Invokes the specified method on the component
+	 * 
+	 * @param component
+	 *            the component on which the specified method should be called
+	 * @param method
+	 *            the method to be called
+	 */
+	protected void invokeMethod(Component component, Method method) {
+		try {
+			method.invoke(component);
+		} catch (Exception e) {
+			Debug.error(String.format("There was an issue trying to invoke method: %s on component: %s",
+					method.getName(), component.getName()));
+			e.printStackTrace();
 		}
 	}
 
@@ -76,9 +85,9 @@ final class EventDispatcher {
 	 * Clears the subscribed components
 	 */
 	public void dispose() {
-		for(LinkedList<ComponentMethod> comps : _subscribedComponents.values())
+		for (LinkedList<ComponentMethod> comps : _subscribedComponents.values())
 			comps.clear();
-		
+
 		_subscribedComponents.clear();
 	}
 

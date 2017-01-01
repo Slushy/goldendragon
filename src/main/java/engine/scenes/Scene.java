@@ -38,8 +38,6 @@ public class Scene {
 
 	private boolean _isReady = false;
 
-	private List<Component> _components = new ArrayList<>();
-
 	/**
 	 * Constructs a new scene with the specified name
 	 * 
@@ -81,7 +79,6 @@ public class Scene {
 		// TODO: Fix to only check classes we have not previously checked before
 		Map<EventDispatcher.ExecutionEvent, Method> compEvents = new HashMap<>();
 		for (Component comp : gameObject.getComponents()) {
-			_components.add(comp);
 			for (Method m : comp.getClass().getDeclaredMethods()) {
 
 				// Loop over every execution method a component can have
@@ -89,7 +86,14 @@ public class Scene {
 					if (m.getName().equals(evt.methodName())) {
 						m.setAccessible(true);
 						compEvents.put(evt, m);
+
+						// Scene has already been initialized, so we
+						// initialize the game object
+						if (_isReady && evt == ExecutionEvent.INITIALIZE) {
+							_eventDispatcher.invokeMethod(comp, m);
+						}
 					}
+
 				}
 			}
 
@@ -143,8 +147,8 @@ public class Scene {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public void render() throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		_sceneRenderer.preRender();
 
 		// Renders the necessary components

@@ -122,18 +122,18 @@ public class TestSceneLoader extends SceneLoader {
 		cube.addComponent(new MeshRenderer(mesh));
 		cube.getTransform().setPosZ(-5);
 		
-		for (int i = 0; i < 5000; i++) {
-			// Create game object with mesh renderer
-			GameObject cube2 = new GameObject("Cube");
-			cube2.addComponent(new MeshRenderer(mesh));
-			
-			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
-			cube2.getTransform().setPosition(randomX, randomY, randomZ);
-			
-			gameObjects.add(cube2);
-		}
+//		for (int i = 0; i < 5000; i++) {
+//			// Create game object with mesh renderer
+//			GameObject cube2 = new GameObject("Cube");
+//			cube2.addComponent(new MeshRenderer(mesh));
+//			
+//			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
+//			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
+//			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
+//			cube2.getTransform().setPosition(randomX, randomY, randomZ);
+//			
+//			gameObjects.add(cube2);
+//		}
 		
 		
 		GameObject script = new GameObject("Scene Behavior");
