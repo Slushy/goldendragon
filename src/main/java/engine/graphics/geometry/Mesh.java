@@ -75,6 +75,10 @@ public class Mesh {
 		return new Material(_material);
 	}
 
+	public Material getMaterial() {
+		return _material;
+	}
+	
 	/**
 	 * Renders our mesh object
 	 */

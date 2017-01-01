@@ -29,7 +29,7 @@ public class Defaults {
 		/**
 		 * The default max updates per second
 		 */
-		public static final int MAX_UPS = 30;
+		public static final int MAX_UPS = 60;
 
 		/*
 		 * Prevent outside classes from creating an instance

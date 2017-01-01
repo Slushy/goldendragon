@@ -36,11 +36,19 @@ public class MeshRenderer extends Component {
 	 * 
 	 * @param sceneRenderer
 	 */
-	private void render(SceneRenderer sceneRenderer) {
+	@Override
+	public void render(SceneRenderer sceneRenderer) {
 		if (_mesh == null)
 			return;
 
 		sceneRenderer.drawMesh(_mesh, this.getGameObject());
+	}
+
+	/**
+	 * @return the mesh being drawn for this mesh renderer
+	 */
+	public Mesh getMesh() {
+		return _mesh;
 	}
 
 	/**

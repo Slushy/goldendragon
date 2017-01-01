@@ -70,7 +70,7 @@ public class SceneRenderer {
 		Camera camera = _scene.getCamera();
 
 		// Set uniforms
-		_sceneShaderProgram.setColor(new Vector3f(1, 1, 1));
+		_sceneShaderProgram.setColor(mesh.getMaterial().getColor());
 		_sceneShaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
 		_sceneShaderProgram.setWorldViewMatrix(Transformation.buildWorldViewMatrix(gameObject.getTransform(), camera.getViewMatrix()));
 

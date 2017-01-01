@@ -148,9 +148,10 @@ public class GameEngine {
 			// 2. Update game state
 			runTime += _timer.getElapsedTime();
 			for (; runTime >= interval; runTime -= interval) {
-				update();
+				
 			}
-
+			
+			update();
 			// 3. Render game
 			render();
 

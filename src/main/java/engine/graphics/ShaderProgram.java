@@ -28,6 +28,8 @@ public abstract class ShaderProgram {
 
 	private int _vertShaderId;
 	private int _fragShaderId;
+	
+	private FloatBuffer _fb = BufferUtils.createFloatBuffer(16);
 
 	/**
 	 * Constructs a new shader program
@@ -154,9 +156,8 @@ public abstract class ShaderProgram {
 	 * @param value
 	 */
 	protected void setUniform(String uniform, Matrix4f value) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-		value.get(buffer);
-		GL20.glUniformMatrix4fv(getUniform(uniform), false, buffer);
+		value.get(_fb);
+		GL20.glUniformMatrix4fv(getUniform(uniform), false, _fb);
 	}
 	
 	/**

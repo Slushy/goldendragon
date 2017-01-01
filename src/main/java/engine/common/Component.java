@@ -1,5 +1,7 @@
 package engine.common;
 
+import engine.graphics.SceneRenderer;
+import engine.input.InputHandler;
 import engine.scenes.Scene;
 
 /**
@@ -51,5 +53,17 @@ public abstract class Component extends Entity {
 	protected void onDispose() {
 		if (_gameObject != null)
 			_gameObject.removeComponent(this);
+	}
+	
+	public void update(InputHandler input) {
+		
+	}
+	
+	public void render(SceneRenderer renderer) {
+		
+	}
+	
+	public void init() {
+		
 	}
 }

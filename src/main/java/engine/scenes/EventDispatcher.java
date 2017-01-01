@@ -21,7 +21,7 @@ import engine.utils.Logger;
 final class EventDispatcher {
 	private static final Logger _log = new Logger("EventDispatcher", Logger.LoggerLevel.DEBUG);
 
-	private final Map<ExecutionEvent, LinkedList<Component>> _subscribedComponents = new HashMap<>();
+	private final Map<ExecutionEvent, LinkedList<ComponentMethod>> _subscribedComponents = new HashMap<>();
 	private final Map<Component, Integer> _componentCapabilities = new HashMap<>();
 
 	/**
@@ -30,7 +30,7 @@ final class EventDispatcher {
 	public EventDispatcher() {
 		// Initializes the event map with empty lists
 		for (ExecutionEvent evt : ExecutionEvent.values()) {
-			_subscribedComponents.put(evt, new LinkedList<Component>());
+			_subscribedComponents.put(evt, new LinkedList<ComponentMethod>());
 		}
 	}
 
@@ -42,10 +42,10 @@ final class EventDispatcher {
 	 * @param events
 	 *            the events on which to subscribe the component to
 	 */
-	public void subscribeComponent(Component component, List<ExecutionEvent> events) {
+	public void subscribeComponent(Component component, Map<EventDispatcher.ExecutionEvent, Method> events) {
 		int subscribedEvents = 0;
-		for (ExecutionEvent evt : events) {
-			_subscribedComponents.get(evt).add(component);
+		for (ExecutionEvent evt : events.keySet()) {
+			_subscribedComponents.get(evt).add(new ComponentMethod(component, events.get(evt)));
 			subscribedEvents |= evt.bitValue();
 		}
 
@@ -83,13 +83,21 @@ final class EventDispatcher {
 	 *            the arguments to pass along
 	 */
 	public void dispatchEvent(ExecutionEvent event, Object... args) {
-		for (Component comp : _subscribedComponents.get(event)) {
+		for (ComponentMethod compMethod : _subscribedComponents.get(event)) {
+			Component comp = compMethod.component;
+			Method meth = compMethod.method;
 			try {
-				Method method = comp.getClass().getDeclaredMethod(event.methodName(), event.methodParams());
-				method.setAccessible(true);
-				method.invoke(comp, args);
+				//meth.invoke(comp, args);
+				if (event == ExecutionEvent.INITIALIZE) {
+					comp.init();
+				} else if (event == ExecutionEvent.RENDER) {
+					comp.render((SceneRenderer) args[0]);
+				} else if (event == ExecutionEvent.UPDATE) {
+					comp.update((InputHandler) args[0]);
+				}
 			} catch (Exception e) {
 				_log.warn("Could not find or invoke method: %s on component: %s", event.methodName(), comp.getName());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -100,7 +108,16 @@ final class EventDispatcher {
 	public void dispose() {
 		_subscribedComponents.clear();
 	}
-
+	
+	private static class ComponentMethod {
+		public final Component component;
+		public final Method method;
+		
+		public ComponentMethod(Component comp, Method meth) {
+			this.component = comp;
+			this.method = meth;
+		}
+	}
 	/**
 	 * The possible types of events a component can listen to
 	 * 

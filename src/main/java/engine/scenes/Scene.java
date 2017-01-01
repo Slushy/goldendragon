@@ -3,7 +3,9 @@ package engine.scenes;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -31,7 +33,7 @@ import engine.utils.Logger;
 public class Scene {
 	private static final Logger _log = new Logger("Scene", Logger.LoggerLevel.DEBUG);
 
-	private final EventDispatcher _eventDispatcher = new EventDispatcher();
+	//private final EventDispatcher _eventDispatcher = new EventDispatcher();
 	private final List<GameObject> _gameObjects = new ArrayList<>();
 	private final SceneRenderer _sceneRenderer = new SceneRenderer();
 
@@ -39,6 +41,8 @@ public class Scene {
 	private final String _name;
 
 	private boolean _isReady = false;
+	
+	private List<Component> _components = new ArrayList<>();
 
 	/**
 	 * Constructs a new scene with the specified name
@@ -78,22 +82,23 @@ public class Scene {
 		gameObject.addedToScene(this);
 
 		// TODO: Fix to only check classes we have not previously checked before
-		List<EventDispatcher.ExecutionEvent> compEvents = new ArrayList<>();
+		Map<EventDispatcher.ExecutionEvent, Method> compEvents = new HashMap<>();
 		for (Component comp : gameObject.getComponents()) {
-			for (Method m : comp.getClass().getDeclaredMethods()) {
-
-				// Loop over every execution method a component can have
-				for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
-					if (m.getName().equals(evt.methodName()) && evt.paramsMatch(m.getParameterTypes())) {
-						m.setAccessible(true);
-						compEvents.add(evt);
-					}
-				}
-			}
-
-			// Subscribe the component to the events
-			_eventDispatcher.subscribeComponent(comp, compEvents);
-			compEvents.clear();
+			_components.add(comp);
+//			for (Method m : comp.getClass().getDeclaredMethods()) {
+//
+//				// Loop over every execution method a component can have
+//				for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
+//					if (m.getName().equals(evt.methodName()) && evt.paramsMatch(m.getParameterTypes())) {
+//						//m.setAccessible(true);
+//						compEvents.put(evt,  m);
+//					}
+//				}
+//			}
+//
+//			// Subscribe the component to the events
+//			_eventDispatcher.subscribeComponent(comp, compEvents);
+//			compEvents.clear();
 		}
 	}
 
@@ -105,7 +110,9 @@ public class Scene {
 	public void init() throws Exception {
 		_sceneRenderer.init(this);
 		// Initializes any components that require it
-		_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
+		//_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
+		for (Component comp : _components)
+			comp.init();
 		this._isReady = true;
 	}
 
@@ -114,7 +121,7 @@ public class Scene {
 	 */
 	public void onForeground() {
 		_log.debug("Scene foregrounded");
-		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
+		//_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
 	}
 
 	/**
@@ -122,14 +129,16 @@ public class Scene {
 	 */
 	public void onBackground() {
 		_log.debug("Scene backgrounded");
-		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_BACKGROUND);
+		//_eventDispatcher.dispatchEvent(ExecutionEvent.ON_BACKGROUND);
 	}
 
 	/**
 	 * Updates the scene
 	 */
 	public void update(InputHandler input) {
-		_eventDispatcher.dispatchEvent(ExecutionEvent.UPDATE, input);
+		//_eventDispatcher.dispatchEvent(ExecutionEvent.UPDATE, input);
+		for (Component comp : _components)
+			comp.update(input);
 	}
 
 	/**
@@ -148,7 +157,9 @@ public class Scene {
 		_sceneRenderer.preRender(graphics);
 
 		// Renders the necessary components
-		_eventDispatcher.dispatchEvent(ExecutionEvent.RENDER, _sceneRenderer);
+		//_eventDispatcher.dispatchEvent(ExecutionEvent.RENDER, _sceneRenderer);
+		for (Component comp : _components)
+			comp.render(_sceneRenderer);
 
 		_sceneRenderer.endRender(graphics);
 	}

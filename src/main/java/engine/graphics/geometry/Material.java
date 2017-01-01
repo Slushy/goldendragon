@@ -10,14 +10,13 @@ import org.joml.Vector3f;
  *
  */
 public class Material {
-	private Vector3f _color = null;
+	private Vector3f _color = MaterialDefaults.COLOR;
 	private Texture _texture = null;
 
 	/**
 	 * Constructs a new material with a default color
 	 */
 	public Material() {
-		this(MaterialDefaults.COLOR);
 	}
 
 	/**
