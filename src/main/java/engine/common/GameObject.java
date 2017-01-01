@@ -81,6 +81,7 @@ public class GameObject extends Entity {
 	 * @param componentClass
 	 * @return component of specified type
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponentByType(Class<T> componentClass) {
 		for (Component component : getComponents()) {
 			if (componentClass.isInstance(component))

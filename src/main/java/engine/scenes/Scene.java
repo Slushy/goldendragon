@@ -7,17 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-
-import engine.GameDisplay;
-import engine.GraphicsController;
 import engine.common.Component;
 import engine.common.GameObject;
 import engine.common.gameObjects.Camera;
-import engine.input.InputHandler;
-import engine.input.Key;
-import engine.input.KeyboardInput;
 import engine.scenes.EventDispatcher.ExecutionEvent;
 
 /**

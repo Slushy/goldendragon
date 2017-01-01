@@ -3,11 +3,9 @@ package engine.scenes;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import engine.common.Component;
-import engine.input.InputHandler;
 import engine.utils.Debug;
 
 /**

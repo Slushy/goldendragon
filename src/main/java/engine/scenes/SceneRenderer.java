@@ -4,10 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.joml.Vector3f;
-
 import engine.GameDisplay;
-import engine.GraphicsController;
 import engine.common.GameObject;
 import engine.common.gameObjects.Camera;
 import engine.graphics.SceneShaderProgram;

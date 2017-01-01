@@ -1,8 +1,6 @@
 package engine.common;
 
-import engine.input.InputHandler;
 import engine.scenes.Scene;
-import engine.scenes.SceneRenderer;
 
 /**
  * Represents the base class for all components

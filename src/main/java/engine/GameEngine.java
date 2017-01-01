@@ -3,6 +3,7 @@ package engine;
 import java.lang.reflect.InvocationTargetException;
 
 import engine.common.Defaults;
+import engine.resources.RequestManager;
 
 /**
  *
@@ -13,7 +14,7 @@ import engine.common.Defaults;
  */
 public class GameEngine {
 	private final GameManager _gameManager;
-	private final Timer _timer;
+	private final TimeManager _timer;
 	private final EngineOptions _options;
 	private final String _titleWithFPS;
 
@@ -75,9 +76,9 @@ public class GameEngine {
 	public GameEngine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options) {
 		this._gameManager = new GameManager(gameInitializer);
 		this._options = options;
-		this._timer = new Timer();
+		this._timer = new TimeManager();
 		this._titleWithFPS = title + " - %d FPS";
-		
+
 		// Creates the display
 		GameDisplay.create(title, width, height, options.windowOptions, options.graphicsOptions);
 	}
@@ -100,6 +101,9 @@ public class GameEngine {
 	public void dispose() {
 		_gameManager.dispose();
 		GameDisplay.dispose();
+
+		// Finish remaining OpenGL requests
+		RequestManager.executeAllGLRequests();
 	}
 
 	/**
@@ -119,7 +123,7 @@ public class GameEngine {
 		_gameManager.init();
 
 		// init our fps counter
-		this._lastFPSCheck = _timer.getTime();
+		this._lastFPSCheck = TimeManager.getTime();
 	}
 
 	/**
@@ -139,9 +143,9 @@ public class GameEngine {
 			// 2. Update game state
 			runTime += _timer.getElapsedTime();
 			for (; runTime >= interval; runTime -= interval) {
-				
+				// TODO: Fixed Update
 			}
-			
+
 			update();
 			// 3. Render game
 			render();
@@ -191,6 +195,9 @@ public class GameEngine {
 
 		_gameManager.render();
 		GameDisplay.refresh();
+
+		// Executes any outstanding OpenGL requests
+		RequestManager.executeSomeGLRequests();
 	}
 
 	/**
