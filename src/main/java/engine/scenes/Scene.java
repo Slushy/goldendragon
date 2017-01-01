@@ -15,7 +15,6 @@ import engine.GraphicsController;
 import engine.common.Component;
 import engine.common.GameObject;
 import engine.common.gameObjects.Camera;
-import engine.graphics.SceneRenderer;
 import engine.input.InputHandler;
 import engine.input.Key;
 import engine.input.KeyboardInput;
@@ -30,8 +29,7 @@ import engine.scenes.EventDispatcher.ExecutionEvent;
  *
  */
 public class Scene {
-
-	//private final EventDispatcher _eventDispatcher = new EventDispatcher();
+	private final EventDispatcher _eventDispatcher = new EventDispatcher();
 	private final List<GameObject> _gameObjects = new ArrayList<>();
 	private final SceneRenderer _sceneRenderer = new SceneRenderer();
 
@@ -39,7 +37,7 @@ public class Scene {
 	private final String _name;
 
 	private boolean _isReady = false;
-	
+
 	private List<Component> _components = new ArrayList<>();
 
 	/**
@@ -66,6 +64,7 @@ public class Scene {
 			if (obj.getName().equalsIgnoreCase(name))
 				return obj;
 		}
+
 		return null;
 	}
 
@@ -83,20 +82,20 @@ public class Scene {
 		Map<EventDispatcher.ExecutionEvent, Method> compEvents = new HashMap<>();
 		for (Component comp : gameObject.getComponents()) {
 			_components.add(comp);
-//			for (Method m : comp.getClass().getDeclaredMethods()) {
-//
-//				// Loop over every execution method a component can have
-//				for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
-//					if (m.getName().equals(evt.methodName()) && evt.paramsMatch(m.getParameterTypes())) {
-//						//m.setAccessible(true);
-//						compEvents.put(evt,  m);
-//					}
-//				}
-//			}
-//
-//			// Subscribe the component to the events
-//			_eventDispatcher.subscribeComponent(comp, compEvents);
-//			compEvents.clear();
+			for (Method m : comp.getClass().getDeclaredMethods()) {
+
+				// Loop over every execution method a component can have
+				for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
+					if (m.getName().equals(evt.methodName())) {
+						m.setAccessible(true);
+						compEvents.put(evt, m);
+					}
+				}
+			}
+
+			// Subscribe the component to the events
+			_eventDispatcher.subscribeComponent(comp, compEvents);
+			compEvents.clear();
 		}
 	}
 
@@ -108,9 +107,7 @@ public class Scene {
 	public void init() throws Exception {
 		_sceneRenderer.init(this);
 		// Initializes any components that require it
-		//_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
-		for (Component comp : _components)
-			comp.init();
+		_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
 		this._isReady = true;
 	}
 
@@ -118,23 +115,21 @@ public class Scene {
 	 * When the scene becomes active this is fired
 	 */
 	public void onForeground() {
-		//_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
+		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
 	}
 
 	/**
 	 * When the currently active scene is no longer active, this is fired
 	 */
 	public void onBackground() {
-		//_eventDispatcher.dispatchEvent(ExecutionEvent.ON_BACKGROUND);
+		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_BACKGROUND);
 	}
 
 	/**
 	 * Updates the scene
 	 */
-	public void update(InputHandler input) {
-		//_eventDispatcher.dispatchEvent(ExecutionEvent.UPDATE, input);
-		for (Component comp : _components)
-			comp.update(input);
+	public void update() {
+		_eventDispatcher.dispatchEvent(ExecutionEvent.UPDATE);
 	}
 
 	/**
@@ -148,16 +143,14 @@ public class Scene {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public void render(GraphicsController graphics) throws NoSuchMethodException, SecurityException,
+	public void render() throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		_sceneRenderer.preRender(graphics);
+		_sceneRenderer.preRender();
 
 		// Renders the necessary components
-		//_eventDispatcher.dispatchEvent(ExecutionEvent.RENDER, _sceneRenderer);
-		for (Component comp : _components)
-			comp.render(_sceneRenderer);
-
-		_sceneRenderer.endRender(graphics);
+		_eventDispatcher.dispatchEvent(ExecutionEvent.RENDER);
+		_sceneRenderer.render();
+		_sceneRenderer.endRender();
 	}
 
 	/**
@@ -172,6 +165,13 @@ public class Scene {
 	 */
 	public Camera getCamera() {
 		return _camera;
+	}
+
+	/**
+	 * @return the renderer for the scene
+	 */
+	public SceneRenderer getRenderer() {
+		return _sceneRenderer;
 	}
 
 	/**

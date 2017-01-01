@@ -14,7 +14,6 @@ import engine.common.Defaults;
 public class GameEngine {
 	private final GameManager _gameManager;
 	private final Timer _timer;
-	private final GameDisplay _display;
 	private final EngineOptions _options;
 	private final String _titleWithFPS;
 
@@ -77,9 +76,10 @@ public class GameEngine {
 		this._gameManager = new GameManager(gameInitializer);
 		this._options = options;
 		this._timer = new Timer();
-		this._display = new GameDisplay(title, width, height, options.windowOptions, options.graphicsOptions);
-
 		this._titleWithFPS = title + " - %d FPS";
+		
+		// Creates the display
+		GameDisplay.create(title, width, height, options.windowOptions, options.graphicsOptions);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class GameEngine {
 	 */
 	public void dispose() {
 		_gameManager.dispose();
-		_display.dispose();
+		GameDisplay.dispose();
 	}
 
 	/**
@@ -108,11 +108,11 @@ public class GameEngine {
 	 * @throws Exception
 	 */
 	protected void init() throws Exception {
-		// Init and show display
-		_display.init();
-		_display.show();
-		// Clear the screen
-		_display.getGraphicsController().clearColor(0, 0, 0, 0);
+		// Initialize input
+		Input.init(GameDisplay.getWindow());
+		// Show and clear the screen
+		GameDisplay.show();
+		GameDisplay.getGraphicsController().clearColor(0, 0, 0, 0);
 		// Init the game timer
 		_timer.init();
 		// Init your game
@@ -132,7 +132,7 @@ public class GameEngine {
 		// TODO: Move interval to timer
 		float interval = 1f / _options.maxUPS;
 
-		while (!_display.shouldClose()) {
+		while (!GameDisplay.shouldClose()) {
 			// 1. Process user input
 			processInput();
 
@@ -163,7 +163,7 @@ public class GameEngine {
 	 * @throws Exception
 	 */
 	protected void update() throws Exception {
-		_gameManager.update(_display);
+		_gameManager.update();
 	}
 
 	/**
@@ -182,15 +182,15 @@ public class GameEngine {
 		// Render FPS counter in title (Hardcoded here while devving)
 		if (_timer.getLastLoopTime() - _lastFPSCheck > 1.0) {
 			this._lastFPSCheck = _timer.getLastLoopTime();
-			_display.setNewTitle(String.format(_titleWithFPS, _fps));
+			GameDisplay.setNewTitle(String.format(_titleWithFPS, _fps));
 			this._fps = 0;
 		}
 
 		// FPS Counter
 		_fps++;
 
-		_gameManager.render(_display);
-		_display.render();
+		_gameManager.render();
+		GameDisplay.refresh();
 	}
 
 	/**

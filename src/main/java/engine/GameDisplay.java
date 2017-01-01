@@ -1,8 +1,5 @@
 package engine;
 
-import engine.common.components.CameraProjection;
-import engine.common.gameObjects.Camera;
-import engine.input.InputHandler;
 import engine.scenes.Scene;
 import engine.scenes.SceneManager;
 
@@ -12,82 +9,49 @@ import engine.scenes.SceneManager;
  * @author brandon.porter
  *
  */
-public class GameDisplay {
-	private final Window _window;
-	private final GraphicsController _graphicsController;
-	private final InputHandler _inputHandler;
+public final class GameDisplay {
+	private static Window _window;
+	private static GraphicsController _graphicsController;
 
-	/**
-	 * Constructs a game display
-	 * 
-	 * @param title
-	 * @param width
-	 * @param height
-	 */
-	public GameDisplay(String title, int width, int height) {
-		this(title, width, height, new Window.WindowOptions());
+	// Static class
+	private GameDisplay() {
 	}
 
 	/**
-	 * Constructs a game display
+	 * Creates and initializes the game window and graphics controller
 	 * 
 	 * @param title
+	 *            text displayed on top of the window
 	 * @param width
+	 *            starting width of the window
 	 * @param height
+	 *            starting height of the window
 	 * @param windowOptions
-	 */
-	public GameDisplay(String title, int width, int height, Window.WindowOptions windowOptions) {
-		this(title, width, height, windowOptions, new GraphicsController.GraphicsOptions());
-	}
-
-	/**
-	 * Constructs a game display
-	 * 
-	 * @param title
-	 * @param width
-	 * @param height
+	 *            additional options to initialize the window
 	 * @param graphicsOptions
+	 *            additional options to initialize the graphics
 	 */
-	public GameDisplay(String title, int width, int height, GraphicsController.GraphicsOptions graphicsOptions) {
-		this(title, width, height, new Window.WindowOptions(), graphicsOptions);
-	}
-
-	/**
-	 * Constructs a game display
-	 * 
-	 * @param title
-	 * @param width
-	 * @param height
-	 * @param windowOptions
-	 * @param graphicsOptions
-	 */
-	public GameDisplay(String title, int width, int height, Window.WindowOptions windowOptions,
+	protected static void create(String title, int width, int height, Window.WindowOptions windowOptions,
 			GraphicsController.GraphicsOptions graphicsOptions) {
-		this._window = new OpenGLWindow(title, width, height, windowOptions);
-		this._graphicsController = new OpenGLGraphicsController(graphicsOptions);
-		this._inputHandler = new InputHandler(_window);
-	}
-
-	/**
-	 * Initializes the display window and graphics controller
-	 */
-	public void init() {
+		_window = new OpenGLWindow(title, width, height, windowOptions);
 		_window.init();
-		_window.setWindowResizedCallback(this::onWindowResized);
+		_window.setWindowResizedCallback(GameDisplay::onWindowResized);
+
+		_graphicsController = new OpenGLGraphicsController(graphicsOptions);
 		_graphicsController.init();
 	}
 
 	/**
 	 * Shows the window
 	 */
-	public void show() {
+	public static void show() {
 		_window.show();
 	}
 
 	/**
 	 * Hides the window
 	 */
-	public void hide() {
+	public static void hide() {
 		_window.hide();
 	}
 
@@ -96,91 +60,24 @@ public class GameDisplay {
 	 * 
 	 * @return true/false if window resized
 	 */
-	public boolean hasResized() {
-		return _window.hasResized();
-	}
-
-	/**
-	 * Tell the window that the game has finished updating state to be resized
-	 */
-	public void resetResized() {
+	public static boolean hasResized() {
+		boolean hasResized = _window.hasResized();
 		_window.setResized(false);
-	}
-
-	/**
-	 * Renders the window, continually called from the game loop several times a
-	 * second
-	 */
-	public void render() {
-		_window.render();
+		return hasResized;
 	}
 
 	/**
 	 * Closes the window and exits the game
 	 */
-	public void closeAndExit() {
+	public static void closeAndExit() {
 		_window.close();
-	}
-
-	/**
-	 * Checks if the window should close
-	 * 
-	 * @return true or false if the window is ready to close (e.g if the user
-	 *         clicks x on the game)
-	 */
-	public boolean shouldClose() {
-		return _window.shouldClose();
 	}
 
 	/**
 	 * Helper function to update the graphics viewport to the size of the window
 	 */
-	public void fixViewportToWindow() {
+	public static void fixViewportToWindow() {
 		getGraphicsController().setViewport(0, 0, _window.getWidthScaled(), _window.getHeightScaled());
-	}
-
-	/**
-	 * Gets the graphics controller for this display
-	 * 
-	 * @return graphics controller
-	 */
-	public GraphicsController getGraphicsController() {
-		return _graphicsController;
-	}
-
-	/**
-	 * Gets the input handler, to be used by the engine to pass to the game
-	 * 
-	 * @return input handler for the display
-	 */
-	public InputHandler getInputHandler() {
-		return _inputHandler;
-	}
-
-	/**
-	 * Cleans up and destroys the game display
-	 */
-	public void dispose() {
-		_window.dispose();
-	}
-
-	/**
-	 * Callback called when the window has been resized
-	 */
-	protected void onWindowResized() {
-		fixViewportToWindow();
-		updateCameraProjectionMatrix();
-	}
-
-	/**
-	 * Updates the camera projection to the aspect ratio change of the window
-	 */
-	protected void updateCameraProjectionMatrix() {
-		Scene activeScene = SceneManager.getActiveScene();
-		if (activeScene != null && activeScene.getCamera() != null) {
-			float aspectRatio = (float) _window.getWidth() / (float) _window.getHeight();
-			activeScene.getCamera().updateProjectionMatrix(aspectRatio);
-		}
 	}
 
 	/**
@@ -189,7 +86,68 @@ public class GameDisplay {
 	 * @param newTitle
 	 *            title to be displayed on the display window
 	 */
-	protected void setNewTitle(String newTitle) {
+	public static void setNewTitle(String newTitle) {
 		_window.setTitle(newTitle);
+	}
+
+	/**
+	 * Gets the graphics controller for this display
+	 * 
+	 * @return graphics controller
+	 */
+	public static GraphicsController getGraphicsController() {
+		return _graphicsController;
+	}
+
+	/**
+	 * @return the window associated to this display. Protected to be used for
+	 *         internal purposes only
+	 */
+	protected static Window getWindow() {
+		return _window;
+	}
+
+	/**
+	 * Renders the window, continually called from the game loop several times a
+	 * second
+	 */
+	protected static void refresh() {
+		_window.refresh();
+	}
+
+	/**
+	 * Updates the camera projection to the aspect ratio change of the window
+	 */
+	protected static void updateCameraProjectionMatrix() {
+		Scene activeScene = SceneManager.getActiveScene();
+		if (activeScene != null && activeScene.getCamera() != null) {
+			float aspectRatio = (float) _window.getWidth() / (float) _window.getHeight();
+			activeScene.getCamera().updateProjectionMatrix(aspectRatio);
+		}
+	}
+
+	/**
+	 * Checks if the window should close
+	 * 
+	 * @return true or false if the window is ready to close (e.g if the user
+	 *         clicks x on the game)
+	 */
+	protected static boolean shouldClose() {
+		return _window.shouldClose();
+	}
+
+	/**
+	 * Cleans up and destroys the game display
+	 */
+	protected static void dispose() {
+		_window.dispose();
+	}
+
+	/**
+	 * Callback called when the window has been resized
+	 */
+	private static void onWindowResized() {
+		fixViewportToWindow();
+		updateCameraProjectionMatrix();
 	}
 }

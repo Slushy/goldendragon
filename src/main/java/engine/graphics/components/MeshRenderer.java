@@ -1,7 +1,6 @@
 package engine.graphics.components;
 
 import engine.common.Component;
-import engine.graphics.SceneRenderer;
 import engine.graphics.geometry.Mesh;
 
 /**
@@ -11,14 +10,7 @@ import engine.graphics.geometry.Mesh;
  *
  */
 public class MeshRenderer extends Component {
-	private Mesh _mesh = null;
-
-	/**
-	 * Constructs an empty mesh renderer
-	 */
-	public MeshRenderer() {
-		super("Mesh Renderer");
-	}
+	private final Mesh _mesh;
 
 	/**
 	 * Constructs a mesh renderer with the default mesh
@@ -27,21 +19,8 @@ public class MeshRenderer extends Component {
 	 *            mesh to render
 	 */
 	public MeshRenderer(Mesh mesh) {
-		this();
+		super("Mesh Renderer");
 		this._mesh = mesh;
-	}
-
-	/**
-	 * Renders the current game object mesh
-	 * 
-	 * @param sceneRenderer
-	 */
-	@Override
-	public void render(SceneRenderer sceneRenderer) {
-		if (_mesh == null)
-			return;
-
-		sceneRenderer.drawMesh(_mesh, this.getGameObject());
 	}
 
 	/**
@@ -49,6 +28,13 @@ public class MeshRenderer extends Component {
 	 */
 	public Mesh getMesh() {
 		return _mesh;
+	}
+
+	/**
+	 * Initializes the renderer by submitting it to the graphics renderer
+	 */
+	private void init() {
+		this.getScene().getRenderer().addMesh(_mesh, this.getGameObject());
 	}
 
 	/**

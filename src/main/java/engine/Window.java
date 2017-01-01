@@ -181,10 +181,10 @@ public abstract class Window {
 	public abstract boolean shouldClose();
 
 	/**
-	 * Renders the window, continually called from the game loop several times a
+	 * Refreshes the window, continually called from the game loop several times a
 	 * second
 	 */
-	public abstract void render();
+	public abstract void refresh();
 
 	/**
 	 * Makes the window visible on screen

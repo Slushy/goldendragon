@@ -42,17 +42,15 @@ public class TestSceneBehavior extends Behavior {
 		super(TestSceneLoader.NAME);
 	}
 	
-	@Override
-	public void init() {
+	private void init() {
 		GameObject cube = this.getScene().findGameObject("Cube");
 		_gameObjects.add(cube);
 		
 		this._mesh = cube.getComponentByType(MeshRenderer.class).getMesh();
 	}
 
-	@Override
-	public void update(InputHandler input) {
-		processInput(input);
+	private void update() {
+		//processInput(input);
 		
 		Camera camera = this.getScene().getCamera();
 		
@@ -65,18 +63,18 @@ public class TestSceneBehavior extends Behavior {
 		}
 		
 		// Add new game object
-		if (input.getKeyboard().keyDown(Key.SPACE)) {
-			GameObject cube = new GameObject("Cube");
-			cube.addComponent(new MeshRenderer(_mesh));
-			
-			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
-			cube.getTransform().setPosition(randomX, randomY, randomZ);
-			
-			getScene().addGameObject(cube);
-			_gameObjects.add(cube);
-		}
+//		if (input.getKeyboard().keyDown(Key.SPACE)) {
+//			GameObject cube = new GameObject("Cube");
+//			cube.addComponent(new MeshRenderer(_mesh));
+//			
+//			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
+//			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
+//			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
+//			cube.getTransform().setPosition(randomX, randomY, randomZ);
+//			
+//			getScene().addGameObject(cube);
+//			_gameObjects.add(cube);
+//		}
 	}
 
 	/**

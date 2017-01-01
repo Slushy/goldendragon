@@ -22,7 +22,7 @@ public class OpenGLWindow extends Window {
 	private GLFWErrorCallback _errorCallback;
 	private GLFWKeyCallback _keyCallback;
 	private GLFWWindowSizeCallback _windowSizeCallback;
-	
+
 	/**
 	 * Constructs an OpenGL window
 	 * 
@@ -50,7 +50,7 @@ public class OpenGLWindow extends Window {
 	}
 
 	@Override
-	public void render() {
+	public void refresh() {
 		// TODO: More Information
 		glfwSwapBuffers(getWindowId());
 		glfwPollEvents();
@@ -160,7 +160,7 @@ public class OpenGLWindow extends Window {
 					if (this.onWindowResizedCallback != null)
 						this.onWindowResizedCallback.run();
 				}));
-		
+
 		// Key press callback - gets fired when a key is pressed
 		glfwSetKeyCallback(windowId,
 				this._keyCallback = GLFWKeyCallback.create((window, key, scancode, action, mods) -> {

@@ -69,7 +69,7 @@ class GameManager {
 	 * @param display
 	 * @throws Exception
 	 */
-	public void update(GameDisplay display) throws Exception {
+	public void update() throws Exception {
 		// Check if there was an error loading
 		if (_loadStatus == GameLoadedStatus.ERROR) {
 			throw new Exception("The game failed to load: ", _loadStatus.getException());
@@ -78,13 +78,13 @@ class GameManager {
 		// Check the scene manager if we should show a new scene
 		if (SceneManager.Instance.newSceneReady()) {
 			SceneManager.Instance.switchToLoadedScene(true);
-			display.updateCameraProjectionMatrix();
+			GameDisplay.updateCameraProjectionMatrix();
 		}
 
 		// Updates the active scene
 		Scene activeScene = SceneManager.getActiveScene();
 		if (activeScene != null) {
-			activeScene.update(display.getInputHandler());
+			activeScene.update();
 		}
 	}
 
@@ -98,13 +98,13 @@ class GameManager {
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-	public void render(GameDisplay display) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+	public void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 
 		// Renders the currently active scene
 		Scene activeScene = SceneManager.getActiveScene();
 		if (activeScene != null) {
-			activeScene.render(display.getGraphicsController());
+			activeScene.render();
 		}
 	}
 
