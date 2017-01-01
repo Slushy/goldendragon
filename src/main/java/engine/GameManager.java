@@ -2,6 +2,7 @@ package engine;
 
 import java.lang.reflect.InvocationTargetException;
 
+import engine.resources.RequestManager;
 import engine.scenes.Scene;
 import engine.scenes.SceneManager;
 
@@ -42,25 +43,8 @@ class GameManager {
 		}
 
 		// Begin loading game in separate thread
-		Thread gameLoader = new Thread(() -> {
-			try {
-				// Load game resources
-				_gameInitializer.loadResources();
-				// Begin loading next scene
-				SceneManager.loadNextScene();
-
-				// Done
-				this._loadStatus = GameLoadedStatus.DONE;
-			} catch (Exception e) {
-				this._loadStatus = GameLoadedStatus.ERROR;
-				this._loadStatus.setException(e);
-			} finally {
-				this.loadingComplete();
-			}
-		});
-
-		gameLoader.run();
-		// gameLoader.start() -> Need to create request processing
+		// RequestManager.makeResourceRequest(this::loadGame);
+		this.loadGame();
 	}
 
 	/**
@@ -113,6 +97,26 @@ class GameManager {
 	 */
 	public void dispose() {
 		SceneManager.Instance.dispose();
+	}
+
+	/*
+	 * Begins loading the game's resources and the first scene
+	 */
+	private void loadGame() {
+		try {
+			// Load game resources
+			_gameInitializer.loadResources();
+			// Begin loading next scene
+			SceneManager.loadNextScene();
+
+			// Done
+			this._loadStatus = GameLoadedStatus.DONE;
+		} catch (Exception e) {
+			this._loadStatus = GameLoadedStatus.ERROR;
+			this._loadStatus.setException(e);
+		} finally {
+			this.loadingComplete();
+		}
 	}
 
 	/*

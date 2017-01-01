@@ -10,6 +10,7 @@ import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
 import engine.resources.loaders.TextureLoader;
 import engine.scenes.SceneLoader;
+import game.GameResources;
 
 /**
  * Loads the test scene
@@ -115,7 +116,7 @@ public class TestSceneLoader extends SceneLoader {
 
 		// Create mesh and set texture material
 		Mesh mesh = new Mesh(new Mesh.MeshVBOData(vertices, texCoords, indices));
-		mesh.setMaterial(new Material(TextureLoader.loadTexture("grassblock.png")));
+		mesh.setMaterial(new Material(GameResources.Textures.GRASS_BLOCK));
 		
 		// Create game object with mesh renderer
 		GameObject cube = new GameObject("Cube");

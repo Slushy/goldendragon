@@ -73,7 +73,7 @@ public class Mesh {
 	public Material getMaterial() {
 		return _material;
 	}
-	
+
 	/**
 	 * Renders our mesh object
 	 */
@@ -83,7 +83,7 @@ public class Mesh {
 		// set active material
 		if (_material.hasTexture()) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			_material.getTexture().use();
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, _material.getTexture().getId());
 		}
 
 		// Draw game object
@@ -91,7 +91,7 @@ public class Mesh {
 
 		// Clear active material
 		if (_material.hasTexture()) {
-			_material.getTexture().done();
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		}
 
 		_vao.done();

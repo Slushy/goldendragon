@@ -1,10 +1,6 @@
 package engine.graphics.geometry;
 
-import java.nio.ByteBuffer;
-
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL30;
 
 /**
  * Represents a texture being stored in graphics VRAM
@@ -12,128 +8,95 @@ import org.lwjgl.opengl.GL30;
  * @author Brandon
  *
  */
-public class Texture implements IBindable {
-	private final int _id;
-	private final int _width;
-	private final int _height;
+public class Texture {
+	private final String _fileName;
+
+	private int _id = -1;
+	private int _width;
+	private int _height;
 
 	/**
-	 * Constructs a new texture
+	 * Constructs a new texture with the filename
 	 * 
-	 * @param width
-	 *            the width of the texture in pixels
-	 * @param height
-	 *            the height of the texture in pixels
-	 * @param buffer
-	 *            the bytes of the image
+	 * @param fileName
 	 */
-	public Texture(int width, int height, ByteBuffer buffer) {
-		this(width, height, buffer, new TextureOptions());
+	public Texture(String fileName) {
+		this._fileName = fileName;
 	}
 
 	/**
-	 * Constructs a new texture
+	 * A texture is loaded if it has a valid ID that was generated from the
+	 * graphics library
 	 * 
-	 * @param width
-	 *            the width of the texture in pixels
-	 * @param height
-	 *            the height of the texture in pixels
-	 * @param buffer
-	 *            the bytes of the image
-	 * @param options
-	 *            additional options to initialize the texture
+	 * @return true if texture is loaded and ready, false otherwise
 	 */
-	public Texture(int width, int height, ByteBuffer buffer, TextureOptions options) {
-		this._id = GL11.glGenTextures();
-		this._width = width;
-		this._height = height;
-
-		// Initialize texture with openGL
-		init(buffer, options);
+	public final boolean isLoaded() {
+		return getId() >= 0;
 	}
 
 	/**
-	 * Readies the texture for use with opengl
+	 * @return the texture file name
 	 */
-	@Override
-	public void use() {
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, _id);
+	public String getFileName() {
+		return _fileName;
 	}
 
-	/**
-	 * Clears the active texture
-	 */
-	@Override
-	public void done() {
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-	}
-	
 	/**
 	 * @return OpenGL reference id for the texture
 	 */
 	public int getId() {
 		return _id;
 	}
-	
+
+	/**
+	 * Sets the OpenGL reference Id for the texture
+	 * 
+	 * @param id
+	 *            the unique id for the graphics library to reference
+	 */
+	public void setId(int id) {
+		this._id = id;
+	}
+
 	/**
 	 * @return width of texture
 	 */
 	public int getWidth() {
 		return _width;
 	}
-	
+
+	/**
+	 * Sets the width of the texture
+	 * 
+	 * @param width
+	 *            width in pixels
+	 */
+	public void setWidth(int width) {
+		this._width = width;
+	}
+
 	/**
 	 * @return height of texture
 	 */
 	public int getHeight() {
 		return _height;
 	}
-	
+
+	/**
+	 * Sets the height of the texture
+	 * 
+	 * @param height
+	 *            height in pixels
+	 */
+	public void setHeight(int height) {
+		this._height = height;
+	}
 
 	/**
 	 * Removes texture from graphics vram
 	 */
-	@Override
 	public void dispose() {
-		GL11.glDeleteTextures(_id);
-	}
-
-	/**
-	 * Initializes texture options with OpenGL
-	 * 
-	 * @param buffer
-	 *            the bytes of the image
-	 * @param options
-	 *            additional options to initialize the texture
-	 */
-	protected void init(ByteBuffer buffer, TextureOptions options) {
-		use();
-
-		// Tell OpenGL how to unpack the RGBA bytes. Each component is 1 byte
-		// size
-		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-
-		// Load texture data to VRAM
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, _width, _height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-				buffer);
-
-		// Generate a mipmap for texture
-		if (options.useMipmap) {
-			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-		}
-
-		// Not always necessary: this basically says that when a pixel is drawn
-		// with no direct one to one association to a texture coordinate it will
-		// pick the nearest texture coordinate point.
-		if (options.filtersEnabled) {
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, options.minFilterRule);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, options.magFilterRule);
-		}
-
-		// Set level of detail bias
-		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, options.levelOfDetailBias);
-		
-		done();
+		// GL11.glDeleteTextures(_id);
 	}
 
 	/**
@@ -143,6 +106,12 @@ public class Texture implements IBindable {
 	 *
 	 */
 	public static class TextureOptions {
+		/**
+		 * Default options to pass through to a builder without creating
+		 * multiple instances
+		 */
+		public static final TextureOptions Default = new TextureOptions();
+
 		/**
 		 * Whether or not the minFilter and magFilter rules are used
 		 */

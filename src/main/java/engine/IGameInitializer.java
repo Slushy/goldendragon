@@ -12,8 +12,9 @@ import engine.scenes.SceneLoader;
 public interface IGameInitializer {
 	/**
 	 * Called by the engine to load the game resources (in a separate thread)
+	 * @throws Exception 
 	 */
-	void loadResources();
+	void loadResources() throws Exception;
 
 	/**
 	 * @return all the scene-specific loaders for the game

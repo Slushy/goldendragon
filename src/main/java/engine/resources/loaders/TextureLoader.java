@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL30;
+
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import engine.graphics.geometry.Texture;
+import engine.graphics.geometry.Texture.TextureOptions;
 import engine.resources.ResourceManager;
 
 /**
@@ -30,13 +35,53 @@ public class TextureLoader {
 	 * @param fileName
 	 *            file name of the texture
 	 * @return new texture object
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	public static Texture loadTexture(String fileName) throws Exception {
+		return loadTexture(fileName, Texture.TextureOptions.Default);
+	}
+
+	/**
+	 * Loads the specified file as a texture
+	 * 
+	 * @param fileName
+	 *            file name of the texture
+	 * @param textureOptions
+	 *            the additional options to load the texture with
+	 * @return new texture object
+	 * @throws Exception 
+	 */
+	public static Texture loadTexture(String fileName, Texture.TextureOptions textureOptions) throws Exception {
+		Texture texture = new Texture(fileName);
+		loadTexture(texture);
+		return texture;
+	}
+
+	/**
+	 * Loads the existing texture from disk and into graphics memory
+	 * 
+	 * @param texture
+	 *            the existing texture object
+	 * @throws Exception 
+	 */
+	public static void loadTexture(Texture texture) throws Exception {
+		loadTexture(texture, Texture.TextureOptions.Default);
+	}
+
+	/**
+	 * Loads the existing texture from disk and into graphics memory
+	 * 
+	 * @param texture
+	 *            the existing texture object
+	 * @param textureOptions
+	 *            the additional options to load the texture with
+	 * @throws Exception 
+	 */
+	public static void loadTexture(Texture texture, Texture.TextureOptions textureOptions) throws Exception {
 		TextureData data = null;
-		Texture.TextureOptions options = new Texture.TextureOptions();
 
 		// Get the path to the texture file
+		String fileName = texture.getFileName();
 		String pathToFile = ResourceManager.TEXTURES_PATH + fileName;
 
 		// Parses the file type so we can support multiple types
@@ -48,8 +93,12 @@ public class TextureLoader {
 			throw new Exception(String.format("Trying to load an invalid file type: %s as a texture.", fileName));
 		}
 
-		// The texture class deals with binding it to openGL for us
-		return new Texture(data.getWidth(), data.getHeight(), data.getByteBuffer(), options);
+		texture.setWidth(data.getWidth());
+		texture.setHeight(data.getHeight());
+
+		// This needs to be in separate thread
+		int id = registerTextureWithOpenGL(data, textureOptions);
+		texture.setId(id);
 	}
 
 	/*
@@ -67,6 +116,40 @@ public class TextureLoader {
 
 		// return the data
 		return new TextureData(decoder.getWidth(), decoder.getHeight(), buffer);
+	}
+
+	private static int registerTextureWithOpenGL(TextureData data, Texture.TextureOptions options) {
+		// Create and bind the new texture
+		int textureId = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+
+		// Tell OpenGL how to unpack the RGBA bytes. Each component is 1 byte
+		// size
+		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
+		// Load texture data to VRAM
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, data.getWidth(), data.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
+				data.getByteBuffer());
+
+		// Generate a mipmap for texture
+		if (options.useMipmap) {
+			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+		}
+
+		// Not always necessary: this basically says that when a pixel is drawn
+		// with no direct one to one association to a texture coordinate it will
+		// pick the nearest texture coordinate point.
+		if (options.filtersEnabled) {
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, options.minFilterRule);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, options.magFilterRule);
+		}
+
+		// Set level of detail bias
+		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, options.levelOfDetailBias);
+
+		// Unbind the texture
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		return textureId;
 	}
 
 	/**

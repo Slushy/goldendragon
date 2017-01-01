@@ -102,8 +102,8 @@ public class GameEngine {
 		_gameManager.dispose();
 		GameDisplay.dispose();
 
-		// Finish remaining OpenGL requests
-		RequestManager.executeAllGLRequests();
+		// Finish remaining OpenGL requests and disposes
+		RequestManager.dispose();
 	}
 
 	/**
