@@ -2,8 +2,6 @@ package engine.scenes;
 
 import java.util.LinkedHashMap;
 
-import engine.utils.Logger;
-
 /**
  * Manages the active scene in our game and helps load new scenes
  * 
@@ -11,8 +9,6 @@ import engine.utils.Logger;
  *
  */
 public final class SceneManager {
-	private static final Logger _log = new Logger("SceneManager", Logger.LoggerLevel.DEBUG);
-
 	public static final SceneManager Instance = new SceneManager();
 
 	protected final LinkedHashMap<String, SceneLoader> sceneLoaders = new LinkedHashMap<>();
@@ -45,12 +41,8 @@ public final class SceneManager {
 	 * @throws Exception
 	 */
 	public static boolean loadScene(String sceneName) throws Exception {
-		_log.debug("Trying to load scene: %s", sceneName);
-
 		// This may not be a warning
 		if (Instance.loadingScene != null) {
-			_log.warn("Found existing ready scene: %s, while trying to load new scene: %s", Instance.loadingScene,
-					sceneName);
 			// For now, let's dispose the loading scene
 			// TODO: do it on a separate thread
 			if (Instance.loadingScene != Instance.activeScene)
@@ -60,7 +52,6 @@ public final class SceneManager {
 		// Get the new scene to load
 		SceneLoader loader = Instance.sceneLoaders.get(sceneName);
 		if (loader == null) {
-			_log.warn("Cannot find scene: %s to load", sceneName);
 			return false;
 		}
 
@@ -69,7 +60,6 @@ public final class SceneManager {
 
 		// load and initialize the scene
 		if (!loader.sceneIsLoaded()) {
-			_log.debug("Scene needs to be loaded and initialized");
 			loader.loadScene().init();
 		}
 
@@ -99,7 +89,6 @@ public final class SceneManager {
 
 		// If we don't have another scene, return false
 		if (nextScene == null) {
-			_log.warn("There is no next scene, CurrentScene: %s", currScene);
 			return false;
 		}
 

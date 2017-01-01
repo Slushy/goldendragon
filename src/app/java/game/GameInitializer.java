@@ -2,7 +2,7 @@ package game;
 
 import engine.IGameInitializer;
 import engine.scenes.SceneLoader;
-import engine.utils.Logger;
+import engine.utils.Debug;
 import game.scenes.TestSceneLoader;
 
 /**
@@ -12,14 +12,13 @@ import game.scenes.TestSceneLoader;
  *
  */
 public class GameInitializer implements IGameInitializer {
-	private static final Logger _log = new Logger("GameInitializer", Logger.LoggerLevel.DEBUG);
 
 	/**
 	 * Called by the engine to load the game resources (in a separate thread)
 	 */
 	@Override
 	public void loadResources() {
-		_log.debug("Begin loading resources");
+		Debug.log("Begin loading resources");
 	}
 
 	/**
@@ -27,7 +26,6 @@ public class GameInitializer implements IGameInitializer {
 	 */
 	@Override
 	public SceneLoader[] getSceneLoaders() {
-		_log.debug("Retrieving game scene loader");
 		return new SceneLoader[] { new TestSceneLoader() };
 	}
 

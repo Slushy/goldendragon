@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import engine.scenes.Scene;
 import engine.scenes.SceneManager;
-import engine.utils.Logger;
 
 /**
  * This private game manager is used by the engine to initialize, update, and
@@ -14,8 +13,6 @@ import engine.utils.Logger;
  *
  */
 class GameManager {
-	private static final Logger _log = new Logger("SceneManager", Logger.LoggerLevel.DEBUG);
-
 	private IGameInitializer _gameInitializer;
 	private GameLoadedStatus _loadStatus = GameLoadedStatus.LOADING;
 
@@ -41,7 +38,7 @@ class GameManager {
 		// First thing is first, load splash screen
 		Scene appSplash = _gameInitializer.getApplicationSplash();
 		if (appSplash != null) {
-			_log.debug("Showing application splash: %s", appSplash.getName());
+			// TODO: Show app splash
 		}
 
 		// Begin loading game in separate thread
@@ -80,7 +77,6 @@ class GameManager {
 
 		// Check the scene manager if we should show a new scene
 		if (SceneManager.Instance.newSceneReady()) {
-			_log.debug("Switched to loaded scene");
 			SceneManager.Instance.switchToLoadedScene(true);
 			display.updateCameraProjectionMatrix();
 		}

@@ -5,7 +5,6 @@ import engine.common.gameObjects.Camera;
 import engine.input.InputHandler;
 import engine.scenes.Scene;
 import engine.scenes.SceneManager;
-import engine.utils.Logger;
 
 /**
  * Our game display that represents a game window and graphics controller
@@ -14,8 +13,6 @@ import engine.utils.Logger;
  *
  */
 public class GameDisplay {
-	private static final Logger _log = new Logger("GameDisplay");
-
 	private final Window _window;
 	private final GraphicsController _graphicsController;
 	private final InputHandler _inputHandler;
@@ -171,7 +168,6 @@ public class GameDisplay {
 	 * Callback called when the window has been resized
 	 */
 	protected void onWindowResized() {
-		_log.debug("Window is resized");
 		fixViewportToWindow();
 		updateCameraProjectionMatrix();
 	}

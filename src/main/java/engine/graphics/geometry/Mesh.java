@@ -3,8 +3,6 @@ package engine.graphics.geometry;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-import engine.utils.Logger;
-
 /**
  * Represents our geometric vertices of a game object
  * 
@@ -12,8 +10,6 @@ import engine.utils.Logger;
  *
  */
 public class Mesh {
-	private static final Logger _log = new Logger("Mesh", Logger.LoggerLevel.DEBUG);
-
 	private VAO _vao;
 	private int _vertexCount;
 
@@ -61,7 +57,6 @@ public class Mesh {
 	 */
 	public void setMaterial(Material material) {
 		if (material == null) {
-			_log.warn("Shouldn't be setting a mesh's material to null, using default material");
 			material = new Material();
 		}
 		_material.dispose();

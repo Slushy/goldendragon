@@ -20,7 +20,6 @@ public class Utils {
 	 * @return
 	 */
 	public static FloatBuffer loadBuffer(float[] data) {
-		System.out.println("LOAD FLOAT BUFFER");
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data).flip();
 		return buffer;
@@ -33,7 +32,6 @@ public class Utils {
 	 * @return
 	 */
 	public static IntBuffer loadBuffer(int[] data) {
-		System.out.println("LOAD INT BUFFER");
 		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
 		buffer.put(data).flip();
 		return buffer;

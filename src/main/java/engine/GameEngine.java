@@ -3,7 +3,6 @@ package engine;
 import java.lang.reflect.InvocationTargetException;
 
 import engine.common.Defaults;
-import engine.utils.Logger;
 
 /**
  *
@@ -13,8 +12,6 @@ import engine.utils.Logger;
  *
  */
 public class GameEngine {
-	private static final Logger _log = new Logger("GameEngine");
-
 	private final GameManager _gameManager;
 	private final Timer _timer;
 	private final GameDisplay _display;
@@ -77,8 +74,6 @@ public class GameEngine {
 	 *            set options to initialize the engine with
 	 */
 	public GameEngine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options) {
-		_log.debug("Created GameEngine");
-
 		this._gameManager = new GameManager(gameInitializer);
 		this._options = options;
 		this._timer = new Timer();
@@ -103,7 +98,6 @@ public class GameEngine {
 	 * Cleans up the game engine
 	 */
 	public void dispose() {
-		_log.debug("Disposing engine...");
 		_gameManager.dispose();
 		_display.dispose();
 	}
@@ -114,7 +108,6 @@ public class GameEngine {
 	 * @throws Exception
 	 */
 	protected void init() throws Exception {
-		_log.debug("Initializing engine...");
 		// Init and show display
 		_display.init();
 		_display.show();
@@ -138,8 +131,6 @@ public class GameEngine {
 		float runTime = 0f;
 		// TODO: Move interval to timer
 		float interval = 1f / _options.maxUPS;
-
-		_log.debug("Running engine...");
 
 		while (!_display.shouldClose()) {
 			// 1. Process user input

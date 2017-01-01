@@ -7,8 +7,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import java.util.HashMap;
 import java.util.Map;
 
-import engine.utils.Logger;
-
 /**
  * Keeps track of our keyboard keys and their current states
  * 
@@ -16,7 +14,6 @@ import engine.utils.Logger;
  *
  */
 public class KeyboardInput {
-	private static final Logger _log = new Logger("KeyboardInput");
 
 	private final Map<Integer, KeyState> _keyStates = new HashMap<>(Key.size());
 
@@ -27,7 +24,6 @@ public class KeyboardInput {
 
 		// Initialize key -> key state values
 		for (Key key : Key.values()) {
-			_log.debug("Initialized Key: %s, Value: %d", key.name(), key.getValue());
 			_keyStates.put(key.getValue(), new KeyState());
 		}
 	}
@@ -101,7 +97,6 @@ public class KeyboardInput {
 	protected void keyStateChanged(int keyValue, int keyState, int mods) {
 		KeyState state = _keyStates.get(keyValue);
 		if (state == null) {
-			_log.warn("Trying to set state for unsupported key: %d", keyValue);
 			return;
 		}
 

@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import engine.utils.Logger;
+import engine.utils.Debug;
 
 /**
  * A VAO (Vertex Array Object) holds all of our VBO's (Vertex Buffer Object) for
@@ -17,8 +17,6 @@ import engine.utils.Logger;
  *
  */
 public class VAO implements IBindable {
-	private static final Logger _log = new Logger("VAO");
-
 	private final int _vaoId;
 	private final List<VBO> _vbos = new ArrayList<>();
 
@@ -40,7 +38,6 @@ public class VAO implements IBindable {
 		GL30.glBindVertexArray(_vaoId);
 
 		// Bind each attribute
-		_log.debug("use [%d]: attr count: %d", _vaoId, _attributeCount);
 		for (int i = 0; i < _attributeCount; i++) {
 			GL20.glEnableVertexAttribArray(i);
 		}
@@ -89,8 +86,6 @@ public class VAO implements IBindable {
 	 */
 	@Override
 	public void dispose() {
-		_log.debug("Disposing VAO");
-
 		// Unbind and dispose any attached vbos
 		int attrCount = 0;
 		for (VBO vbo : _vbos) {
@@ -115,13 +110,11 @@ public class VAO implements IBindable {
 	 * Stores the vbo in memory and adds to attribute list if applicable
 	 */
 	private void storeVBO(VBO vbo, int attrType) {
-		_log.debug("Store VBO: %s", vbo);
 		_vbos.add(vbo);
 
 		// Check and add vbo to attribute list
 		if (vbo.isAttribute()) {
 			GL20.glVertexAttribPointer(_attributeCount++, vbo.getAttrSize(), attrType, false, 0, 0);
-			_log.debug("VBO added to list");
 		}
 
 		// Tell the VBO we are done with it

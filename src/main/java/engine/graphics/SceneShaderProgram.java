@@ -3,8 +3,6 @@ package engine.graphics;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.utils.Logger;
-
 /**
  * A Scene shader program to hold all of the scene uniforms and shader data
  * 
@@ -12,8 +10,6 @@ import engine.utils.Logger;
  *
  */
 public class SceneShaderProgram extends ShaderProgram {
-	private static final Logger _log = new Logger("SceneShaderProgram");
-
 	private static final String COLOR = "color";
 	private static final String USE_TEXTURE = "useTexture";
 	private static final String PROJECTION_MATRIX = "projectionMatrix";

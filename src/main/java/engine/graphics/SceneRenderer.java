@@ -7,7 +7,6 @@ import engine.common.GameObject;
 import engine.common.gameObjects.Camera;
 import engine.graphics.geometry.Mesh;
 import engine.scenes.Scene;
-import engine.utils.Logger;
 import engine.utils.math.Transformation;
 
 /**
@@ -18,8 +17,6 @@ import engine.utils.math.Transformation;
  *
  */
 public class SceneRenderer {
-	private static final Logger _log = new Logger("SceneRenderer");
-
 	private Scene _scene;
 	private SceneShaderProgram _sceneShaderProgram;
 
@@ -43,8 +40,6 @@ public class SceneRenderer {
 	 */
 	public void preRender(GraphicsController graphics) {
 		// Update viewport to window ONLY IF the window has been resized
-		_log.debug("Rendering...");
-
 		// Clear the current frame before we render the next frame
 		graphics.clearGraphics();
 

@@ -1,7 +1,6 @@
 package engine.input;
 
 import engine.Window;
-import engine.utils.Logger;
 
 /**
  * Handles any keyboard/mouse/gamepad input for our game engine
@@ -10,7 +9,6 @@ import engine.utils.Logger;
  *
  */
 public class InputHandler {
-	private static final Logger _log = new Logger("InputHandler");
 
 	private final KeyboardInput _keyboard = new KeyboardInput();
 
@@ -39,7 +37,6 @@ public class InputHandler {
 	 * @param mods
 	 */
 	private void onKeyStateChanged(int keyValue, int keyState, int mods) {
-		_log.debug("Key State Changed: Key: %d, State: %d, Mods: %d", keyValue, keyState, mods);
 		_keyboard.keyStateChanged(keyValue, keyState, mods);
 	}
 }

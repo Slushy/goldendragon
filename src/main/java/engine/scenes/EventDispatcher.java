@@ -9,7 +9,6 @@ import java.util.Map;
 import engine.common.Component;
 import engine.graphics.SceneRenderer;
 import engine.input.InputHandler;
-import engine.utils.Logger;
 
 /**
  * The scene uses an event dispatcher to send events to any of its applicable
@@ -19,7 +18,6 @@ import engine.utils.Logger;
  *
  */
 final class EventDispatcher {
-	private static final Logger _log = new Logger("EventDispatcher", Logger.LoggerLevel.DEBUG);
 
 	private final Map<ExecutionEvent, LinkedList<ComponentMethod>> _subscribedComponents = new HashMap<>();
 	private final Map<Component, Integer> _componentCapabilities = new HashMap<>();
@@ -96,7 +94,6 @@ final class EventDispatcher {
 					comp.update((InputHandler) args[0]);
 				}
 			} catch (Exception e) {
-				_log.warn("Could not find or invoke method: %s on component: %s", event.methodName(), comp.getName());
 				e.printStackTrace();
 			}
 		}

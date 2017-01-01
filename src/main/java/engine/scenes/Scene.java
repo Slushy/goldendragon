@@ -20,7 +20,6 @@ import engine.input.InputHandler;
 import engine.input.Key;
 import engine.input.KeyboardInput;
 import engine.scenes.EventDispatcher.ExecutionEvent;
-import engine.utils.Logger;
 
 /**
  * Each "screen" of the game will be a type of scene that holds onto all of the
@@ -31,7 +30,6 @@ import engine.utils.Logger;
  *
  */
 public class Scene {
-	private static final Logger _log = new Logger("Scene", Logger.LoggerLevel.DEBUG);
 
 	//private final EventDispatcher _eventDispatcher = new EventDispatcher();
 	private final List<GameObject> _gameObjects = new ArrayList<>();
@@ -120,7 +118,6 @@ public class Scene {
 	 * When the scene becomes active this is fired
 	 */
 	public void onForeground() {
-		_log.debug("Scene foregrounded");
 		//_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
 	}
 
@@ -128,7 +125,6 @@ public class Scene {
 	 * When the currently active scene is no longer active, this is fired
 	 */
 	public void onBackground() {
-		_log.debug("Scene backgrounded");
 		//_eventDispatcher.dispatchEvent(ExecutionEvent.ON_BACKGROUND);
 	}
 

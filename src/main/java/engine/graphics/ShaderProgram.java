@@ -10,7 +10,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
 import engine.resources.ResourceManager;
-import engine.utils.Logger;
+import engine.utils.Debug;
 
 /**
  * Hooks up data from our renderers to our shader code. Every instance of
@@ -20,8 +20,6 @@ import engine.utils.Logger;
  *
  */
 public abstract class ShaderProgram {
-	private static final Logger _log = new Logger("ShaderProgram");
-
 	private final int _programId;
 	private final ShaderType _shaderType;
 	private final Map<String, Integer> _uniforms = new HashMap<>();
@@ -45,7 +43,6 @@ public abstract class ShaderProgram {
 		if (_programId == 0) {
 			throw new Exception("Could not create shader program");
 		}
-		_log.debug("Created new shader program: %d", _programId);
 		
 		// Next we register the shaders and link the program
 		// TODO: More information on what link does
@@ -105,10 +102,8 @@ public abstract class ShaderProgram {
 		// Keep in only while debugging, unnecessary for release
 		GL20.glValidateProgram(_programId);
 		if (GL20.glGetProgrami(_programId, GL20.GL_VALIDATE_STATUS) == 0) {
-			_log.warn("Warning validing shader code: " + GL20.glGetProgramInfoLog(_programId, 1024));
+			Debug.warn("Warning validing shader code: " + GL20.glGetProgramInfoLog(_programId, 1024));
 		}
-		
-		_log.debug("Program linked");
 	}
 	
 	/**
@@ -126,7 +121,6 @@ public abstract class ShaderProgram {
 		}
 		// We found it, so add it to the list of uniforms
 		_uniforms.put(uniform, uniformLocation);
-		_log.debug("Registered uniform '%s' at location %d for program %d", uniform, uniformLocation, _programId);
 	}
 	
 	protected int getUniform(String uniform) {
@@ -166,7 +160,6 @@ public abstract class ShaderProgram {
 	 */
 	protected void registerVertexShader() throws Exception {
 		this._vertShaderId = registerShader(_shaderType.toString().toLowerCase() + ".vert", GL20.GL_VERTEX_SHADER);
-		_log.debug("Registered new vertex shader: %d", _vertShaderId);
 	}
 
 	/**
@@ -175,7 +168,6 @@ public abstract class ShaderProgram {
 	 */
 	protected void registerFragmentShader() throws Exception {
 		this._fragShaderId = registerShader(_shaderType.toString().toLowerCase() + ".frag", GL20.GL_FRAGMENT_SHADER);
-		_log.debug("Registered new fragment shader: %d", _fragShaderId);
 	}
 	
 	/**

@@ -10,8 +10,6 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
-import engine.utils.Logger;
-
 /**
  * An OpenGL window that the user sees when interacting with the game
  * 
@@ -19,8 +17,6 @@ import engine.utils.Logger;
  *
  */
 public class OpenGLWindow extends Window {
-	private static final Logger _log = new Logger("OpenGLWindow", Logger.LoggerLevel.DEBUG);
-
 	// Store references to callbacks to prevent java from doing any
 	// garbage collection on them while they are still in use
 	private GLFWErrorCallback _errorCallback;
@@ -187,7 +183,6 @@ public class OpenGLWindow extends Window {
 		// Set a scale that we can use to get the actual width/height
 		if (actualWidth[0] != setWidth && setWidth != 0) {
 			this.sizeScale = actualWidth[0] / setWidth;
-			_log.warn("OS window resolution is different by a scale of %.2f", sizeScale);
 		}
 	}
 }

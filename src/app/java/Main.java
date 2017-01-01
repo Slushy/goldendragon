@@ -1,6 +1,7 @@
 
 
 import engine.GameEngine;
+import engine.utils.Debug;
 import game.GameInitializer;
 
 /*
@@ -15,7 +16,9 @@ public class Main {
 	 * Entry point 
 	 */
 	public static void main(String[] args) {
-		System.out.println("Starting Game Engine...");
+		Debug.ENABLED = true;
+		Debug.log("Starting Game Engine...");
+		
 		GameEngine engine = null;
 		try {
 			GameEngine.EngineOptions options = new GameEngine.EngineOptions();
@@ -34,6 +37,6 @@ public class Main {
 			}
 		}
 		
-		System.out.println("Stopping Game Engine...");
+		Debug.log("Stopping Game Engine...");
 	}
 }
