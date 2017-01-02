@@ -7,17 +7,29 @@ package engine.common;
  *
  */
 public abstract class Entity {
+	private static long TOTAL_ENTITIES = 0;
+	
+	private final long _instanceId = TOTAL_ENTITIES++;
+	
 	private String _name = "Entity";
 	private boolean _isDisposed = false;
 	
 	public Entity(String name) {
 		this._name = name;
 	}
+	
 	/**
 	 * @return name of the entity
 	 */
-	public String getName() {
+	public final String getName() {
 		return _name;
+	}
+	
+	/**
+	 * @return unique instanceID of this entity
+	 */
+	public final long getInstanceId() {
+		return _instanceId;
 	}
 
 	/**
@@ -26,7 +38,7 @@ public abstract class Entity {
 	 * @param name
 	 *            name to be referenced by within a lookup table
 	 */
-	public void setName(String name) {
+	public final void setName(String name) {
 		this._name = name;
 	}
 	
@@ -48,5 +60,5 @@ public abstract class Entity {
 	/**
 	 * To be implemented by inherited classes, called when it is time to destroy the entity
 	 */
-	protected abstract void onDispose();
+	protected void onDispose() {}
 }

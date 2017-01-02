@@ -100,7 +100,7 @@ public class Scene {
 	 * 
 	 * @throws Exception
 	 */
-	public void init() throws Exception {
+	protected void init() throws Exception {
 		_sceneRenderer.init(this);
 		// Initializes any components that require it
 		_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
@@ -142,9 +142,7 @@ public class Scene {
 	public void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		_sceneRenderer.preRender();
-
 		// Renders the necessary components
-		_eventDispatcher.dispatchEvent(ExecutionEvent.RENDER);
 		_sceneRenderer.render();
 		_sceneRenderer.endRender();
 	}

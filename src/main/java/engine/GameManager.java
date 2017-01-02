@@ -4,7 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import engine.resources.RequestManager;
 import engine.scenes.Scene;
-import engine.scenes.SceneManager;
+import engine.scenes.SceneHandler;
+import engine.scenes.SceneLoader;
+import engine.utils.Debug;
 
 /**
  * This private game manager is used by the engine to initialize, update, and
@@ -14,8 +16,13 @@ import engine.scenes.SceneManager;
  *
  */
 class GameManager {
+	/**
+	 * Quick way of detecting state, definitely not permanent
+	 */
+	public static GameState STATE = GameState.NOT_STARTED;
+
 	private IGameInitializer _gameInitializer;
-	private GameLoadedStatus _loadStatus = GameLoadedStatus.LOADING;
+	private String _firstScene;
 
 	/**
 	 * Constructs a game manager
@@ -25,8 +32,6 @@ class GameManager {
 	 */
 	public GameManager(IGameInitializer gameInitializer) {
 		this._gameInitializer = gameInitializer;
-		// Sets the scene loaders
-		SceneManager.Instance.setSceneLoaders(gameInitializer.getSceneLoaders());
 	}
 
 	/**
@@ -35,16 +40,19 @@ class GameManager {
 	 * 
 	 * @throws Exception
 	 */
-	public void init() throws Exception {
-		// First thing is first, load splash screen
-		Scene appSplash = _gameInitializer.getApplicationSplash();
-		if (appSplash != null) {
-			// TODO: Show app splash
-		}
+	protected void init() throws Exception {
+		STATE = GameState.INITIALIZING;
 
-		// Begin loading game in separate thread
-		// RequestManager.makeResourceRequest(this::loadGame);
-		this.loadGame();
+		// Initialize our graphics first
+		GraphicsManager.init();
+
+		// Initialize the scene manager
+		SceneLoader[] sceneLoaders = _gameInitializer.getSceneLoaders();
+		this._firstScene = sceneLoaders[0].sceneName;
+		SceneManager.init(sceneLoaders);
+
+		// We are initialized, lets begin loading
+		this.load();
 	}
 
 	/**
@@ -53,17 +61,9 @@ class GameManager {
 	 * @param display
 	 * @throws Exception
 	 */
-	public void update() throws Exception {
-		// Check if there was an error loading
-		if (_loadStatus == GameLoadedStatus.ERROR) {
-			throw new Exception("The game failed to load: ", _loadStatus.getException());
-		}
-
-		// Check the scene manager if we should show a new scene
-		if (SceneManager.Instance.newSceneReady()) {
-			SceneManager.Instance.switchToLoadedScene(true);
-			GameDisplay.updateCameraProjectionMatrix();
-		}
+	protected void update() throws Exception {
+		// Checks the game state before any execution
+		this.checkGameState();
 
 		// Updates the active scene
 		Scene activeScene = SceneManager.getActiveScene();
@@ -82,7 +82,7 @@ class GameManager {
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-	public void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+	protected void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 
 		// Renders the currently active scene
@@ -92,66 +92,75 @@ class GameManager {
 		}
 	}
 
+	/*
+	 * Loads and shows the application splash and then begins to load any other
+	 * game resources
+	 */
+	private void load() {
+		STATE = GameState.LOADING_SPLASH;
+
+		// First thing is first, load splash screen (Should be synchronous so we
+		// can wait on it)
+		SceneLoader appSplashLoader = _gameInitializer.getApplicationSplashLoader();
+		if (appSplashLoader != null) {
+			// TODO: Show app splash
+		}
+
+		// Begin loading game resources in separate thread
+		STATE = GameState.LOADING_RESOURCES;
+		RequestManager.makeResourceRequest(() -> {
+			try {
+				_gameInitializer.loadResourcesAsync();
+
+				// Wait for all additional resource and graphics requests to
+				// complete before we begin loading the scene
+				RequestManager.waitForAllRequestsOnSeparateThread(() -> {
+					STATE = GameState.LOADING_RESOURCES_COMPLETE;
+				});
+
+			} catch (Exception e) {
+				STATE = GameState.FAILURE;
+				Debug.error("Error loading game resources");
+				e.printStackTrace();
+			}
+		});
+	}
+
+	/*
+	 * Checks the game state every update frame. TODO: Move to a game state
+	 * manager eventually, only here temporarily.
+	 */
+	private void checkGameState() throws Exception {
+		switch (STATE) {
+		case FAILURE:
+			throw new Exception("The game failed to load: ", STATE.Exception());
+		case LOADING_RESOURCES_COMPLETE:
+			STATE = GameState.LOADING_FIRST_SCENE;
+			SceneManager.loadSceneAsync(_firstScene, (success) -> {
+				if (success) {
+					STATE = GameState.FIRST_SCENE_READY;
+					Debug.log("Scene is ready");
+				}
+				else {
+					STATE = GameState.FAILURE;
+					STATE.setException(new Exception("Couldn't load game scene so just saying we failed"));
+				}
+			});
+			break;
+		case FIRST_SCENE_READY:
+			STATE = GameState.RUNNING;
+			SceneManager.switchToNewScene();
+			GameDisplay.updateCameraProjectionMatrix();
+			break;
+		default:
+			break;
+		}
+	}
+
 	/**
 	 * Done with the game, dispose any state
 	 */
-	public void dispose() {
-		SceneManager.Instance.dispose();
-	}
-
-	/*
-	 * Begins loading the game's resources and the first scene
-	 */
-	private void loadGame() {
-		try {
-			// Load game resources
-			_gameInitializer.loadResources();
-			// Begin loading next scene
-			SceneManager.loadNextScene();
-
-			// Done
-			this._loadStatus = GameLoadedStatus.DONE;
-		} catch (Exception e) {
-			this._loadStatus = GameLoadedStatus.ERROR;
-			this._loadStatus.setException(e);
-		} finally {
-			this.loadingComplete();
-		}
-	}
-
-	/*
-	 * Called when game loading has been finished
-	 */
-	private void loadingComplete() {
-		this._gameInitializer = null;
-	}
-
-	/**
-	 * Temporary enum to determine the game loaded status, eventually we will
-	 * have a full state machine to determine this globally.
-	 * 
-	 * @author Brandon Porter
-	 *
-	 */
-	private static enum GameLoadedStatus {
-		LOADING, DONE, ERROR;
-
-		private Exception _ex;
-
-		/**
-		 * @return the exception caused during game loading
-		 */
-		public Exception getException() {
-			return _ex;
-		}
-
-		/**
-		 * Sets the loading exception
-		 * 
-		 * @param ex
-		 */
-		public void setException(Exception ex) {
-			this._ex = ex;
-		}
+	protected void dispose() {
+		SceneManager.dispose();
 	}
 }

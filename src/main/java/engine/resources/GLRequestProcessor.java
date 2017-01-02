@@ -20,6 +20,13 @@ final class GLRequestProcessor implements IRequestProcessor {
 	protected GLRequestProcessor() {
 		this._timer = TimeManager.CreateTimer(MAX_TIME_MS);
 	}
+	
+	/**
+	 * @return whether or not we have graphic requests to complete
+	 */
+	public boolean hasOutstandingRequests() {
+		return !_requestQueue.isEmpty();
+	}
 
 	/**
 	 * Enqueues a new GL request at the end of the queue which will be executed

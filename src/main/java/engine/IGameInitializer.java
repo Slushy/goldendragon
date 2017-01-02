@@ -1,6 +1,5 @@
 package engine;
 
-import engine.scenes.Scene;
 import engine.scenes.SceneLoader;
 
 /**
@@ -14,7 +13,7 @@ public interface IGameInitializer {
 	 * Called by the engine to load the game resources (in a separate thread)
 	 * @throws Exception 
 	 */
-	void loadResources() throws Exception;
+	void loadResourcesAsync() throws Exception;
 
 	/**
 	 * @return all the scene-specific loaders for the game
@@ -24,7 +23,7 @@ public interface IGameInitializer {
 	/**
 	 * @return the splash to show at application launch, or none to skip
 	 */
-	default Scene getApplicationSplash() {
+	default SceneLoader getApplicationSplashLoader() {
 		return null;
 	}
 }

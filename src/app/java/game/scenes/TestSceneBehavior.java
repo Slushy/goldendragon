@@ -32,10 +32,8 @@ public class TestSceneBehavior extends Behavior {
 	private Vector2f _cameraRot = new Vector2f();
 
 	private List<GameObject> _gameObjects = new ArrayList<>();
-	private Mesh _mesh;
-
-	private boolean _addNewObject = false;
-
+	private GameObject _cube;
+	
 	/**
 	 * Constructs a new behavior for the Test Scene
 	 */
@@ -43,11 +41,10 @@ public class TestSceneBehavior extends Behavior {
 		super(TestSceneLoader.NAME);
 	}
 
+	@SuppressWarnings("unused")
 	private void init() {
-		GameObject cube = this.getScene().findGameObject("Cube");
-		_gameObjects.add(cube);
-
-		this._mesh = cube.getComponentByType(MeshRenderer.class).getMesh();
+		this._cube = this.getScene().findGameObject("Cube");
+		_gameObjects.add(_cube);
 	}
 
 	/**
@@ -103,7 +100,8 @@ public class TestSceneBehavior extends Behavior {
 		// Add new game object
 		if (Input.keyDown(Key.SPACE)) {
 			GameObject cube = new GameObject("Cube");
-			cube.addComponent(new MeshRenderer(_mesh));
+			MeshRenderer rend = _cube.getComponentByType(MeshRenderer.class);
+			cube.addComponent(new MeshRenderer(rend.getMesh(), rend.getMaterial()));
 
 			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
 			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);

@@ -11,8 +11,9 @@ import org.lwjgl.opengl.GL30;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import engine.graphics.geometry.Texture;
-import engine.graphics.geometry.Texture.TextureOptions;
+import engine.resources.RequestManager;
 import engine.resources.ResourceManager;
+import engine.utils.Debug;
 
 /**
  * Parses texture files of supported types and loads them into memory as new
@@ -35,7 +36,7 @@ public class TextureLoader {
 	 * @param fileName
 	 *            file name of the texture
 	 * @return new texture object
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static Texture loadTexture(String fileName) throws Exception {
 		return loadTexture(fileName, Texture.TextureOptions.Default);
@@ -49,7 +50,7 @@ public class TextureLoader {
 	 * @param textureOptions
 	 *            the additional options to load the texture with
 	 * @return new texture object
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static Texture loadTexture(String fileName, Texture.TextureOptions textureOptions) throws Exception {
 		Texture texture = new Texture(fileName);
@@ -62,7 +63,7 @@ public class TextureLoader {
 	 * 
 	 * @param texture
 	 *            the existing texture object
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static void loadTexture(Texture texture) throws Exception {
 		loadTexture(texture, Texture.TextureOptions.Default);
@@ -75,10 +76,10 @@ public class TextureLoader {
 	 *            the existing texture object
 	 * @param textureOptions
 	 *            the additional options to load the texture with
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static void loadTexture(Texture texture, Texture.TextureOptions textureOptions) throws Exception {
-		TextureData data = null;
+		TextureData data; // Must be
 
 		// Get the path to the texture file
 		String fileName = texture.getFileName();
@@ -96,9 +97,13 @@ public class TextureLoader {
 		texture.setWidth(data.getWidth());
 		texture.setHeight(data.getHeight());
 
-		// This needs to be in separate thread
-		int id = registerTextureWithOpenGL(data, textureOptions);
-		texture.setId(id);
+		// This needs to be on main thread
+		boolean wasImmediate = RequestManager.makeGLRequestImmediate(() -> {
+			int id = registerTextureWithOpenGL(data, textureOptions);
+			texture.setTextureId(id);
+		});
+		
+		Debug.log("GL request to register texture was immediate: " + wasImmediate);
 	}
 
 	/*
@@ -118,6 +123,10 @@ public class TextureLoader {
 		return new TextureData(decoder.getWidth(), decoder.getHeight(), buffer);
 	}
 
+	/*
+	 * Registers the texture with opengl. [WARNING] - This MUST be called from
+	 * the main thread.
+	 */
 	private static int registerTextureWithOpenGL(TextureData data, Texture.TextureOptions options) {
 		// Create and bind the new texture
 		int textureId = GL11.glGenTextures();
@@ -128,8 +137,8 @@ public class TextureLoader {
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
 		// Load texture data to VRAM
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, data.getWidth(), data.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-				data.getByteBuffer());
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, data.getWidth(), data.getHeight(), 0, GL11.GL_RGBA,
+				GL11.GL_UNSIGNED_BYTE, data.getByteBuffer());
 
 		// Generate a mipmap for texture
 		if (options.useMipmap) {
@@ -147,7 +156,7 @@ public class TextureLoader {
 		// Set level of detail bias
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, options.levelOfDetailBias);
 
-		// Unbind the texture
+		// Unbind and return the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		return textureId;
 	}

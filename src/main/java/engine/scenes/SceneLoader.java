@@ -29,10 +29,13 @@ public abstract class SceneLoader {
 	}
 
 	/**
-	 * @return a scene with the loaded game objects
+	 * Loads the scene by setting the initial game objects from the dynamic game
+	 * object loader
+	 * 
+	 * @return whether or not the scene was loaded successfully
 	 * @throws Exception
 	 */
-	protected Scene loadScene() throws Exception {
+	protected boolean loadScene() throws Exception {
 		// clear the existing scene if it exists
 		clearScene();
 
@@ -44,14 +47,12 @@ public abstract class SceneLoader {
 		for (GameObject obj : loadGameObjectsForScene())
 			_scene.addGameObject(obj);
 
-		return _scene;
-	}
+		/**
+		 * Initializes the scene
+		 */
+		_scene.init();
 
-	/**
-	 * @return true if the scene is already loaded and ready
-	 */
-	protected boolean sceneIsLoaded() {
-		return _scene != null && _scene.isReady();
+		return _scene.isReady();
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package engine;
 
 import engine.scenes.Scene;
-import engine.scenes.SceneManager;
 
 /**
  * Our game display that represents a game window and graphics controller

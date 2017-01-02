@@ -1,5 +1,6 @@
 package game;
 
+import engine.graphics.geometry.Mesh;
 import engine.graphics.geometry.Texture;
 
 /**
@@ -28,6 +29,24 @@ public final class GameResources {
 
 		// Static class
 		private Textures() {
+		}
+	}
+
+	/**
+	 * Statis class to reference the game meshes
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	public static final class Meshes {
+
+		/**
+		 * The 6 sided cube
+		 */
+		public static final Mesh CUBE = new Mesh("cube.obj");
+
+		// Static class
+		private Meshes() {
 		}
 	}
 }

@@ -7,5 +7,5 @@ package engine.graphics;
  *
  */
 public enum ShaderType {
-	Scene
+	STANDARD
 }

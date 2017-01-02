@@ -2,15 +2,15 @@ package engine.graphics.geometry;
 
 import org.lwjgl.opengl.GL11;
 
+import engine.common.Entity;
+
 /**
  * Represents a texture being stored in graphics VRAM
  * 
  * @author Brandon
  *
  */
-public class Texture {
-	private final String _fileName;
-
+public class Texture extends Entity {
 	private int _id = -1;
 	private int _width;
 	private int _height;
@@ -19,9 +19,10 @@ public class Texture {
 	 * Constructs a new texture with the filename
 	 * 
 	 * @param fileName
+	 *            the filename (including extension) of the texture
 	 */
 	public Texture(String fileName) {
-		this._fileName = fileName;
+		super(fileName);
 	}
 
 	/**
@@ -31,20 +32,20 @@ public class Texture {
 	 * @return true if texture is loaded and ready, false otherwise
 	 */
 	public final boolean isLoaded() {
-		return getId() >= 0;
+		return getTextureId() >= 0;
 	}
 
 	/**
 	 * @return the texture file name
 	 */
 	public String getFileName() {
-		return _fileName;
+		return getName();
 	}
 
 	/**
 	 * @return OpenGL reference id for the texture
 	 */
-	public int getId() {
+	public int getTextureId() {
 		return _id;
 	}
 
@@ -54,7 +55,7 @@ public class Texture {
 	 * @param id
 	 *            the unique id for the graphics library to reference
 	 */
-	public void setId(int id) {
+	public void setTextureId(int id) {
 		this._id = id;
 	}
 
@@ -95,8 +96,12 @@ public class Texture {
 	/**
 	 * Removes texture from graphics vram
 	 */
-	public void dispose() {
-		// GL11.glDeleteTextures(_id);
+	@Override
+	protected void onDispose() {
+		if (isLoaded())
+			GL11.glDeleteTextures(_id);
+
+		super.onDispose();
 	}
 
 	/**

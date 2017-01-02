@@ -14,9 +14,20 @@ final class RequestProcessor extends Thread implements IRequestProcessor {
 
 	/**
 	 * Constructs a request processor thread and starts it
+	 * 
+	 * @param threadName
+	 *            the name of the thread this processor will be running on 
 	 */
-	protected RequestProcessor() {
+	protected RequestProcessor(String threadName) {
+		this.setName(threadName);
 		this.start();
+	}
+	
+	/**
+	 * @return whether or not we have requests to complete
+	 */
+	public boolean hasOutstandingRequests() {
+		return !_requestQueue.isEmpty();
 	}
 
 	/**
@@ -40,7 +51,7 @@ final class RequestProcessor extends Thread implements IRequestProcessor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a new request to the request queue
 	 * 

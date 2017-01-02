@@ -13,6 +13,8 @@ import engine.resources.RequestManager;
  *
  */
 public class GameEngine {
+	public static final String MAIN_THREAD = Thread.currentThread().getName();
+
 	private final GameManager _gameManager;
 	private final TimeManager _timer;
 	private final EngineOptions _options;
@@ -102,7 +104,7 @@ public class GameEngine {
 		_gameManager.dispose();
 		GameDisplay.dispose();
 
-		// Finish remaining OpenGL requests and disposes
+		// Finish remaining any remaining requests and disposes
 		RequestManager.dispose();
 	}
 
@@ -117,6 +119,7 @@ public class GameEngine {
 		// Show and clear the screen
 		GameDisplay.show();
 		GameDisplay.getGraphicsController().clearColor(0, 0, 0, 0);
+
 		// Init the game timer
 		_timer.init();
 		// Init your game
@@ -146,7 +149,9 @@ public class GameEngine {
 				// TODO: Fixed Update
 			}
 
+			// Normal update (once per frame)
 			update();
+
 			// 3. Render game
 			render();
 

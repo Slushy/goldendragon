@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import engine.common.components.Transform;
+import engine.graphics.components.MeshRenderer;
 import engine.scenes.Scene;
 
 /**
@@ -18,6 +19,7 @@ public class GameObject extends Entity {
 	// Special components that can be referenced individually
 	private final Transform _transform = new Transform();
 
+	private MeshRenderer _renderer = null;
 	private Scene _scene = null;
 
 	/**
@@ -44,6 +46,10 @@ public class GameObject extends Entity {
 		return _scene;
 	}
 
+	public MeshRenderer getRenderer() {
+		return _renderer;
+	}
+
 	/**
 	 * Constructs a new game object entity with the specified name
 	 * 
@@ -63,6 +69,10 @@ public class GameObject extends Entity {
 	 *            component to attach to this game object
 	 */
 	public void addComponent(Component component) {
+		// Throw exception later if renderer exists
+		if (component instanceof MeshRenderer)
+			this._renderer = (MeshRenderer) component;
+
 		_components.add(component);
 		component.setGameObject(this);
 	}

@@ -1,132 +1,77 @@
 package engine.graphics.geometry;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
+import engine.common.Entity;
 
 /**
- * Represents our geometric vertices of a game object
+ * Represents the geometric vertices for a game object
  * 
  * @author brandon.porter
  *
  */
-public class Mesh {
+public class Mesh extends Entity {
 	private VAO _vao;
-	private int _vertexCount;
-
-	private Material _material = new Material();
+	private int _vertexCount = -1;
 
 	/**
-	 * Construct a new mesh
+	 * Constructs a new mesh with the filename
 	 * 
-	 * @param vertexPositions
-	 * @param textureCoords
-	 * @param indices
-	 * @throws Exception
+	 * @param fileName
+	 *            the fileName (including extension) of the mesh
 	 */
-	public Mesh(MeshVBOData vboData) throws Exception {
-		// We'll do this from here for now
-		init(vboData);
+	public Mesh(String fileName) {
+		super(fileName);
 	}
 
 	/**
-	 * Initializes the Mesh (must be done on main thread)
+	 * A mesh is loaded once all of its vbo data (positions, texture coords,
+	 * vertices, etc.) have been loaded and stored within this mesh instance
 	 * 
-	 * @throws Exception
+	 * @return true if mesh is loaded and ready, false otherwise
 	 */
-	public void init(MeshVBOData vboData) throws Exception {
-		this._vertexCount = vboData.indices.length;
-
-		// Create and bind the VAO
-		this._vao = new VAO();
-		_vao.use();
-
-		// Bind all VBOS
-		_vao.bindVBO(VBO.POSITION, vboData.vertexPositions);
-		_vao.bindVBO(VBO.TEXTURE, vboData.textureCoords);
-		_vao.bindVBO(VBO.INDEX, vboData.indices);
-
-		// Done binding
-		_vao.done();
+	public final boolean isLoaded() {
+		return _vao != null;
 	}
 
 	/**
-	 * First disposes any existing material before setting the new one
+	 * @return the mesh file name
+	 */
+	public String getFileName() {
+		return getName();
+	}
+
+	/**
+	 * @return the number of vertices for this mesh
+	 */
+	public int getVertexCount() {
+		return _vertexCount;
+	}
+
+	/**
+	 * @return the vao for the mesh
+	 */
+	public VAO getVAO() {
+		return _vao;
+	}
+
+	/**
+	 * Sets the vbo data for this mesh, making it officially loaded and ready
+	 * (if not null)
 	 * 
-	 * @param material
-	 *            material to display on mesh, or null to clear
+	 * @param vao
+	 *            the vertex array object containing all the loaded vbos
+	 * @param vertexCount
+	 *            the number of vertexes this mesh has
 	 */
-	public void setMaterial(Material material) {
-		if (material == null) {
-			material = new Material();
-		}
-		_material.dispose();
-		this._material = material;
-	}
-
-	/**
-	 * @return copy of the current material of the mesh
-	 */
-	public Material cloneMaterial() {
-		return new Material(_material);
-	}
-
-	public Material getMaterial() {
-		return _material;
-	}
-
-	/**
-	 * Renders our mesh object
-	 */
-	public void render() {
-		_vao.use();
-
-		// set active material
-		if (_material.hasTexture()) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, _material.getTexture().getId());
-		}
-
-		// Draw game object
-		GL11.glDrawElements(GL11.GL_TRIANGLES, _vertexCount, GL11.GL_UNSIGNED_INT, 0);
-
-		// Clear active material
-		if (_material.hasTexture()) {
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		}
-
-		_vao.done();
+	public void setVAO(VAO vao, int vertexCount) {
+		this._vao = vao;
+		this._vertexCount = vertexCount;
 	}
 
 	/**
 	 * Disposes VAO/VBOS and any other entities relating to this mesh
 	 */
-	public void dispose() {
-		_material.dispose();
+	@Override
+	protected void onDispose() {
 		_vao.dispose();
-	}
-
-	/**
-	 * Used to hold mesh vertices data while creating a new mesh
-	 * 
-	 * @author Brandon Porter
-	 *
-	 */
-	public static class MeshVBOData {
-		public final float[] vertexPositions;
-		public final float[] textureCoords;
-		public final int[] indices;
-
-		/**
-		 * Constructs a new mesh vbo data wrapper
-		 * 
-		 * @param vertexPositions
-		 * @param textureCoords
-		 * @param indices
-		 */
-		public MeshVBOData(float[] vertexPositions, float[] textureCoords, int[] indices) {
-			this.vertexPositions = vertexPositions;
-			this.textureCoords = textureCoords;
-			this.indices = indices;
-		}
 	}
 }
