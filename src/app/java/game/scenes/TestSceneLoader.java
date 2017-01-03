@@ -8,7 +8,6 @@ import engine.common.GameObject;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
-import engine.resources.loaders.TextureLoader;
 import engine.scenes.SceneLoader;
 import game.GameResources;
 
@@ -43,7 +42,7 @@ public class TestSceneLoader extends SceneLoader {
 		cube.addComponent(new MeshRenderer(mesh, mat));
 		cube.getTransform().setPosZ(-5);
 		
-		for (int i = 0; i < 65000; i++) {
+		for (int i = 0; i < 5; i++) {
 			// Create game object with mesh renderer
 			GameObject cube2 = new GameObject("Cube");
 			cube2.addComponent(new MeshRenderer(mesh, mat));
@@ -52,10 +51,6 @@ public class TestSceneLoader extends SceneLoader {
 			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
 			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
 			cube2.getTransform().setPosition(randomX, randomY, randomZ);
-			
-			if (i % 10000 == 0) {
-				Thread.sleep(1000);
-			}
 			
 			gameObjects.add(cube2);
 		}

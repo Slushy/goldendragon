@@ -8,12 +8,17 @@ import engine.scenes.Scene;
  * @author brandon.porter
  *
  */
-public final class GameDisplay {
-	private static Window _window;
-	private static GraphicsController _graphicsController;
+public class Display {
+	/**
+	 * The main display singleton
+	 */
+	public static final Display MAIN = new Display();
+	
+	private Window _window;
+	private GraphicsController _graphicsController;
 
-	// Static class
-	private GameDisplay() {
+	// Singleton class
+	private Display() {
 	}
 
 	/**
@@ -30,11 +35,11 @@ public final class GameDisplay {
 	 * @param graphicsOptions
 	 *            additional options to initialize the graphics
 	 */
-	protected static void create(String title, int width, int height, Window.WindowOptions windowOptions,
+	protected void init(String title, int width, int height, Window.WindowOptions windowOptions,
 			GraphicsController.GraphicsOptions graphicsOptions) {
 		_window = new OpenGLWindow(title, width, height, windowOptions);
 		_window.init();
-		_window.setWindowResizedCallback(GameDisplay::onWindowResized);
+		_window.setWindowResizedCallback(this::onWindowResized);
 
 		_graphicsController = new OpenGLGraphicsController(graphicsOptions);
 		_graphicsController.init();
@@ -43,14 +48,14 @@ public final class GameDisplay {
 	/**
 	 * Shows the window
 	 */
-	public static void show() {
+	public void show() {
 		_window.show();
 	}
 
 	/**
 	 * Hides the window
 	 */
-	public static void hide() {
+	public void hide() {
 		_window.hide();
 	}
 
@@ -59,7 +64,7 @@ public final class GameDisplay {
 	 * 
 	 * @return true/false if window resized
 	 */
-	public static boolean hasResized() {
+	public boolean hasResized() {
 		boolean hasResized = _window.hasResized();
 		_window.setResized(false);
 		return hasResized;
@@ -68,14 +73,14 @@ public final class GameDisplay {
 	/**
 	 * Closes the window and exits the game
 	 */
-	public static void closeAndExit() {
+	public void closeAndExit() {
 		_window.close();
 	}
 
 	/**
 	 * Helper function to update the graphics viewport to the size of the window
 	 */
-	public static void fixViewportToWindow() {
+	public void fixViewportToWindow() {
 		getGraphicsController().setViewport(0, 0, _window.getWidthScaled(), _window.getHeightScaled());
 	}
 
@@ -85,7 +90,7 @@ public final class GameDisplay {
 	 * @param newTitle
 	 *            title to be displayed on the display window
 	 */
-	public static void setNewTitle(String newTitle) {
+	public void setNewTitle(String newTitle) {
 		_window.setTitle(newTitle);
 	}
 
@@ -94,7 +99,7 @@ public final class GameDisplay {
 	 * 
 	 * @return graphics controller
 	 */
-	public static GraphicsController getGraphicsController() {
+	public GraphicsController getGraphicsController() {
 		return _graphicsController;
 	}
 
@@ -102,7 +107,7 @@ public final class GameDisplay {
 	 * @return the window associated to this display. Protected to be used for
 	 *         internal purposes only
 	 */
-	protected static Window getWindow() {
+	protected Window getWindow() {
 		return _window;
 	}
 
@@ -110,14 +115,14 @@ public final class GameDisplay {
 	 * Renders the window, continually called from the game loop several times a
 	 * second
 	 */
-	protected static void refresh() {
+	protected void refresh() {
 		_window.refresh();
 	}
 
 	/**
 	 * Updates the camera projection to the aspect ratio change of the window
 	 */
-	protected static void updateCameraProjectionMatrix() {
+	protected void updateCameraProjectionMatrix() {
 		Scene activeScene = SceneManager.getActiveScene();
 		if (activeScene != null && activeScene.getCamera() != null) {
 			float aspectRatio = (float) _window.getWidth() / (float) _window.getHeight();
@@ -131,21 +136,21 @@ public final class GameDisplay {
 	 * @return true or false if the window is ready to close (e.g if the user
 	 *         clicks x on the game)
 	 */
-	protected static boolean shouldClose() {
+	protected boolean shouldClose() {
 		return _window.shouldClose();
 	}
 
 	/**
 	 * Cleans up and destroys the game display
 	 */
-	protected static void dispose() {
+	protected void dispose() {
 		_window.dispose();
 	}
 
 	/**
 	 * Callback called when the window has been resized
 	 */
-	private static void onWindowResized() {
+	private void onWindowResized() {
 		fixViewportToWindow();
 		updateCameraProjectionMatrix();
 	}

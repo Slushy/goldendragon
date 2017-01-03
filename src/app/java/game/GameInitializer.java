@@ -1,13 +1,8 @@
 package game;
 
 import engine.IGameInitializer;
-import engine.common.GameObject;
-import engine.graphics.StandardShaderProgram;
-import engine.graphics.components.MeshRenderer;
-import engine.resources.RequestManager;
 import engine.resources.loaders.MeshLoader;
 import engine.resources.loaders.TextureLoader;
-import engine.scenes.Scene;
 import engine.scenes.SceneLoader;
 import engine.utils.Debug;
 import game.scenes.TestSceneLoader;
@@ -19,25 +14,9 @@ import game.scenes.TestSceneLoader;
  *
  */
 public class GameInitializer implements IGameInitializer {
-	private boolean gameIsReady = false;
-
 	@Override
 	public SceneLoader getApplicationSplashLoader() {
-		// Scene splash = new Scene("Test");
-		//
-		// try {
-		// MeshLoader.loadMesh(GameResources.Meshes.CUBE);
-		// TextureLoader.loadTexture(GameResources.Textures.GRASS_BLOCK);
-		// } catch (Exception e) {
-		// Debug.error("Error trying to load application splash");
-		// e.printStackTrace();
-		// }
-		//
-		// GameObject cube = new GameObject("Cube");
-		// cube.addComponent(new MeshRenderer(mesh, mat));
-		// cube.getTransform().setPosZ(-5);
-		//
-		// return splash;
+		// return new SplashLoader();
 		return null;
 	}
 
@@ -47,7 +26,7 @@ public class GameInitializer implements IGameInitializer {
 	 * @throws Exception
 	 */
 	@Override
-	public void loadResourcesAsync() throws Exception {
+	public void loadResources() throws Exception {
 		Debug.log("Begin loading resources");
 
 		TextureLoader.loadTexture(GameResources.Textures.GRASS_BLOCK);
@@ -60,5 +39,10 @@ public class GameInitializer implements IGameInitializer {
 	@Override
 	public SceneLoader[] getSceneLoaders() {
 		return new SceneLoader[] { new TestSceneLoader() };
+	}
+
+	@Override
+	public void dispose() {
+		// TODO: resource disposing
 	}
 }

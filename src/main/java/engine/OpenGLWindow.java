@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -68,10 +69,16 @@ public class OpenGLWindow extends Window {
 
 	@Override
 	public void dispose() {
+		// Destroy window and free window callbacks
 		long windowId = getWindowId();
 		if (windowId != NULL) {
 			glfwDestroyWindow(windowId);
+			Callbacks.glfwFreeCallbacks(windowId);
 		}
+		
+		// Terminate GLFW & free error callback
+		glfwTerminate();
+		_errorCallback.free();
 	}
 
 	@Override

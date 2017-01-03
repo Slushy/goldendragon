@@ -11,7 +11,11 @@ import org.lwjgl.BufferUtils;
  * @author brandon.porter
  *
  */
-public class Utils {
+public final class Utils {
+
+	// Static class
+	private Utils() {
+	}
 
 	/**
 	 * Loads an array of floats into a float buffer

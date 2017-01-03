@@ -26,7 +26,7 @@ public class Main {
 			options.graphicsOptions.polygonMode = false;
 			
 			engine = new GameEngine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, options);
-			engine.initializeAndRun();
+			engine.run();
 		} catch (Exception e) {
 			// TODO: Catch a specific exception, possibly implement a restart
 			e.printStackTrace();

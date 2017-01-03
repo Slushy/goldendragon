@@ -53,6 +53,9 @@ final class EventDispatcher {
 	public void dispatchEvent(ExecutionEvent event) {
 		for (ComponentMethod compMethod : _subscribedComponents.get(event)) {
 			Component comp = compMethod.component;
+			// For now we are just going to continue, but
+			// we should eventually figure out how to remove this
+			// effectively
 			if (comp.isDisposed())
 				continue;
 
@@ -96,8 +99,7 @@ final class EventDispatcher {
 	 *
 	 */
 	public static enum ExecutionEvent {
-		INITIALIZE(1, "init"), ON_FOREGROUND(2, "onForeground"), UPDATE(4, "update"), RENDER(8,
-				"render"), ON_BACKGROUND(16, "onBackground");
+		INITIALIZE(1, "init"), ON_FOREGROUND(2, "onForeground"), UPDATE(4, "update");
 
 		private final int _bitValue;
 		private final String _methodName;

@@ -12,11 +12,7 @@ import engine.common.GameObject;
 import engine.common.components.Behavior;
 import engine.common.gameObjects.Camera;
 import engine.graphics.components.MeshRenderer;
-import engine.graphics.geometry.Mesh;
-import engine.input.InputHandler;
 import engine.input.Key;
-import engine.input.KeyboardInput;
-import engine.scenes.Scene;
 
 /**
  * A behavior that controls the Test Scene script
@@ -84,6 +80,7 @@ public class TestSceneBehavior extends Behavior {
 			_cameraRot.x = 1;
 	}
 
+	@SuppressWarnings("unused")
 	private void update() {
 		processInput();
 

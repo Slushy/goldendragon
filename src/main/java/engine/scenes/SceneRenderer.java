@@ -4,67 +4,54 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import engine.GameDisplay;
+import engine.Display;
 import engine.common.gameObjects.Camera;
+import engine.graphics.GraphicsManager;
+import engine.graphics.ShaderType;
 import engine.graphics.StandardShaderProgram;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
-import engine.utils.Debug;
 import engine.utils.math.Transformation;
 
 /**
- * Our renderer, TODO: Abstract out to separate class to be inherited by
- * specific renderers
+ * The scene renderer is the main renderer to render our scene game objects
  * 
  * @author brandon.porter
  *
  */
 public class SceneRenderer {
-	private Scene _scene;
-	private StandardShaderProgram _shaderProgram;
+	private static SceneRenderer _instance = null;
+
+	/**
+	 * @return current scenes renderer
+	 */
+	protected static SceneRenderer instance() {
+		if (_instance == null)
+			_instance = new SceneRenderer();
+		return _instance;
+	}
 
 	private final Map<Long, LinkedList<Long>> _meshMaterials = new LinkedHashMap<>();
 	private final Map<Long, LinkedList<MeshRenderer>> _materialRenderers = new LinkedHashMap<>();
 
-	/**
-	 * Initializes the renderer
-	 * 
-	 * @param _scene
-	 *            the scene holding this renderer
-	 * @throws Exception
-	 */
-	public void init(Scene scene) throws Exception {
-		this._scene = scene;
-		this._shaderProgram = StandardShaderProgram.Instance;
+	// Singleton class
+	private SceneRenderer() {
 	}
 
 	/**
-	 * Adds a mesh to the scene rendering process
-	 * 
-	 * @param mesh
-	 *            the mesh to render
-	 * @param gameObject
-	 *            the attached game object
+	 * Clears the stored objects for new scene
 	 */
-	// public void addMesh(Mesh mesh, GameObject gameObject) {
-	// // For better performance, we use the same mesh for many entities just
-	// // with different transformation properties
-	// LinkedList<GameObject> gameObjects = _drawableEntities.get(mesh);
-	// if (gameObjects == null) {
-	// gameObjects = new LinkedList<GameObject>();
-	// _drawableEntities.put(mesh, gameObjects);
-	// }
-	//
-	// // Adds the mesh's game object to the end of the list
-	// gameObjects.add(gameObject);
-	// }
+	public void reset() {
+		_meshMaterials.clear();
+		_materialRenderers.clear();
+	}
 
 	/**
 	 * Adds renderer to scene
 	 * 
 	 * @param renderer
 	 */
-	public void rendererAddedToScene(MeshRenderer renderer) {
+	public void submitRendererForRenderering(MeshRenderer renderer) {
 		long meshId = renderer.getMesh().getInstanceId();
 		long matId = renderer.getMaterial().getInstanceId();
 
@@ -88,23 +75,18 @@ public class SceneRenderer {
 	}
 
 	/**
-	 * Begins the rendering process
-	 * 
-	 * @param graphics
-	 *            the graphics controller for the current display
-	 */
-	protected void preRender() {
-		// Clear the current frame before we render the next frame
-		GameDisplay.getGraphicsController().clearGraphics();
-		_shaderProgram.bind();
-	}
-
-	/**
 	 * Renders the meshes to screen
 	 */
-	protected void render() {
-		Camera camera = _scene.getCamera();
-		_shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
+	protected void render(Scene scene) {
+		StandardShaderProgram shaderProgram = GraphicsManager.getShader(ShaderType.STANDARD);
+		
+		// Starts the rendering process
+		// Clear the current frame before we render the next frame
+		Display.MAIN.getGraphicsController().clearGraphics();
+		shaderProgram.bind();
+
+		Camera camera = scene.getCamera();
+		shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
 
 		// For each similar mesh
 		for (long meshId : _meshMaterials.keySet()) {
@@ -112,34 +94,26 @@ public class SceneRenderer {
 			for (long matId : _meshMaterials.get(meshId)) {
 				// For each renderer with the shared mesh & material
 				Material mat = _materialRenderers.get(matId).peekFirst().getMaterial();
-				mat.renderStart(_shaderProgram);
+				mat.renderStart(shaderProgram);
 				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
 					// Set the transformation matrix
-					_shaderProgram.setWorldViewMatrix(Transformation
+					shaderProgram.setWorldViewMatrix(Transformation
 							.buildWorldViewMatrix(renderer.getGameObject().getTransform(), camera.getViewMatrix()));
 					// Tell the renderer to render
-					renderer.render(_shaderProgram);
+					renderer.render();
 				}
 				mat.renderEnd();
 			}
 		}
-	}
 
-	/**
-	 * Ends the rendering process
-	 * 
-	 * @param graphics
-	 *            the graphics controller for the current display
-	 */
-	protected void endRender() {
-		_shaderProgram.unbind();
+		// Ends the rendering process
+		shaderProgram.unbind();
 	}
 
 	/**
 	 * Disposes the renderer
 	 */
 	protected void dispose() {
-		if (_shaderProgram != null)
-			_shaderProgram.dispose();
+		reset();
 	}
 }

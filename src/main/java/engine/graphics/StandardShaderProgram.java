@@ -10,22 +10,33 @@ import org.joml.Vector3f;
  *
  */
 public class StandardShaderProgram extends ShaderProgram {
-	
-	public static StandardShaderProgram Instance = null;
-	
+	private static StandardShaderProgram _instance = null;
+
+	/**
+	 * @return instance for the standard shader program
+	 */
+	protected static StandardShaderProgram getInstance() {
+		return _instance;
+	}
+
+	/**
+	 * Initializes the standard shader program if it hasn't been
+	 * 
+	 * @return instance for the standard shader program
+	 * @throws Exception
+	 */
+	protected static StandardShaderProgram init() throws Exception {
+		if (_instance == null)
+			_instance = new StandardShaderProgram();
+		return _instance;
+	}
+
 	private static final String COLOR = "color";
 	private static final String USE_TEXTURE = "useTexture";
 	private static final String PROJECTION_MATRIX = "projectionMatrix";
 	private static final String WORLD_VIEW_MATRIX = "worldViewMatrix";
 
-	public static void init() throws Exception {
-		Instance = new StandardShaderProgram();
-	}
-	/**
-	 * Constructs a scene shader program
-	 * 
-	 * @throws Exception
-	 */
+	// Singleton shader
 	private StandardShaderProgram() throws Exception {
 		super(ShaderType.STANDARD);
 	}

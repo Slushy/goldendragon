@@ -9,15 +9,18 @@ import engine.utils.TimeUtils;
  *
  */
 public class TimeManager {
-	private double _lastLoopTime;
-	private double _gameTimeStart;
+	private static double _lastLoopTime;
+	private static double _gameTimeStart;
+	private static double _lastFPSCheck;
+	private static int _fps;
 
 	/**
 	 * Initializes the game timer
 	 */
-	public void init() {
-		this._gameTimeStart = getTime();
-		this._lastLoopTime = _gameTimeStart;
+	protected static void start() {
+		_gameTimeStart = getTime();
+		_lastLoopTime = _gameTimeStart;
+		_fps = 0;
 	}
 
 	/**
@@ -25,7 +28,7 @@ public class TimeManager {
 	 * 
 	 * @return total elapsed game time in seconds
 	 */
-	public double getGameTime() {
+	public static double getGameTime() {
 		return getTime() - _gameTimeStart;
 	}
 
@@ -50,17 +53,18 @@ public class TimeManager {
 	 * 
 	 * @return time since we last checked
 	 */
-	public float getElapsedTime() {
+	public static float getElapsedTime() {
 		double time = getTime();
 		float elapsedTime = (float) (time - _lastLoopTime);
 		_lastLoopTime = time;
+		_fps++;
 		return elapsedTime;
 	}
 
 	/**
 	 * @return last loop time
 	 */
-	public double getLastLoopTime() {
+	public static double getLastLoopTime() {
 		return _lastLoopTime;
 	}
 
@@ -73,6 +77,24 @@ public class TimeManager {
 	 */
 	public static Timer CreateTimer(double timerLengthMS) {
 		return new Timer(timerLengthMS);
+	}
+
+	/**
+	 * If it has been > 1s since last checked, it will get the correct fps and
+	 * reset it, otherwise it will return -1
+	 * 
+	 * @return Correct FPS or -1 if not yet time to check
+	 */
+	public static int getFPS() {
+		int fps = -1;
+
+		if (getLastLoopTime() - _lastFPSCheck > 1.0) {
+			_lastFPSCheck = getLastLoopTime();
+			fps = _fps;
+			_fps = 0;
+		}
+
+		return fps;
 	}
 
 	/**

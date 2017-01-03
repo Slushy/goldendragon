@@ -1,16 +1,10 @@
 package engine.graphics.components;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
 import engine.common.Component;
-import engine.graphics.StandardShaderProgram;
 import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
-import engine.graphics.geometry.VAO;
 import engine.utils.Debug;
 
 /**
@@ -63,7 +57,7 @@ public class MeshRenderer extends Component {
 	 */
 	@SuppressWarnings("unused")
 	private void init() {
-		this.getScene().getRenderer().rendererAddedToScene(this);
+		this.getScene().getRenderer().submitRendererForRenderering(this);
 	}
 
 	/**
@@ -71,7 +65,7 @@ public class MeshRenderer extends Component {
 	 * 
 	 * @param shaderProgram
 	 */
-	public void render(StandardShaderProgram shaderProgram) {
+	public void render() {
 		if (!_mesh.isLoaded()) {
 			Debug.error("Trying to render a mesh that isn't loaded yet: " + _mesh.getFileName());
 			return;

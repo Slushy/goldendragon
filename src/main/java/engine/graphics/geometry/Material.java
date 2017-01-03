@@ -52,6 +52,11 @@ public class Material extends Entity {
 		this._texture = texture;
 	}
 
+	/**
+	 * TEMPORARY
+	 * 
+	 * @param shaderProgram
+	 */
 	public final void renderStart(StandardShaderProgram shaderProgram) {
 		shaderProgram.setColor(getColor());
 		if (hasTexture()) {
@@ -60,6 +65,9 @@ public class Material extends Entity {
 		}
 	}
 
+	/**
+	 * TEMPORARY
+	 */
 	public final void renderEnd() {
 		if (hasTexture()) {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -118,9 +126,10 @@ public class Material extends Entity {
 	 */
 	@Override
 	protected void onDispose() {
-		if (_texture != null)
+		// TODO: Remove this because texture is probably
+		// a shared element, so it should dispose itself
+		if (hasTexture())
 			_texture.dispose();
-		super.onDispose();
 	}
 
 	public static class MaterialDefaults {

@@ -17,6 +17,14 @@ public final class Input {
 	}
 
 	/**
+	 * Called once per frame, this is where we will store
+	 * and set the frame specific input states
+	 */
+	protected static void updateInputState() {
+		// TODO: IMPLEMENT ME
+	}
+	
+	/**
 	 * Checks if the passed in key was pressed this frame
 	 * 
 	 * @param key

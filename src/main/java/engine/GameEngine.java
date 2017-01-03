@@ -1,35 +1,37 @@
 package engine;
 
-import java.lang.reflect.InvocationTargetException;
-
 import engine.common.Defaults;
+import engine.graphics.GraphicsManager;
 import engine.resources.RequestManager;
 
 /**
  *
- * Controls the main loop of the game
+ * Manages and controls the runner that runs the main loop of the game
  *
  * @author brandon.porter
  *
  */
 public class GameEngine {
+	/**
+	 * The name of the main thread this engine is running on
+	 */
 	public static final String MAIN_THREAD = Thread.currentThread().getName();
+	/**
+	 * By setting an failure message statically the next update iteration in
+	 * this engine will handle it by throwing an exception
+	 */
+	public static String runtimeFailureMsg = null;
 
-	private final GameManager _gameManager;
-	private final TimeManager _timer;
-	private final EngineOptions _options;
-	private final String _titleWithFPS;
-
-	private double _lastFPSCheck = 0;
-	private int _fps = 0;
+	private final EngineRunner _engineRunner;
 
 	/**
 	 * Constructs the game engine
 	 * 
 	 * @param gameInitializer
-	 *            instance of the initializer that loads the game
+	 *            instance of the initializer that loads the scenes for the game
+	 * @throws Exception
 	 */
-	public GameEngine(IGameInitializer game) {
+	public GameEngine(IGameInitializer game) throws Exception {
 		this(game, Defaults.Window.TITLE);
 	}
 
@@ -37,11 +39,12 @@ public class GameEngine {
 	 * Constructs the game engine
 	 * 
 	 * @param gameInitializer
-	 *            instance of the initializer that loads the game
+	 *            instance of the initializer that loads the scenes for the game
 	 * @param title
 	 *            text displayed on the game window
+	 * @throws Exception
 	 */
-	public GameEngine(IGameInitializer game, String title) {
+	public GameEngine(IGameInitializer game, String title) throws Exception {
 		this(game, title, Defaults.Window.WIDTH, Defaults.Window.HEIGHT);
 	}
 
@@ -49,15 +52,16 @@ public class GameEngine {
 	 * Constructs the game engine
 	 * 
 	 * @param gameInitializer
-	 *            instance of the initializer that loads the game
+	 *            instance of the initializer that loads the scenes for the game
 	 * @param title
 	 *            text displayed on the game window
 	 * @param width
 	 *            starting width of the game window
 	 * @param height
 	 *            starting height of the game window
+	 * @throws Exception
 	 */
-	public GameEngine(IGameInitializer game, String title, int width, int height) {
+	public GameEngine(IGameInitializer game, String title, int width, int height) throws Exception {
 		this(game, title, width, height, new EngineOptions());
 	}
 
@@ -65,7 +69,7 @@ public class GameEngine {
 	 * Constructs the game engine
 	 * 
 	 * @param gameInitializer
-	 *            instance of the initializer that loads the game
+	 *            instance of the initializer that loads the scenes for the game
 	 * @param title
 	 *            text displayed on the game window
 	 * @param width
@@ -74,136 +78,74 @@ public class GameEngine {
 	 *            starting height of the game window
 	 * @param options
 	 *            set options to initialize the engine with
-	 */
-	public GameEngine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options) {
-		this._gameManager = new GameManager(gameInitializer);
-		this._options = options;
-		this._timer = new TimeManager();
-		this._titleWithFPS = title + " - %d FPS";
-
-		// Creates the display
-		GameDisplay.create(title, width, height, options.windowOptions, options.graphicsOptions);
-	}
-
-	/**
-	 * Initializes the game instance and starts
-	 * 
 	 * @throws Exception
 	 */
-	public void initializeAndRun() throws Exception {
-		// Initialize
-		init();
-		// Begin game loop
-		run();
+	public GameEngine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options)
+			throws Exception {
+		// Create the runner
+		this._engineRunner = new EngineRunner(gameInitializer, options);
+
+		// Create the display but don't show it
+		Display.MAIN.init(title, width, height, options.windowOptions, options.graphicsOptions);
+
+		// Initialize input
+		Input.init(Display.MAIN.getWindow());
+
+		// Initialize our graphics
+		GraphicsManager.init();
+
+		// Initialize the scene manager with the game-specific scene loaders
+		// We use this to determine what scenes to load when the game requests
+		// one
+		SceneManager.init(gameInitializer.getSceneLoaders());
 	}
 
 	/**
-	 * Cleans up the game engine
+	 * Starts the engine and runs the game
+	 * 
+	 * @throws Exception
+	 *             Any exception caused in the game loop will be thrown here
+	 */
+	public void run() throws Exception {
+		// Show and clear the screen
+		Display.MAIN.show();
+		Display.MAIN.getGraphicsController().clearColor(0, 0, 0, 0);
+
+		// Start the game timer
+		TimeManager.start();
+
+		// Runs the main loop
+		_engineRunner.loadAndRun();
+		
+		// If we get here the game has successfully run with no exceptions
+		// and a close has been requested, so we dispose of the engine and
+		// quit.
+		// 
+		// EDIT: May implement exception handling on app side to determine whether to continue
+		//       running the game or dispose
+		// 
+		// dispose();
+	}
+
+	/**
+	 * Cleans up all resources created by the game or engine
 	 */
 	public void dispose() {
-		_gameManager.dispose();
-		GameDisplay.dispose();
+		// Cleans up all our scenes
+		SceneManager.dispose();
+		// Cleans up our shaders & other graphics
+		GraphicsManager.dispose();
+		// Cleans up our window and callbacks
+		Display.MAIN.dispose();
+		// Finish up all graphics requests created by disposing
+		RequestManager.executeAllGLRequests();
 
+		// Clean up our runner (and game specific resources)
+		_engineRunner.dispose();
 		// Finish remaining any remaining requests and disposes
 		RequestManager.dispose();
 	}
 
-	/**
-	 * Initializes all the core components
-	 * 
-	 * @throws Exception
-	 */
-	protected void init() throws Exception {
-		// Initialize input
-		Input.init(GameDisplay.getWindow());
-		// Show and clear the screen
-		GameDisplay.show();
-		GameDisplay.getGraphicsController().clearColor(0, 0, 0, 0);
-
-		// Init the game timer
-		_timer.init();
-		// Init your game
-		_gameManager.init();
-
-		// init our fps counter
-		this._lastFPSCheck = TimeManager.getTime();
-	}
-
-	/**
-	 * Game Loop
-	 * 
-	 * @throws Exception
-	 */
-	protected void run() throws Exception {
-		float runTime = 0f;
-		// TODO: Move interval to timer
-		float interval = 1f / _options.maxUPS;
-
-		while (!GameDisplay.shouldClose()) {
-			// 1. Process user input
-			processInput();
-
-			// 2. Update game state
-			runTime += _timer.getElapsedTime();
-			for (; runTime >= interval; runTime -= interval) {
-				// TODO: Fixed Update
-			}
-
-			// Normal update (once per frame)
-			update();
-
-			// 3. Render game
-			render();
-
-			// TODO: Limit FPS if window is not V-Sync
-		}
-	}
-
-	/**
-	 * Game processes input
-	 */
-	protected void processInput() {
-		// TODO: Implement input processing
-	}
-
-	/**
-	 * Update game state
-	 * 
-	 * @throws Exception
-	 */
-	protected void update() throws Exception {
-		_gameManager.update();
-	}
-
-	/**
-	 * Render updated game state to screen
-	 * 
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 */
-	protected void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		_timer.getLastLoopTime();
-
-		// Render FPS counter in title (Hardcoded here while devving)
-		if (_timer.getLastLoopTime() - _lastFPSCheck > 1.0) {
-			this._lastFPSCheck = _timer.getLastLoopTime();
-			GameDisplay.setNewTitle(String.format(_titleWithFPS, _fps));
-			this._fps = 0;
-		}
-
-		// FPS Counter
-		_fps++;
-
-		_gameManager.render();
-		GameDisplay.refresh();
-
-		// Executes any outstanding OpenGL requests
-		RequestManager.executeSomeGLRequests();
-	}
 
 	/**
 	 * Defines the starting values to initialize the engine

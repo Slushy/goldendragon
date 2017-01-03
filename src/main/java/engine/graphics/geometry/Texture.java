@@ -100,8 +100,6 @@ public class Texture extends Entity {
 	protected void onDispose() {
 		if (isLoaded())
 			GL11.glDeleteTextures(_id);
-
-		super.onDispose();
 	}
 
 	/**

@@ -30,27 +30,6 @@ public class GameObject extends Entity {
 	}
 
 	/**
-	 * Called when this game object is added to a scene
-	 * 
-	 * @param scene
-	 *            the scene this object was added to
-	 */
-	public void addedToScene(Scene scene) {
-		this._scene = scene;
-	}
-
-	/**
-	 * @return the scene this game object belongs to
-	 */
-	public Scene getScene() {
-		return _scene;
-	}
-
-	public MeshRenderer getRenderer() {
-		return _renderer;
-	}
-
-	/**
 	 * Constructs a new game object entity with the specified name
 	 * 
 	 * @param name
@@ -101,8 +80,34 @@ public class GameObject extends Entity {
 	}
 
 	/**
+	 * Called when this game object is added to a scene
+	 * 
+	 * @param scene
+	 *            the scene this object was added to
+	 */
+	public void addedToScene(Scene scene) {
+		this._scene = scene;
+	}
+
+	/**
+	 * @return the scene this game object belongs to
+	 */
+	public Scene getScene() {
+		return _scene;
+	}
+
+	/**
+	 * @return the renderer for this game object
+	 */
+	public MeshRenderer getRenderer() {
+		return _renderer;
+	}
+
+	/**
+	 * Removes the component from this game object
 	 * 
 	 * @param component
+	 *            the component to remove
 	 */
 	protected void removeComponent(Component component) {
 		_components.remove(component);

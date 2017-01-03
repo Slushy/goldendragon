@@ -11,9 +11,10 @@ import engine.scenes.SceneLoader;
 public interface IGameInitializer {
 	/**
 	 * Called by the engine to load the game resources (in a separate thread)
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	void loadResourcesAsync() throws Exception;
+	void loadResources() throws Exception;
 
 	/**
 	 * @return all the scene-specific loaders for the game
@@ -26,4 +27,9 @@ public interface IGameInitializer {
 	default SceneLoader getApplicationSplashLoader() {
 		return null;
 	}
+
+	/**
+	 * Called when the game is closing; this should unload all resources created
+	 */
+	void dispose();
 }

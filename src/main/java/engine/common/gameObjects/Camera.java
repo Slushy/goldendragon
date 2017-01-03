@@ -2,24 +2,37 @@ package engine.common.gameObjects;
 
 import org.joml.Matrix4f;
 
+import engine.common.Defaults;
 import engine.common.GameObject;
-import engine.common.components.CameraProjection;
 import engine.common.components.Transform;
 import engine.utils.math.MatrixUtils;
 
-public class Camera extends GameObject {
-	private final CameraProjection _cameraProjection = new CameraProjection();
-	// Matrices to deal with the view within the world
+/**
+ * The camera game object. For now there can be only one camera: MAIN
+ * 
+ * @author Brandon Porter
+ *
+ */
+public final class Camera extends GameObject {
+	/**
+	 * Main camera
+	 */
+	public static final Camera MAIN = new Camera();
+
+	// Main variables to define our camera viewport
+	public float FIELD_OF_VIEW = Defaults.Camera.FIELD_OF_VIEW;
+	public float FRUSTUM_NEAR = Defaults.Camera.FRUSTUM_NEAR;
+	public float FRUSTUM_FAR = Defaults.Camera.FRUSTUM_FAR;
+
+	// Matrices to deal with the view and projection within the world
 	private final Matrix4f _viewMatrix = new Matrix4f();
+	private final Matrix4f _projectionMatrix = new Matrix4f();
 
 	/**
 	 * Constructs a camera game object
 	 */
-	public Camera() {
+	private Camera() {
 		super("Camera");
-
-		// Every camera needs a camera projection
-		this.addComponent(_cameraProjection);
 	}
 
 	/**
@@ -73,22 +86,22 @@ public class Camera extends GameObject {
 	}
 
 	/**
-	 * TODO: REMOVE, ONLY TEMPORARY Gets the projection matrix for the camera
+	 * Gets the projection matrix for the camera
 	 * 
 	 * @return projection matrix
 	 */
 	public Matrix4f getProjectionMatrix() {
-		return _cameraProjection.getProjectionMatrix();
+		return _projectionMatrix;
 	}
 
 	/**
-	 * TODO: REMOVE, ONLY TEMPORARY Updates the projection matrix for the camera
+	 * Updates the projection matrix for the camera
 	 * 
 	 * @param aspectRatio
 	 *            the width/height ratio of the screen
 	 * @return updated projection matrix
 	 */
 	public Matrix4f updateProjectionMatrix(float aspectRatio) {
-		return _cameraProjection.updateProjectionMatrix(aspectRatio);
+		return _projectionMatrix.setPerspective(FIELD_OF_VIEW, aspectRatio, FRUSTUM_NEAR, FRUSTUM_FAR);
 	}
 }

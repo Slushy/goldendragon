@@ -2,12 +2,13 @@ package engine.scenes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import engine.common.Component;
+import engine.common.Entity;
 import engine.common.GameObject;
 import engine.common.gameObjects.Camera;
 import engine.scenes.EventDispatcher.ExecutionEvent;
@@ -20,13 +21,9 @@ import engine.scenes.EventDispatcher.ExecutionEvent;
  * @author Brandon Porter
  *
  */
-public class Scene {
+public class Scene extends Entity {
 	private final EventDispatcher _eventDispatcher = new EventDispatcher();
-	private final List<GameObject> _gameObjects = new ArrayList<>();
-	private final SceneRenderer _sceneRenderer = new SceneRenderer();
-
-	private final Camera _camera = new Camera();
-	private final String _name;
+	private final List<GameObject> _gameObjects = new LinkedList<>();
 
 	private boolean _isReady = false;
 
@@ -37,13 +34,11 @@ public class Scene {
 	 *            unique name of the scene
 	 */
 	public Scene(String name) {
-		this._name = name;
-		// For now every scene will have a default camera
-		this.addGameObject(_camera);
+		super(name);
 	}
 
 	/**
-	 * Finds a game object in the scene by name
+	 * Finds the first game object in the scene with the specified name
 	 * 
 	 * @param name
 	 *            of the game object to locate
@@ -56,6 +51,23 @@ public class Scene {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Finds all game object in the scene by name
+	 * 
+	 * @param name
+	 *            of the game object to locate
+	 * @return the found game object or null
+	 */
+	public List<GameObject> findGameObjects(String name) {
+		List<GameObject> gameObjects = new LinkedList<>();
+		for (GameObject obj : _gameObjects) {
+			if (obj.getName().equalsIgnoreCase(name))
+				gameObjects.add(obj);
+		}
+
+		return gameObjects;
 	}
 
 	/**
@@ -96,12 +108,33 @@ public class Scene {
 	}
 
 	/**
+	 * @return the camera for the scene
+	 */
+	public Camera getCamera() {
+		return Camera.MAIN;
+	}
+
+	/**
+	 * @return the renderer for the scene
+	 */
+	public SceneRenderer getRenderer() {
+		return SceneRenderer.instance();
+	}
+
+	/**
+	 * @return true if the scene is ready to show, false otherwise
+	 */
+	protected final boolean isReady() {
+		return _isReady;
+	}
+	
+	/**
 	 * Initializes the scene
 	 * 
 	 * @throws Exception
 	 */
 	protected void init() throws Exception {
-		_sceneRenderer.init(this);
+		SceneRenderer.instance().reset();
 		// Initializes any components that require it
 		_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
 		this._isReady = true;
@@ -112,13 +145,6 @@ public class Scene {
 	 */
 	public void onForeground() {
 		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
-	}
-
-	/**
-	 * When the currently active scene is no longer active, this is fired
-	 */
-	public void onBackground() {
-		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_BACKGROUND);
 	}
 
 	/**
@@ -141,47 +167,20 @@ public class Scene {
 	 */
 	public void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
-		_sceneRenderer.preRender();
 		// Renders the necessary components
-		_sceneRenderer.render();
-		_sceneRenderer.endRender();
-	}
-
-	/**
-	 * @return name of this scene
-	 */
-	public String getName() {
-		return _name;
-	}
-
-	/**
-	 * @return the camera for the scene
-	 */
-	public Camera getCamera() {
-		return _camera;
-	}
-
-	/**
-	 * @return the renderer for the scene
-	 */
-	public SceneRenderer getRenderer() {
-		return _sceneRenderer;
+		SceneRenderer.instance().render(this);
 	}
 
 	/**
 	 * Disposes the scene
 	 */
-	public void dispose() {
+	@Override
+	protected void onDispose() {
 		this._isReady = false;
+		_eventDispatcher.dispose();
+
 		for (GameObject gameObject : _gameObjects) {
 			gameObject.dispose();
 		}
-	}
-
-	/**
-	 * @return true if the scene is ready to show, false otherwise
-	 */
-	protected final boolean isReady() {
-		return _isReady;
 	}
 }

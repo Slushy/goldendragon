@@ -26,7 +26,7 @@ public abstract class ShaderProgram {
 
 	private int _vertShaderId;
 	private int _fragShaderId;
-	
+
 	private FloatBuffer _fb = BufferUtils.createFloatBuffer(16);
 
 	/**
@@ -43,54 +43,35 @@ public abstract class ShaderProgram {
 		if (_programId == 0) {
 			throw new Exception("Could not create shader program");
 		}
-		
+
 		// Next we register the shaders and link the program
 		// TODO: More information on what link does
 		registerShaders();
 		linkProgram();
-		
+
 		// Register any uniforms
 		registerUniforms();
 	}
-	
+
 	/**
-	 * Binds this shader program to OpenGL as the active shader program
-	 * for the current render/calculation cycle
+	 * Binds this shader program to OpenGL as the active shader program for the
+	 * current render/calculation cycle
 	 */
 	public void bind() {
 		GL20.glUseProgram(_programId);
 	}
 
 	/**
-	 * Unbinds this shader program from openGL to end the current render/calculation
-	 * cycle with this as the active program
+	 * Unbinds this shader program from openGL to end the current
+	 * render/calculation cycle with this as the active program
 	 */
 	public void unbind() {
 		GL20.glUseProgram(0);
 	}
-	
-	/**
-	 * Cleans up the shader program
-	 */
-	public void dispose() {
-		// Program might be active, so lets unbind first
-		unbind();
-		
-		if (_programId == 0)
-			return;
-		
-		// Cleanup the shaders from the program
-		if (_vertShaderId != 0)
-			GL20.glDetachShader(_programId, _vertShaderId);
-		if (_fragShaderId != 0)
-			GL20.glDetachShader(_programId, _fragShaderId);
-		
-		// Delete the program from memory
-		GL20.glDeleteProgram(_programId);
-	}
 
 	/**
 	 * Links the program TODO: More information on what link does
+	 * 
 	 * @throws Exception
 	 */
 	protected void linkProgram() throws Exception {
@@ -105,7 +86,7 @@ public abstract class ShaderProgram {
 			Debug.warn("Warning validing shader code: " + GL20.glGetProgramInfoLog(_programId, 1024));
 		}
 	}
-	
+
 	/**
 	 * Registers a uniform (i.e. global variable) for use within our shaders
 	 * 
@@ -122,7 +103,7 @@ public abstract class ShaderProgram {
 		// We found it, so add it to the list of uniforms
 		_uniforms.put(uniform, uniformLocation);
 	}
-	
+
 	protected int getUniform(String uniform) {
 		int location = _uniforms.get(uniform);
 		if (!_uniforms.containsKey(uniform) || location < 0) {
@@ -130,22 +111,24 @@ public abstract class ShaderProgram {
 		}
 		return location;
 	}
-	
+
 	/**
 	 * Sets a vector uniform
+	 * 
 	 * @param uniform
 	 * @param value
 	 */
 	protected void setUniform(String uniform, Vector3f value) {
 		GL20.glUniform3f(getUniform(uniform), value.x, value.y, value.z);
 	}
-	
+
 	protected void setUniform(String uniform, boolean value) {
 		GL20.glUniform1i(getUniform(uniform), value ? 1 : 0);
 	}
-	
+
 	/**
 	 * Sets a matrix uniform
+	 * 
 	 * @param uniform
 	 * @param value
 	 */
@@ -153,9 +136,10 @@ public abstract class ShaderProgram {
 		value.get(_fb);
 		GL20.glUniformMatrix4fv(getUniform(uniform), false, _fb);
 	}
-	
+
 	/**
 	 * Loads and compiles the vertex shader for this program
+	 * 
 	 * @throws Exception
 	 */
 	protected void registerVertexShader() throws Exception {
@@ -164,14 +148,16 @@ public abstract class ShaderProgram {
 
 	/**
 	 * Loads and compiles the fragment shader for this program
+	 * 
 	 * @throws Exception
 	 */
 	protected void registerFragmentShader() throws Exception {
 		this._fragShaderId = registerShader(_shaderType.toString().toLowerCase() + ".frag", GL20.GL_FRAGMENT_SHADER);
 	}
-	
+
 	/**
 	 * Loads and compiles a generic shader file and returns the new shaderID
+	 * 
 	 * @param fileName
 	 * @param glShaderType
 	 * @return
@@ -190,7 +176,7 @@ public abstract class ShaderProgram {
 		GL20.glShaderSource(shaderId, shaderCode);
 		// Compile the shader code
 		GL20.glCompileShader(shaderId);
-		
+
 		// Verify shader compilation succeeded
 		if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0) {
 			throw new Exception("Error compiling Shader code: " + GL20.glGetShaderInfoLog(shaderId, 1024));
@@ -200,13 +186,34 @@ public abstract class ShaderProgram {
 		GL20.glAttachShader(_programId, shaderId);
 		return shaderId;
 	}
-	
+
+	/**
+	 * Cleans up the shader program
+	 */
+	protected void dispose() {
+		// Program might be active, so lets unbind first
+		unbind();
+
+		if (_programId == 0)
+			return;
+
+		// Cleanup the shaders from the program
+		if (_vertShaderId != 0)
+			GL20.glDetachShader(_programId, _vertShaderId);
+		if (_fragShaderId != 0)
+			GL20.glDetachShader(_programId, _fragShaderId);
+
+		// Delete the program from memory
+		GL20.glDeleteProgram(_programId);
+	}
+
 	/**
 	 * Register any shaders for this shader program
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	protected abstract void registerShaders() throws Exception;
-	
+
 	/**
 	 * Register any uniforms for this shader program
 	 */

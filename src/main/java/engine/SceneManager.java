@@ -9,27 +9,17 @@ import engine.scenes.SceneLoader;
 import engine.utils.Debug;
 
 /**
- * Manages the active scene in our game and helps load new scenes
+ * Static api to dynamically load new scenes throughout our game
  * 
  * @author Brandon Porter
  *
  */
 public final class SceneManager {
 	private static final SceneHandler _sceneHandler = new SceneHandler();
+	private static boolean _newSceneLoaded = false;
 
 	// Static class
 	private SceneManager() {
-	}
-
-	/**
-	 * Initializes the handler that wraps the scene loading logic, should be
-	 * assigned by our game manager
-	 * 
-	 * @param sceneLoaders
-	 *            the scene loaders as specified by the game initializer
-	 */
-	protected static void init(SceneLoader[] sceneLoaders) {
-		_sceneHandler.initSceneLoaders(sceneLoaders);
 	}
 
 	/**
@@ -40,7 +30,7 @@ public final class SceneManager {
 	 * @return boolean stating whether the scene has been loaded
 	 * @throws Exception
 	 */
-	public static boolean loadScene(String sceneName) throws Exception {
+	public static synchronized boolean loadScene(String sceneName) throws Exception {
 		// This may not be a warning
 		if (_sceneHandler.hasLoadingScene()) {
 			// For now, let's log and return
@@ -49,7 +39,8 @@ public final class SceneManager {
 		}
 
 		// Load the scene
-		if (!_sceneHandler.loadScene(sceneName)) {
+		_newSceneLoaded = _sceneHandler.loadScene(sceneName);
+		if (!_newSceneLoaded) {
 			throw new Exception("Scene failed to load");
 		}
 
@@ -71,11 +62,9 @@ public final class SceneManager {
 			try {
 				// Execute the complete callback;
 				onComplete.accept(loadScene(sceneName));
-
 			} catch (Exception e) {
-				Debug.error("Failed to load " + sceneName + " asynchronously");
-				GameManager.STATE = GameState.FAILURE;
-				GameManager.STATE.setException(e);
+				e.printStackTrace();
+				GameEngine.runtimeFailureMsg = "Failed to load " + sceneName + " asynchronously";
 			}
 		});
 	}
@@ -88,17 +77,39 @@ public final class SceneManager {
 	}
 
 	/**
+	 * Initializes the handler that wraps the scene loading logic, should be
+	 * assigned by our game manager
+	 * 
+	 * @param sceneLoaders
+	 *            the scene loaders as specified by the game initializer
+	 */
+	protected static void init(SceneLoader[] sceneLoaders) {
+		_sceneHandler.initSceneLoaders(sceneLoaders);
+	}
+
+	/**
+	 * @return true if we have a new scene to show
+	 */
+	protected static boolean hasNewScene() {
+		return _sceneHandler.hasLoadingScene() && _newSceneLoaded;
+	}
+
+	/**
 	 * Switches to the ready scene and disposes the old one
 	 */
 	protected static void switchToNewScene() {
-		if (!_sceneHandler.hasLoadingScene()) {
+		if (!hasNewScene()) {
 			Debug.error("Trying to switch to new scene when there is no loaded scene");
 			return;
 		}
-		
+
+		// Game loop uses this boolean to dictate whether or not we should
+		// switch, so set it to false until we have a new scene
+		_newSceneLoaded = false;
+
 		// Set the loading scene as active and start it
 		String oldActiveScene = _sceneHandler.setLoadingToActive();
-		
+
 		// The new scene is now active
 		getActiveScene().onForeground();
 
