@@ -1,6 +1,4 @@
-package engine.common.components;
-
-import engine.common.Component;
+package engine.common;
 
 /**
  * A behavior is a custom script that is run in a scene

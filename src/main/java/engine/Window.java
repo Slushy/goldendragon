@@ -240,6 +240,11 @@ public abstract class Window {
 		 * introduce minor input lag.
 		 */
 		public boolean vSync = Defaults.Window.VSYNC;
+		
+		/**
+		 * Whether or not to display the FPS (frames per second) on the window title bar
+		 */
+		public boolean showFPS = Defaults.Window.SHOW_FPS;
 	}
 
 	@FunctionalInterface

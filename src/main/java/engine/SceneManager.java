@@ -64,7 +64,7 @@ public final class SceneManager {
 				onComplete.accept(loadScene(sceneName));
 			} catch (Exception e) {
 				e.printStackTrace();
-				GameEngine.runtimeFailureMsg = "Failed to load " + sceneName + " asynchronously";
+				Engine.runtimeFailureMsg = "Failed to load " + sceneName + " asynchronously";
 			}
 		});
 	}

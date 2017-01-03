@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import engine.common.Camera;
 import engine.common.Component;
 import engine.common.Entity;
 import engine.common.GameObject;
-import engine.common.gameObjects.Camera;
 import engine.scenes.EventDispatcher.ExecutionEvent;
 
 /**

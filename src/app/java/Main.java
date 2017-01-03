@@ -1,6 +1,6 @@
 
 
-import engine.GameEngine;
+import engine.Engine;
 import engine.utils.Debug;
 import game.GameInitializer;
 
@@ -19,13 +19,15 @@ public class Main {
 		Debug.ENABLED = true;
 		Debug.log("Starting Game Engine...");
 		
-		GameEngine engine = null;
+		Engine engine = null;
 		try {
-			GameEngine.EngineOptions options = new GameEngine.EngineOptions();
+			Engine.EngineOptions options = new Engine.EngineOptions();
 			options.windowOptions.resizable = true;
+			options.windowOptions.showFPS = true;
+			options.windowOptions.vSync = true;
 			options.graphicsOptions.polygonMode = false;
 			
-			engine = new GameEngine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, options);
+			engine = new Engine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, options);
 			engine.run();
 		} catch (Exception e) {
 			// TODO: Catch a specific exception, possibly implement a restart

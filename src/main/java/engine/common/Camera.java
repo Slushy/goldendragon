@@ -1,10 +1,7 @@
-package engine.common.gameObjects;
+package engine.common;
 
 import org.joml.Matrix4f;
 
-import engine.common.Defaults;
-import engine.common.GameObject;
-import engine.common.components.Transform;
 import engine.utils.math.MatrixUtils;
 
 /**

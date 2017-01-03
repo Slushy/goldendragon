@@ -1,4 +1,4 @@
-package game.scenes;
+package game.scenes.loaders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
 import engine.scenes.SceneLoader;
 import game.GameResources;
+import game.scenes.TestScene;
 
 /**
  * Loads the test scene
@@ -56,7 +57,7 @@ public class TestSceneLoader extends SceneLoader {
 		}
 		
 		GameObject script = new GameObject("Scene Behavior");
-		script.addComponent(new TestSceneBehavior());
+		script.addComponent(new TestScene());
 		
 		gameObjects.add(cube);
 		gameObjects.add(script);

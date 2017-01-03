@@ -1,6 +1,6 @@
 package engine.resources;
 
-import engine.GameEngine;
+import engine.Engine;
 import engine.utils.Debug;
 
 /**
@@ -16,7 +16,7 @@ public final class RequestManager {
 	/**
 	 * The graphics thread is the same as the main thread
 	 */
-	public static final String GRAPHICS_THREAD_NAME = GameEngine.MAIN_THREAD;
+	public static final String GRAPHICS_THREAD_NAME = Engine.MAIN_THREAD;
 	/**
 	 * The name of the thread running resource requests
 	 */

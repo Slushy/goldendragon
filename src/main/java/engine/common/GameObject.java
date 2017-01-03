@@ -3,7 +3,6 @@ package engine.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import engine.common.components.Transform;
 import engine.graphics.components.MeshRenderer;
 import engine.scenes.Scene;
 

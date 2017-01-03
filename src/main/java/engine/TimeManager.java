@@ -9,10 +9,13 @@ import engine.utils.TimeUtils;
  *
  */
 public class TimeManager {
+	public static float SPEED = 1;
+	
 	private static double _lastLoopTime;
 	private static double _gameTimeStart;
 	private static double _lastFPSCheck;
 	private static int _fps;
+	private static float _elapsedTime;
 
 	/**
 	 * Initializes the game timer
@@ -20,6 +23,7 @@ public class TimeManager {
 	protected static void start() {
 		_gameTimeStart = getTime();
 		_lastLoopTime = _gameTimeStart;
+		_elapsedTime = 0;
 		_fps = 0;
 	}
 
@@ -49,16 +53,10 @@ public class TimeManager {
 	}
 
 	/**
-	 * Gets the time since last loop time and updates the last loop time
-	 * 
-	 * @return time since we last checked
+	 * @return the delta time of the last frame
 	 */
-	public static float getElapsedTime() {
-		double time = getTime();
-		float elapsedTime = (float) (time - _lastLoopTime);
-		_lastLoopTime = time;
-		_fps++;
-		return elapsedTime;
+	public static float getDeltaTime() {
+		return _elapsedTime * SPEED;
 	}
 
 	/**
@@ -66,17 +64,6 @@ public class TimeManager {
 	 */
 	public static double getLastLoopTime() {
 		return _lastLoopTime;
-	}
-
-	/**
-	 * Creates a simple timer
-	 * 
-	 * @param timerLengthMS
-	 *            The countdown length of the timer in millis
-	 * @return new stop watch
-	 */
-	public static Timer CreateTimer(double timerLengthMS) {
-		return new Timer(timerLengthMS);
 	}
 
 	/**
@@ -95,6 +82,30 @@ public class TimeManager {
 		}
 
 		return fps;
+	}
+
+	/**
+	 * Gets the time since last loop time and updates the last loop time
+	 * 
+	 * @return time since we last checked
+	 */
+	protected static float setBenchmark() {
+		double time = getTime();
+		_elapsedTime = (float) (time - _lastLoopTime);
+		_lastLoopTime = time;
+		_fps++;
+		return _elapsedTime;
+	}
+
+	/**
+	 * Creates a simple timer
+	 * 
+	 * @param timerLengthMS
+	 *            The countdown length of the timer in millis
+	 * @return new stop watch
+	 */
+	public static Timer CreateTimer(double timerLengthMS) {
+		return new Timer(timerLengthMS);
 	}
 
 	/**

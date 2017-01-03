@@ -11,7 +11,7 @@ import engine.resources.RequestManager;
  * @author brandon.porter
  *
  */
-public class GameEngine {
+public class Engine {
 	/**
 	 * The name of the main thread this engine is running on
 	 */
@@ -22,7 +22,7 @@ public class GameEngine {
 	 */
 	public static String runtimeFailureMsg = null;
 
-	private final EngineRunner _engineRunner;
+	private final GameRunner _gameRunner;
 
 	/**
 	 * Constructs the game engine
@@ -31,7 +31,7 @@ public class GameEngine {
 	 *            instance of the initializer that loads the scenes for the game
 	 * @throws Exception
 	 */
-	public GameEngine(IGameInitializer game) throws Exception {
+	public Engine(IGameInitializer game) throws Exception {
 		this(game, Defaults.Window.TITLE);
 	}
 
@@ -44,7 +44,7 @@ public class GameEngine {
 	 *            text displayed on the game window
 	 * @throws Exception
 	 */
-	public GameEngine(IGameInitializer game, String title) throws Exception {
+	public Engine(IGameInitializer game, String title) throws Exception {
 		this(game, title, Defaults.Window.WIDTH, Defaults.Window.HEIGHT);
 	}
 
@@ -61,7 +61,7 @@ public class GameEngine {
 	 *            starting height of the game window
 	 * @throws Exception
 	 */
-	public GameEngine(IGameInitializer game, String title, int width, int height) throws Exception {
+	public Engine(IGameInitializer game, String title, int width, int height) throws Exception {
 		this(game, title, width, height, new EngineOptions());
 	}
 
@@ -80,10 +80,10 @@ public class GameEngine {
 	 *            set options to initialize the engine with
 	 * @throws Exception
 	 */
-	public GameEngine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options)
+	public Engine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options)
 			throws Exception {
 		// Create the runner
-		this._engineRunner = new EngineRunner(gameInitializer, options);
+		this._gameRunner = new GameRunner(gameInitializer, options);
 
 		// Create the display but don't show it
 		Display.MAIN.init(title, width, height, options.windowOptions, options.graphicsOptions);
@@ -115,7 +115,7 @@ public class GameEngine {
 		TimeManager.start();
 
 		// Runs the main loop
-		_engineRunner.loadAndRun();
+		_gameRunner.loadAndRun();
 		
 		// If we get here the game has successfully run with no exceptions
 		// and a close has been requested, so we dispose of the engine and
@@ -141,7 +141,7 @@ public class GameEngine {
 		RequestManager.executeAllGLRequests();
 
 		// Clean up our runner (and game specific resources)
-		_engineRunner.dispose();
+		_gameRunner.dispose();
 		// Finish remaining any remaining requests and disposes
 		RequestManager.dispose();
 	}

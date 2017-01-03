@@ -119,6 +119,11 @@ public class Defaults {
 		 * introduce minor input lag.
 		 */
 		public static final boolean VSYNC = true;
+		
+		/**
+		 * Whether or not to display the FPS (frames per second) on the window title bar
+		 */
+		public static final boolean SHOW_FPS = false;
 
 		/*
 		 * Prevent outside classes from creating an instance

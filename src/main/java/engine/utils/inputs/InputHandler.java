@@ -1,4 +1,4 @@
-package engine.input;
+package engine.utils.inputs;
 
 import engine.Window;
 

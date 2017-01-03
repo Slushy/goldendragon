@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import engine.Display;
-import engine.common.gameObjects.Camera;
+import engine.common.Camera;
 import engine.graphics.GraphicsManager;
 import engine.graphics.ShaderType;
 import engine.graphics.StandardShaderProgram;

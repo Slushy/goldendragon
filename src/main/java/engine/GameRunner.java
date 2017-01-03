@@ -1,27 +1,28 @@
 package engine;
 
-import engine.GameEngine.EngineOptions;
+import engine.Engine.EngineOptions;
 import engine.resources.RequestManager;
 import engine.scenes.Scene;
 
 /**
- * This private game manager is used by the engine to initialize, update, and
- * render the game
+ * This game runner is ran by the engine to load update the game
  * 
  * @author Brandon Porter
  *
  */
-class EngineRunner {
+class GameRunner {
 	private final EngineOptions _options;
 	private final GameLoader _gameLoader;
 
 	/**
-	 * Constructs a game manager
+	 * Constructs a game runner
 	 * 
+	 * @param gameInitializer
+	 *            game-specific instance to load various scenes of the game
 	 * @param options
 	 *            set options to initialize the engine with
 	 */
-	public EngineRunner(IGameInitializer gameInitializer, EngineOptions options) {
+	public GameRunner(IGameInitializer gameInitializer, EngineOptions options) {
 		this._options = options;
 		this._gameLoader = new GameLoader(gameInitializer);
 	}
@@ -29,8 +30,6 @@ class EngineRunner {
 	/**
 	 * Loads the game and starts the game loop
 	 * 
-	 * @param gameInitializer
-	 *            game-specific instance to load various scenes of the game
 	 * @throws Exception
 	 */
 	public void loadAndRun() throws Exception {
@@ -39,7 +38,7 @@ class EngineRunner {
 		// asynchronously
 		_gameLoader.load((errMsg) -> {
 			if (errMsg != null)
-				GameEngine.runtimeFailureMsg = errMsg;
+				Engine.runtimeFailureMsg = errMsg;
 		});
 
 		// Starts the game loop
@@ -64,7 +63,7 @@ class EngineRunner {
 			processInput();
 
 			// 2. Physics/AI fixed update logic
-			runTime += TimeManager.getElapsedTime();
+			runTime += TimeManager.setBenchmark();
 			for (; runTime >= interval; runTime -= interval) {
 				fixedUpdate();
 			}
@@ -105,8 +104,8 @@ class EngineRunner {
 	protected void update() throws Exception {
 		// First thing we do is throw an exception if
 		// one occurred
-		if (GameEngine.runtimeFailureMsg != null)
-			throw new Exception(GameEngine.runtimeFailureMsg);
+		if (Engine.runtimeFailureMsg != null)
+			throw new Exception(Engine.runtimeFailureMsg);
 
 		// If the game has decided to load a new scene,
 		// we check that here first, switch to it if true,
@@ -129,12 +128,6 @@ class EngineRunner {
 	 * @throws Exception
 	 */
 	protected void render() throws Exception {
-		int fps = TimeManager.getFPS();
-		if (fps > -1) {
-			// TODO: Render FPS counter in title (Hardcoded here while devving)
-			// GameDisplay.setNewTitle(String.format(_titleWithFPS, _fps));
-		}
-
 		// Renders the currently active scene
 		Scene activeScene = SceneManager.getActiveScene();
 		if (activeScene != null) {

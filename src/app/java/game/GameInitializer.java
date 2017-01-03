@@ -5,7 +5,7 @@ import engine.resources.loaders.MeshLoader;
 import engine.resources.loaders.TextureLoader;
 import engine.scenes.SceneLoader;
 import engine.utils.Debug;
-import game.scenes.TestSceneLoader;
+import game.scenes.loaders.TestSceneLoader;
 
 /**
  * Defines how our game will initialize

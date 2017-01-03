@@ -52,7 +52,15 @@ public class OpenGLWindow extends Window {
 
 	@Override
 	public void refresh() {
-		// TODO: More Information
+		// If enabled, show the FPS in the title bar
+		if (windowOptions.showFPS) {
+			int fps = TimeManager.getFPS();
+			if (fps > -1) {
+				updateWindowTitle(getTitle() + " - " + fps + " FPS");
+			}
+		}
+
+		// Updates the window with the new drawn buffer
 		glfwSwapBuffers(getWindowId());
 		glfwPollEvents();
 	}
@@ -75,7 +83,7 @@ public class OpenGLWindow extends Window {
 			glfwDestroyWindow(windowId);
 			Callbacks.glfwFreeCallbacks(windowId);
 		}
-		
+
 		// Terminate GLFW & free error callback
 		glfwTerminate();
 		_errorCallback.free();
@@ -114,10 +122,8 @@ public class OpenGLWindow extends Window {
 		checkIfWindowCoordinatesDifferFromPixels(windowId, width, height);
 
 		// Set V-Sync for window if enabled
-		if (isVSync()) {
-			// note: 1 is for full frame rate, 2 is for half, etc.
-			glfwSwapInterval(1);
-		}
+		// note:0 for no vsync, 1 is for full frame rate, 2 is for half, etc.
+		glfwSwapInterval(isVSync() ? 1 : 0);
 
 		// Make the window visible
 		return windowId;

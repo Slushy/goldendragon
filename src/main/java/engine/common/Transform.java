@@ -1,8 +1,7 @@
-package engine.common.components;
+package engine.common;
 
 import org.joml.Vector3f;
 
-import engine.common.Component;
 import engine.utils.math.VectorUtils;
 
 /**

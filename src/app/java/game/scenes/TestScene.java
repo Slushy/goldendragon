@@ -8,11 +8,13 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import engine.Input;
+import engine.TimeManager;
+import engine.common.Behavior;
+import engine.common.Camera;
 import engine.common.GameObject;
-import engine.common.components.Behavior;
-import engine.common.gameObjects.Camera;
 import engine.graphics.components.MeshRenderer;
-import engine.input.Key;
+import engine.utils.inputs.Key;
+import game.scenes.loaders.TestSceneLoader;
 
 /**
  * A behavior that controls the Test Scene script
@@ -20,26 +22,27 @@ import engine.input.Key;
  * @author Brandon Porter
  *
  */
-public class TestSceneBehavior extends Behavior {
-	private static final float CAMERA_POS_STEP = 0.3f;
-	private static final float CAMERA_ROT_STEP = 5;
+public class TestScene extends Behavior {
+	private static final float CAMERA_POS_STEP = 7f;
+	private static final float CAMERA_ROT_STEP = 120;
 
 	private Vector3f _cameraInc = new Vector3f();
 	private Vector2f _cameraRot = new Vector2f();
 
 	private List<GameObject> _gameObjects = new ArrayList<>();
 	private GameObject _cube;
-	
+	private MeshRenderer _rend;
 	/**
 	 * Constructs a new behavior for the Test Scene
 	 */
-	public TestSceneBehavior() {
+	public TestScene() {
 		super(TestSceneLoader.NAME);
 	}
 
 	@SuppressWarnings("unused")
 	private void init() {
 		this._cube = this.getScene().findGameObject("Cube");
+		this._rend = _cube.getComponentByType(MeshRenderer.class);
 		_gameObjects.add(_cube);
 	}
 
@@ -86,19 +89,20 @@ public class TestSceneBehavior extends Behavior {
 
 		Camera camera = this.getScene().getCamera();
 
-		camera.move(_cameraInc.x * CAMERA_POS_STEP, _cameraInc.y * CAMERA_POS_STEP, _cameraInc.z * CAMERA_POS_STEP);
-		camera.getTransform().rotate(_cameraRot.x * CAMERA_ROT_STEP, _cameraRot.y * CAMERA_ROT_STEP, 0);
+		float deltaTime = TimeManager.getDeltaTime();
+		camera.move(_cameraInc.x * CAMERA_POS_STEP * deltaTime, _cameraInc.y * CAMERA_POS_STEP * deltaTime, _cameraInc.z * CAMERA_POS_STEP * deltaTime);
+		camera.getTransform().rotate(_cameraRot.x * CAMERA_ROT_STEP * deltaTime, _cameraRot.y * CAMERA_ROT_STEP * deltaTime, 0);
 		camera.updateViewMatrix();
 
 		for (GameObject obj : _gameObjects) {
-			obj.getTransform().rotate(1.5f, 1.5f, 1.5f);
+			float rot = 90 * deltaTime;
+			obj.getTransform().rotate(rot, rot, rot);
 		}
 
 		// Add new game object
 		if (Input.keyDown(Key.SPACE)) {
 			GameObject cube = new GameObject("Cube");
-			MeshRenderer rend = _cube.getComponentByType(MeshRenderer.class);
-			cube.addComponent(new MeshRenderer(rend.getMesh(), rend.getMaterial()));
+			cube.addComponent(new MeshRenderer(_rend.getMesh(), _rend.getMaterial()));
 
 			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
 			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);

@@ -3,7 +3,7 @@ package engine.utils.math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.common.components.Transform;
+import engine.common.Transform;
 
 /**
  * Holds instances of matrices for calculations to reduce the amount of

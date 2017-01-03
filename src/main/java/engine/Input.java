@@ -1,7 +1,7 @@
 package engine;
 
-import engine.input.Key;
-import engine.input.InputHandler;
+import engine.utils.inputs.InputHandler;
+import engine.utils.inputs.Key;
 
 /**
  * Public API to handle/listen to input-related events

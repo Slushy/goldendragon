@@ -1,4 +1,4 @@
-package game.scenes;
+package game.scenes.loaders;
 
 import java.util.List;
 
