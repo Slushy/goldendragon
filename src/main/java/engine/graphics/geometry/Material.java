@@ -53,13 +53,29 @@ public class Material extends Entity {
 	}
 
 	/**
+	 * Constructs a new colored material
+	 * 
+	 * @param vector3f
+	 *            color of the material
+	 */
+	public Material(Vector3f vector3f) {
+		this();
+		this._color = vector3f;
+	}
+
+	/**
 	 * TEMPORARY
 	 * 
 	 * @param shaderProgram
 	 */
 	public final void renderStart(StandardShaderProgram shaderProgram) {
 		shaderProgram.setColor(getColor());
-		if (hasTexture()) {
+		
+		// Sets whether or not to use a texture
+		boolean hasTexture = hasTexture();
+		shaderProgram.useTexture(hasTexture);
+		
+		if (hasTexture) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, getTexture().getTextureId());
 		}
@@ -128,8 +144,8 @@ public class Material extends Entity {
 	protected void onDispose() {
 		// TODO: Remove this because texture is probably
 		// a shared element, so it should dispose itself
-		if (hasTexture())
-			_texture.dispose();
+		// if (hasTexture())
+		// _texture.dispose();
 	}
 
 	public static class MaterialDefaults {

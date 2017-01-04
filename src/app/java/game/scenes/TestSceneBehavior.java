@@ -22,7 +22,7 @@ import game.scenes.loaders.TestSceneLoader;
  * @author Brandon Porter
  *
  */
-public class TestScene extends Behavior {
+public class TestSceneBehavior extends Behavior {
 	private static final float CAMERA_POS_STEP = 7f;
 	private static final float CAMERA_ROT_STEP = 120;
 
@@ -36,13 +36,13 @@ public class TestScene extends Behavior {
 	/**
 	 * Constructs a new behavior for the Test Scene
 	 */
-	public TestScene() {
+	public TestSceneBehavior() {
 		super(TestSceneLoader.NAME);
 	}
 
 	@SuppressWarnings("unused")
-	private void init() {
-		this._cube = this.getScene().findGameObject("bunny");
+	private void start() {
+		this._cube = this.getScene().findGameObject("cube");
 		this._rend = _cube.getComponentByType(MeshRenderer.class);
 		_gameObjects.add(_cube);
 	}

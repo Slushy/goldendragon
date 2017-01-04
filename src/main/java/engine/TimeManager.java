@@ -10,7 +10,7 @@ import engine.utils.TimeUtils;
  */
 public class TimeManager {
 	public static float SPEED = 1;
-	
+
 	private static double _lastLoopTime;
 	private static double _gameTimeStart;
 	private static double _lastFPSCheck;
@@ -89,7 +89,7 @@ public class TimeManager {
 	 * 
 	 * @return time since we last checked
 	 */
-	protected static float setBenchmark() {
+	protected static float getBenchmark() {
 		double time = getTime();
 		_elapsedTime = (float) (time - _lastLoopTime);
 		_lastLoopTime = time;
@@ -102,10 +102,19 @@ public class TimeManager {
 	 * 
 	 * @param timerLengthMS
 	 *            The countdown length of the timer in millis
-	 * @return new stop watch
+	 * @return new timer
 	 */
 	public static Timer CreateTimer(double timerLengthMS) {
 		return new Timer(timerLengthMS);
+	}
+
+	/**
+	 * Creates a simple timer
+	 * 
+	 * @return new timer
+	 */
+	public static Timer CreateTimer() {
+		return new Timer();
 	}
 
 	/**
@@ -115,9 +124,15 @@ public class TimeManager {
 	 *
 	 */
 	public static class Timer {
-		private double _timerLengthNS;
-		private long _startTimeNS;
-		private boolean _started;
+		private double _timerLengthNS = -1;
+		private long _startTimeNS = 0;
+		private boolean _started = false;
+
+		/**
+		 * Constructs a new timer
+		 */
+		private Timer() {
+		}
 
 		/**
 		 * Constructs a new timer
@@ -149,11 +164,29 @@ public class TimeManager {
 		}
 
 		/**
-		 * Starts the timer
+		 * Resets the timer with the specified length and starts it
+		 * 
+		 * @param timerLengthMS
+		 *            the countdown length of the timer in milliseconds
 		 */
-		public void Start() {
+		public void start(double timerLengthMS) {
+			reset(timerLengthMS);
+			start();
+		}
+
+		/**
+		 * Starts the timer with the default time
+		 */
+		public void start() {
 			this._startTimeNS = TimeManager.getTimeNS();
 			this._started = true;
+		}
+
+		/**
+		 * @return true if the timer has been started
+		 */
+		public boolean hasStarted() {
+			return _started;
 		}
 
 		/**
@@ -161,11 +194,11 @@ public class TimeManager {
 		 */
 		public double getTimeRemaining() {
 			// Return the normal timer length if haven't started yet
-			if (!_started)
+			if (!hasStarted())
 				return _timerLengthNS;
 
 			// Returns 0 if timer is done
-			return IsDone() ? 0.0 : _timerLengthNS - getTimeTaken();
+			return isDone() ? 0.0 : _timerLengthNS - getTimeTaken();
 		}
 
 		/**
@@ -173,16 +206,22 @@ public class TimeManager {
 		 */
 		public double getTimeTaken() {
 			// Returns 0 if timer hasn't started
-			return !_started ? 0.0 : TimeManager.getTimeNS() - _startTimeNS;
+			return !hasStarted() ? 0.0 : TimeManager.getTimeNS() - _startTimeNS;
 		}
 
 		/**
-		 * Checks if the current timer is done
+		 * Checks if the current timer is done. If it is done it resets the
+		 * timer
 		 * 
-		 * @return true if the time taken >= timer length passed in
+		 * @return true if the timer hasnt been started, or the time taken >=
+		 *         timer length passed in
 		 */
-		public boolean IsDone() {
-			return getTimeTaken() >= _timerLengthNS;
+		public boolean isDone() {
+			boolean isDone = hasStarted() && getTimeTaken() >= _timerLengthNS;
+			// Reset the timer if we just finished
+			if (isDone)
+				reset();
+			return isDone;
 		}
 	}
 }

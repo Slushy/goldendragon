@@ -62,7 +62,15 @@ public class StandardShaderProgram extends ShaderProgram {
 	 */
 	public void setColor(Vector3f color) {
 		super.setUniform(COLOR, color);
-		super.setUniform(USE_TEXTURE, true);
+	}
+
+	/**
+	 * Sets whether or not this object should use a texture to render
+	 * 
+	 * @param useTexture
+	 */
+	public void useTexture(boolean useTexture) {
+		super.setUniform(USE_TEXTURE, useTexture);
 	}
 
 	/**

@@ -78,7 +78,7 @@ public class MeshLoader {
 			}
 		});
 
-		Debug.log("GL request to register mesh was immediate: " + wasImmediate);
+		Debug.log("GL request to register mesh (" + mesh.getName() + ") was immediate: " + wasImmediate);
 	}
 
 	/*

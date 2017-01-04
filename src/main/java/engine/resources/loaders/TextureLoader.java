@@ -103,7 +103,7 @@ public class TextureLoader {
 			texture.setTextureId(id);
 		});
 		
-		Debug.log("GL request to register texture was immediate: " + wasImmediate);
+		Debug.log("GL request to register texture (" + texture.getName() + ") was immediate: " + wasImmediate);
 	}
 
 	/*

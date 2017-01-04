@@ -48,7 +48,7 @@ final class GLRequestProcessor implements IRequestProcessor {
 	 */
 	public void run(boolean executeAll) {
 		if (!executeAll)
-			_timer.Start();
+			_timer.start();
 
 		while (!_requestQueue.isEmpty()) {
 			// Removes and executes the top request
@@ -56,7 +56,7 @@ final class GLRequestProcessor implements IRequestProcessor {
 
 			// Stop making requests if we've reached
 			// our max limit
-			if (!executeAll && _timer.IsDone())
+			if (!executeAll && _timer.isDone())
 				break;
 		}
 

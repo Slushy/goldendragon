@@ -3,6 +3,7 @@ package engine;
 import engine.Engine.EngineOptions;
 import engine.resources.RequestManager;
 import engine.scenes.Scene;
+import engine.utils.Debug;
 
 /**
  * This game runner is ran by the engine to load update the game
@@ -63,7 +64,7 @@ class GameRunner {
 			processInput();
 
 			// 2. Physics/AI fixed update logic
-			runTime += TimeManager.setBenchmark();
+			runTime += TimeManager.getBenchmark();
 			for (; runTime >= interval; runTime -= interval) {
 				fixedUpdate();
 			}
@@ -110,10 +111,8 @@ class GameRunner {
 		// If the game has decided to load a new scene,
 		// we check that here first, switch to it if true,
 		// and then update the main display projection matrix.
-		if (SceneManager.hasNewScene()) {
+		if (SceneManager.hasNewScene())
 			SceneManager.switchToNewScene();
-			Display.MAIN.updateCameraProjectionMatrix();
-		}
 
 		// Updates the currently active scene
 		Scene activeScene = SceneManager.getActiveScene();

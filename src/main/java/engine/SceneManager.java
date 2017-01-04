@@ -3,6 +3,7 @@ package engine;
 import java.util.function.Consumer;
 
 import engine.resources.RequestManager;
+import engine.scenes.ApplicationSplashLoader;
 import engine.scenes.Scene;
 import engine.scenes.SceneHandler;
 import engine.scenes.SceneLoader;
@@ -16,8 +17,12 @@ import engine.utils.Debug;
  */
 public final class SceneManager {
 	private static final SceneHandler _sceneHandler = new SceneHandler();
+	private static final TimeManager.Timer _splashTimer = TimeManager.CreateTimer();
+
 	private static boolean _newSceneLoaded = false;
 
+	// NOTE: We should probably make the scene manager a singleton since we seem
+	// to be throwing more and more state into it
 	// Static class
 	private SceneManager() {
 	}
@@ -82,27 +87,76 @@ public final class SceneManager {
 	 * 
 	 * @param sceneLoaders
 	 *            the scene loaders as specified by the game initializer
+	 * @throws Exception
 	 */
-	protected static void init(SceneLoader[] sceneLoaders) {
+	protected static void init(SceneLoader[] sceneLoaders) throws Exception {
 		_sceneHandler.initSceneLoaders(sceneLoaders);
+	}
+
+	/**
+	 * Loads and shows the application splash for the game
+	 * 
+	 * @param sceneLoader
+	 * @return true or false if the splash was loaded and shown successfully
+	 * @throws Exception
+	 */
+	protected static boolean loadAndShowApplicationSplash(ApplicationSplashLoader splashLoader) throws Exception {
+		// This may not be a warning
+		if (_sceneHandler.hasLoadingScene()) {
+			// For now, let's log and return
+			Debug.error("Trying to load the application splash while another scene is already loading");
+			return false;
+		}
+
+		// Load the splash scene
+		_newSceneLoaded = _sceneHandler.loadSplash(splashLoader);
+		if (!_newSceneLoaded) {
+			throw new Exception("Application splash scene failed to load");
+		}
+
+		// Try to switch to the new splash
+		if (!switchToNewScene())
+			return false;
+
+		// If applicable, start a timer that will allow the splash scene
+		// to be shown for a minimum amount of time before another scene
+		// can be shown.
+		double splashWait = splashLoader.getMinimumTimeSplashIsDisplayed();
+		if (splashWait > 0.0) {
+			Debug.log(String.format("Starting a splash timer for %.2f ms", splashWait));
+			_splashTimer.start(splashWait);
+		}
+
+		return true;
 	}
 
 	/**
 	 * @return true if we have a new scene to show
 	 */
 	protected static boolean hasNewScene() {
-		return _sceneHandler.hasLoadingScene() && _newSceneLoaded;
+		// If we have a splash timer that has been started, make sure it is done
+		// before a new scene can be loaded
+		return _sceneHandler.hasLoadingScene() && _newSceneLoaded && !waitingOnSplashTimer();
 	}
 
 	/**
 	 * Switches to the ready scene and disposes the old one
+	 * 
+	 * @return true if the scene was successfully switched to and is currently
+	 *         showing
 	 */
-	protected static void switchToNewScene() {
+	protected static boolean switchToNewScene() {
 		if (!hasNewScene()) {
 			Debug.error("Trying to switch to new scene when there is no loaded scene");
-			return;
+			return false;
 		}
 
+		// We dont want to show the new scene yet if we still have an active
+		// splash timer
+		if (waitingOnSplashTimer()) {
+			Debug.warn("Trying to switch to new scene when we have an active splash timer");
+			return false;
+		}
 		// Game loop uses this boolean to dictate whether or not we should
 		// switch, so set it to false until we have a new scene
 		_newSceneLoaded = false;
@@ -110,12 +164,21 @@ public final class SceneManager {
 		// Set the loading scene as active and start it
 		String oldActiveScene = _sceneHandler.setLoadingToActive();
 
-		// The new scene is now active
-		getActiveScene().onForeground();
+		// Set the camera projection matrix for the new main scene
+		// NOTE: May not need this anymore since we only have one camera
+		// although might be good practice to leave this here in case
+		// we want to support multiple
+		Display.MAIN.updateCameraProjectionMatrix();
 
-		// If we had an old active scene, dispose it
+		// The new scene is now active
+		getActiveScene().start();
+
+		// If we had an old active scene, dispose it asynchronously (so
+		// our new scene is not waiting for it to unload)
 		if (oldActiveScene != null)
-			_sceneHandler.disposeScene(oldActiveScene);
+			_sceneHandler.disposeSceneAsync(oldActiveScene);
+
+		return true;
 	}
 
 	/**
@@ -123,5 +186,16 @@ public final class SceneManager {
 	 */
 	protected static void dispose() {
 		_sceneHandler.dispose();
+	}
+
+	/**
+	 * Checks if we are waiting for a splash to be finished showing
+	 * 
+	 * @return true if we have started a splash timer that is not finished,
+	 *         otherwise if there is no splash timer or it has finished loading
+	 *         we return false
+	 */
+	private static boolean waitingOnSplashTimer() {
+		return _splashTimer.hasStarted() && !_splashTimer.isDone();
 	}
 }

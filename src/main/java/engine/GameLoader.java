@@ -3,6 +3,7 @@ package engine;
 import java.util.function.Consumer;
 
 import engine.resources.RequestManager;
+import engine.scenes.ApplicationSplashLoader;
 import engine.scenes.SceneLoader;
 
 /**
@@ -37,11 +38,23 @@ final class GameLoader {
 	 *            did not occur it will be null.
 	 */
 	public void load(Consumer<String> onLoadingComplete) {
-		// First thing is first, load splash screen (Should be synchronous so we
-		// can wait on it)
-		SceneLoader appSplashLoader = _gameInitializer.getApplicationSplashLoader();
+		// First thing is first, load splash screen (Should be synchronous since
+		// we are on main thread
+		// so we can wait on it)
+		ApplicationSplashLoader appSplashLoader = _gameInitializer.getApplicationSplashLoader();
 		if (appSplashLoader != null) {
-			// TODO: Show app splash
+			try {
+				SceneManager.loadAndShowApplicationSplash(appSplashLoader);
+			} catch (Exception e) {
+				e.printStackTrace();
+
+				// For now simply set error and return if we fail to load splash
+				// Obviously in practice we won't want to stop a game from
+				// loading if the splash fails unless it is a core part of the
+				// game.
+				onLoadingComplete.accept("Error loading application splash");
+				return;
+			}
 		}
 
 		// Begin loading game resources in separate thread
@@ -62,7 +75,7 @@ final class GameLoader {
 			}
 		});
 	}
-	
+
 	/**
 	 * Called when the game is closing; this should unload all resources created
 	 */

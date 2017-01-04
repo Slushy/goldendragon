@@ -25,7 +25,7 @@ public class Scene extends Entity {
 	private final EventDispatcher _eventDispatcher = new EventDispatcher();
 	private final List<GameObject> _gameObjects = new LinkedList<>();
 
-	private boolean _isReady = false;
+	private SceneState _sceneState = SceneState.INACTIVE;
 
 	/**
 	 * Constructs a new scene with the specified name
@@ -52,7 +52,7 @@ public class Scene extends Entity {
 
 		return null;
 	}
-	
+
 	/**
 	 * Finds all game object in the scene by name
 	 * 
@@ -88,16 +88,32 @@ public class Scene extends Entity {
 				// Loop over every execution method a component can have
 				for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
 					if (m.getName().equals(evt.methodName())) {
+						// Set the method as essentially "public" so we can
+						// invoke it, as these methods are usually defined as
+						// private or protected.
 						m.setAccessible(true);
-						compEvents.put(evt, m);
 
-						// Scene has already been initialized, so we
-						// initialize the game object
-						if (_isReady && evt == ExecutionEvent.INITIALIZE) {
+						// If the scene is in any state other than
+						// INACTIVE, this means they are being added from
+						// other components so we can go ahead and
+						// initialize them now.
+						if (evt == ExecutionEvent.INITIALIZE && _sceneState.greaterThan(SceneState.INACTIVE)) {
+							_eventDispatcher.invokeMethod(comp, m);
+						} else {
+							// Dont add the initialize event to those game
+							// objects that are being added dynamically
+							// because we only initialize once
+							compEvents.put(evt, m);
+						}
+
+						// If the scene has already started then lets invoke the
+						// START method on the new supported component (we still
+						// want to subscribe it since it could be called later
+						// if a disabled game object becomes enabled again)
+						if (evt == ExecutionEvent.START && _sceneState.greaterThan(SceneState.READY)) {
 							_eventDispatcher.invokeMethod(comp, m);
 						}
 					}
-
 				}
 			}
 
@@ -125,26 +141,39 @@ public class Scene extends Entity {
 	 * @return true if the scene is ready to show, false otherwise
 	 */
 	protected final boolean isReady() {
-		return _isReady;
+		return _sceneState == SceneState.READY;
 	}
-	
+
 	/**
-	 * Initializes the scene
+	 * Initializes the scene, this may happen in the background while another
+	 * scene is still running
 	 * 
 	 * @throws Exception
 	 */
 	protected void init() throws Exception {
-		SceneRenderer.instance().reset();
+		this._sceneState = SceneState.INITIALIZING;
+
 		// Initializes any components that require it
 		_eventDispatcher.dispatchEvent(ExecutionEvent.INITIALIZE);
-		this._isReady = true;
+
+		// TODO: Instead of saying its ready, maybe we should find a way to make
+		// sure all game objects have been initialized and aren't loading
+		// anything before saying we are "READY"
+		this._sceneState = SceneState.READY;
 	}
 
 	/**
-	 * When the scene becomes active this is fired
+	 * When the scene first starts (becomes the active scene) this is fired
 	 */
-	public void onForeground() {
-		_eventDispatcher.dispatchEvent(ExecutionEvent.ON_FOREGROUND);
+	public void start() {
+		// We are now the active scene
+		this._sceneState = SceneState.ACTIVE;
+
+		// Reset the scene renderer to inform it a new scene is ready to start
+		SceneRenderer.instance().reset();
+
+		// Starts any components that require it
+		_eventDispatcher.dispatchEvent(ExecutionEvent.START);
 	}
 
 	/**
@@ -176,11 +205,51 @@ public class Scene extends Entity {
 	 */
 	@Override
 	protected void onDispose() {
-		this._isReady = false;
+		this._sceneState = SceneState.CLOSING;
 		_eventDispatcher.dispose();
 
 		for (GameObject gameObject : _gameObjects) {
 			gameObject.dispose();
+		}
+	}
+
+	/**
+	 * The different states a scene can be in (this will most likely be changed)
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	private enum SceneState {
+		INACTIVE(0), INITIALIZING(1), READY(2), STARTING(3), ACTIVE(4), CLOSING(5);
+
+		private final int _rank;
+
+		/**
+		 * Constructs a scene state of certain rank
+		 * 
+		 * @param rank
+		 *            the relative "level" compared to other scene states
+		 */
+		private SceneState(int rank) {
+			this._rank = rank;
+		}
+
+		/**
+		 * @param state
+		 *            SceneState to compare against
+		 * @return true if the current scene state is greater in rank than the
+		 *         passed in scene state
+		 */
+		public boolean greaterThan(SceneState state) {
+			return getRank() > state.getRank();
+		}
+
+		/**
+		 * @return the current rank of this scene state used to compare against
+		 *         other scene states
+		 */
+		public int getRank() {
+			return _rank;
 		}
 	}
 }

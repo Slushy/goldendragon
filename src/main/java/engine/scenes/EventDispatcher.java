@@ -51,7 +51,8 @@ final class EventDispatcher {
 	 *            the arguments to pass along
 	 */
 	public void dispatchEvent(ExecutionEvent event) {
-		for (ComponentMethod compMethod : _subscribedComponents.get(event)) {
+		LinkedList<ComponentMethod> compMethods = _subscribedComponents.get(event);
+		for (ComponentMethod compMethod : compMethods) {
 			Component comp = compMethod.component;
 			// For now we are just going to continue, but
 			// we should eventually figure out how to remove this
@@ -99,7 +100,7 @@ final class EventDispatcher {
 	 *
 	 */
 	public static enum ExecutionEvent {
-		INITIALIZE(1, "init"), ON_FOREGROUND(2, "onForeground"), UPDATE(4, "update");
+		INITIALIZE(1, "init"), START(2, "start"), UPDATE(4, "update");
 
 		private final int _bitValue;
 		private final String _methodName;

@@ -1,10 +1,10 @@
 package game;
 
 import engine.IGameInitializer;
-import engine.resources.loaders.MeshLoader;
-import engine.resources.loaders.TextureLoader;
+import engine.scenes.ApplicationSplashLoader;
 import engine.scenes.SceneLoader;
 import engine.utils.Debug;
+import game.scenes.loaders.SplashLoader;
 import game.scenes.loaders.TestSceneLoader;
 
 /**
@@ -15,9 +15,8 @@ import game.scenes.loaders.TestSceneLoader;
  */
 public class GameInitializer implements IGameInitializer {
 	@Override
-	public SceneLoader getApplicationSplashLoader() {
-		// return new SplashLoader();
-		return null;
+	public ApplicationSplashLoader getApplicationSplashLoader() {
+		return new SplashLoader();
 	}
 
 	/**
@@ -41,8 +40,12 @@ public class GameInitializer implements IGameInitializer {
 		return new SceneLoader[] { new TestSceneLoader() };
 	}
 
+	/**
+	 * Dispose all game-generated textures and meshes
+	 */
 	@Override
 	public void dispose() {
-		// TODO: resource disposing
+		GameResources.Textures.disposeAll();
+		GameResources.Meshes.disposeAll();
 	}
 }

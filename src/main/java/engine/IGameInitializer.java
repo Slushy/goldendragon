@@ -1,5 +1,6 @@
 package engine;
 
+import engine.scenes.ApplicationSplashLoader;
 import engine.scenes.SceneLoader;
 
 /**
@@ -24,7 +25,7 @@ public interface IGameInitializer {
 	/**
 	 * @return the splash to show at application launch, or none to skip
 	 */
-	default SceneLoader getApplicationSplashLoader() {
+	default ApplicationSplashLoader getApplicationSplashLoader() {
 		return null;
 	}
 

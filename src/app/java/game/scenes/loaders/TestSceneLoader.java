@@ -10,7 +10,7 @@ import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
 import engine.scenes.SceneLoader;
 import game.GameResources;
-import game.scenes.TestScene;
+import game.scenes.TestSceneBehavior;
 
 /**
  * Loads the test scene
@@ -39,35 +39,33 @@ public class TestSceneLoader extends SceneLoader {
 		Mesh mesh = GameResources.Meshes.CUBE;
 		Material mat = new Material(GameResources.Textures.GRASS_BLOCK);
 
-		// Create game object with mesh renderer
-		GameObject cube = new GameObject("Cube");
-		cube.addComponent(new MeshRenderer(mesh, mat));
-		cube.getTransform().setPosZ(-5);
-
+		String cubeName = "Cube";
+		// Create dynamic placed cubes
 		for (int i = 0; i < 5; i++) {
 			// Create game object with mesh renderer
-			GameObject cube2 = new GameObject("Cube");
-			cube2.addComponent(new MeshRenderer(mesh, mat));
+			GameObject cube = new GameObject(cubeName);
+			cube.addComponent(new MeshRenderer(mesh, mat));
 
 			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
 			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
 			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
-			cube2.getTransform().setPosition(randomX, randomY, randomZ);
+			cube.getTransform().setPosition(randomX, randomY, randomZ);
 
-			gameObjects.add(cube2);
+			gameObjects.add(cube);
 		}
 
-		GameObject script = new GameObject("Scene Behavior");
-		script.addComponent(new TestScene());
+		// Create a bunny
+		GameObject bunny = new GameObject("Bunny");
+		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, Material.DEFAULT));
+		bunny.getTransform().setPosZ(-3);
+		gameObjects.add(bunny);
 
-		gameObjects.add(cube);
+		// Create our scene script
+		GameObject script = new GameObject("Scene Behavior");
+		script.addComponent(new TestSceneBehavior());
 		gameObjects.add(script);
 
-		 GameObject bunny = new GameObject("Bunny");
-		 bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY,
-		 mat));
-		 gameObjects.add(bunny);
-
+		// return all game objects for our test scene
 		return gameObjects;
 	}
 }

@@ -58,7 +58,7 @@ public abstract class SceneLoader {
 	/**
 	 * Disposes the scene and sets it to null
 	 */
-	protected void clearScene() {
+	protected synchronized void clearScene() {
 		if (_scene != null) {
 			_scene.dispose();
 			_scene = null;
