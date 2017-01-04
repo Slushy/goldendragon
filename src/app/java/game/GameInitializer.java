@@ -29,9 +29,8 @@ public class GameInitializer implements IGameInitializer {
 	public void loadResources() throws Exception {
 		Debug.log("Begin loading resources");
 
-		TextureLoader.loadTexture(GameResources.Textures.GRASS_BLOCK);
-		MeshLoader.loadMesh(GameResources.Meshes.CUBE);
-		MeshLoader.loadMesh(GameResources.Meshes.BUNNY);
+		GameResources.Textures.loadAll();
+		GameResources.Meshes.loadAll();
 	}
 
 	/**
