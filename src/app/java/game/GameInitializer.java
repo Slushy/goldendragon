@@ -31,6 +31,7 @@ public class GameInitializer implements IGameInitializer {
 
 		TextureLoader.loadTexture(GameResources.Textures.GRASS_BLOCK);
 		MeshLoader.loadMesh(GameResources.Meshes.CUBE);
+		MeshLoader.loadMesh(GameResources.Meshes.BUNNY);
 	}
 
 	/**

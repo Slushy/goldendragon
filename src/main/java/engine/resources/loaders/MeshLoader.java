@@ -109,6 +109,7 @@ public class MeshLoader {
 	protected static class MeshVBOData {
 		public final float[] vertexPositions;
 		public final float[] textureCoords;
+		public final float[] vertexNormals;
 		public final int[] indices;
 
 		/**
@@ -116,11 +117,13 @@ public class MeshLoader {
 		 * 
 		 * @param vertexPositions
 		 * @param textureCoords
+		 * @param vertexNormals
 		 * @param indices
 		 */
-		public MeshVBOData(float[] vertexPositions, float[] textureCoords, int[] indices) {
+		public MeshVBOData(float[] vertexPositions, float[] textureCoords, float[] vertexNormals, int[] indices) {
 			this.vertexPositions = vertexPositions;
 			this.textureCoords = textureCoords;
+			this.vertexNormals = vertexNormals;
 			this.indices = indices;
 		}
 	}

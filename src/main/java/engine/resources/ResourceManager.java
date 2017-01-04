@@ -1,8 +1,12 @@
 package engine.resources;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -11,7 +15,7 @@ import java.util.Scanner;
  * @author brandon.porter
  *
  */
-public class ResourceManager {
+public final class ResourceManager {
 	/**
 	 * An array of supported file types for the engine
 	 */
@@ -32,7 +36,8 @@ public class ResourceManager {
 	 * Loads the found shader file as a String
 	 * 
 	 * @param fileName
-	 * @return
+	 *            file name of the shader
+	 * @return shader file as one big string
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -44,7 +49,8 @@ public class ResourceManager {
 	 * Loads and returns the complete file as a String
 	 * 
 	 * @param relFilePath
-	 * @return
+	 *            full relative file path to the resources directory
+	 * @return resource file as one big string
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -64,6 +70,38 @@ public class ResourceManager {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Loads the model file to read and return all lines as a list of strings
+	 * 
+	 * @param fileName
+	 *            filename of the model
+	 * @return all lines in the model file
+	 * @throws IOException
+	 */
+	public static List<String> loadModel(String fileName) throws IOException {
+		return loadResourceAsStringList(MODELS_PATH + fileName);
+	}
+
+	/**
+	 * Loads and return the resource file as a list of strings
+	 * 
+	 * @param relFilePath
+	 *            full relative file path to the resources directory
+	 * @return parsed file into a list of strings
+	 * @throws IOException
+	 */
+	public static List<String> loadResourceAsStringList(String relFilePath) throws IOException {
+		List<String> lines = new ArrayList<>();
+
+		String line;
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(loadResourceAsStream(relFilePath)))) {
+			while ((line = br.readLine()) != null)
+				lines.add(line);
+		}
+
+		return lines;
 	}
 
 	/**

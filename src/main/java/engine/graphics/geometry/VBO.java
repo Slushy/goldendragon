@@ -15,15 +15,11 @@ import engine.utils.Utils;
  *
  */
 public enum VBO {
-	POSITION(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE), 
-	TEXTURE(GL15.GL_ARRAY_BUFFER, VECTOR_2D_SIZE),
-	NORMAL(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE),
-	INDEX(GL15.GL_ELEMENT_ARRAY_BUFFER, -1);
+	POSITION(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE), TEXTURE(GL15.GL_ARRAY_BUFFER,
+			VECTOR_2D_SIZE), NORMAL(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE), INDEX(GL15.GL_ELEMENT_ARRAY_BUFFER, -1);
 
 	private final int _bufferTarget;
 	private final int _attrSize;
-
-	private int _vboId = -1;
 
 	/**
 	 * Constructs a VBO object
@@ -58,9 +54,10 @@ public enum VBO {
 	 * @param data
 	 * @throws Exception
 	 */
-	public void bindData(float[] data) throws Exception {
-		this._vboId = createVBO();
+	public int bindData(float[] data) throws Exception {
+		int vboId = createVBO();
 		GL15.glBufferData(_bufferTarget, Utils.loadBuffer(data), GL15.GL_STATIC_DRAW);
+		return vboId;
 	}
 
 	/**
@@ -69,9 +66,10 @@ public enum VBO {
 	 * @param data
 	 * @throws Exception
 	 */
-	public void bindData(int[] data) throws Exception {
-		this._vboId = createVBO();
+	public int bindData(int[] data) throws Exception {
+		int vboId = createVBO();
 		GL15.glBufferData(_bufferTarget, Utils.loadBuffer(data), GL15.GL_STATIC_DRAW);
+		return vboId;
 	}
 
 	/**
@@ -82,31 +80,17 @@ public enum VBO {
 			GL15.glBindBuffer(_bufferTarget, 0);
 	}
 
-	/**
-	 * Unbind and deletes this VBO from graphics memory
-	 */
-	public void dispose() {
-		if (_vboId != -1) {
-			done(); // Just in case
-			GL15.glDeleteBuffers(_vboId);
-		}
-	}
-
 	@Override
 	public String toString() {
 		String name = super.toString();
-		return String.format("%s [%d]: type: %d, size: %d", name, _vboId, _bufferTarget, _attrSize);
+		return String.format("%s: type: %d, size: %d", name, _bufferTarget, _attrSize);
 	}
 
 	/*
 	 * Creates a new VBO and binds it for use
 	 */
 	private int createVBO() throws Exception {
-		if (_vboId != -1)
-			throw new Exception("This VBO has already been created");
-
 		int vboId = GL15.glGenBuffers();
-
 		GL15.glBindBuffer(_bufferTarget, vboId);
 		return vboId;
 	}

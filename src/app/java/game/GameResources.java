@@ -44,6 +44,7 @@ public final class GameResources {
 		 * The 6 sided cube
 		 */
 		public static final Mesh CUBE = new Mesh("cube.obj");
+		public static final Mesh BUNNY = new Mesh("bunny.obj");
 
 		// Static class
 		private Meshes() {

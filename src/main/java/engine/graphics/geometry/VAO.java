@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
@@ -16,7 +17,7 @@ import org.lwjgl.opengl.GL30;
  */
 public class VAO implements IBindable {
 	private final int _vaoId;
-	private final List<VBO> _vbos = new ArrayList<>();
+	private final List<Integer> _vbos = new ArrayList<>();
 
 	private int _attributeCount = 0;
 
@@ -49,7 +50,7 @@ public class VAO implements IBindable {
 	 * @throws Exception
 	 */
 	public void bindVBO(VBO vbo, float[] data) throws Exception {
-		vbo.bindData(data);
+		_vbos.add(vbo.bindData(data));
 		storeVBO(vbo, GL11.GL_FLOAT);
 	}
 
@@ -61,7 +62,7 @@ public class VAO implements IBindable {
 	 * @throws Exception
 	 */
 	public void bindVBO(VBO vbo, int[] data) throws Exception {
-		vbo.bindData(data);
+		_vbos.add(vbo.bindData(data));
 		storeVBO(vbo, GL11.GL_INT);
 	}
 
@@ -86,13 +87,13 @@ public class VAO implements IBindable {
 	public void dispose() {
 		// Unbind and dispose any attached vbos
 		int attrCount = 0;
-		for (VBO vbo : _vbos) {
+		for (int vbo : _vbos) {
 			// Unbind attribute
-			if (vbo.isAttribute() && attrCount < _attributeCount)
+			if (attrCount < _attributeCount)
 				GL20.glDisableVertexAttribArray(attrCount++);
 
 			// Delete the VBO
-			vbo.dispose();
+			GL15.glDeleteBuffers(vbo);
 		}
 
 		// clear any vbo data
@@ -108,8 +109,6 @@ public class VAO implements IBindable {
 	 * Stores the vbo in memory and adds to attribute list if applicable
 	 */
 	private void storeVBO(VBO vbo, int attrType) {
-		_vbos.add(vbo);
-
 		// Check and add vbo to attribute list
 		if (vbo.isAttribute()) {
 			GL20.glVertexAttribPointer(_attributeCount++, vbo.getAttrSize(), attrType, false, 0, 0);
