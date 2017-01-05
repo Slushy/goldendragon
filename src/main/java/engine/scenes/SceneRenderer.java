@@ -11,6 +11,7 @@ import engine.graphics.ShaderType;
 import engine.graphics.StandardShaderProgram;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
+import engine.lighting.Light;
 import engine.utils.math.Transformation;
 
 /**
@@ -78,6 +79,7 @@ public class SceneRenderer {
 	 * Renders the meshes to screen
 	 */
 	protected void render(Scene scene) {
+		Camera camera = scene.getCamera();
 		StandardShaderProgram shaderProgram = GraphicsManager.getShader(ShaderType.STANDARD);
 		
 		// Starts the rendering process
@@ -85,9 +87,10 @@ public class SceneRenderer {
 		Display.MAIN.getGraphicsController().clearGraphics();
 		shaderProgram.bind();
 
-		Camera camera = scene.getCamera();
+		// Sets the variables that will not change between render cycles
 		shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
-
+		shaderProgram.setAmbientLight(Light.getAmbientLight());
+		
 		// For each similar mesh
 		for (long meshId : _meshMaterials.keySet()) {
 			// For each similar material

@@ -8,7 +8,7 @@ import org.joml.Quaternionf;
  * @author brandon.porter
  *
  */
-public class QuaternionUtils {
+public final class QuaternionUtils {
 
 	/*
 	 * Prevent manual instantiation

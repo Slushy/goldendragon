@@ -35,6 +35,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	private static final String USE_TEXTURE = "useTexture";
 	private static final String PROJECTION_MATRIX = "projectionMatrix";
 	private static final String WORLD_VIEW_MATRIX = "worldViewMatrix";
+	private static final String AMBIENT_LIGHT = "ambientLight";
 
 	// Singleton shader
 	private StandardShaderProgram() throws Exception {
@@ -53,6 +54,7 @@ public class StandardShaderProgram extends ShaderProgram {
 		super.registerUniform(USE_TEXTURE);
 		super.registerUniform(PROJECTION_MATRIX);
 		super.registerUniform(WORLD_VIEW_MATRIX);
+		super.registerUniform(AMBIENT_LIGHT);
 	}
 
 	/**
@@ -62,6 +64,15 @@ public class StandardShaderProgram extends ShaderProgram {
 	 */
 	public void setColor(Vector3f color) {
 		super.setUniform(COLOR, color);
+	}
+
+	/**
+	 * Sets the ambient light of the scene
+	 * 
+	 * @param ambientLight
+	 */
+	public void setAmbientLight(Vector3f ambientLight) {
+		super.setUniform(AMBIENT_LIGHT, ambientLight);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package game;
 
 import engine.IGameInitializer;
+import engine.lighting.Light;
 import engine.scenes.ApplicationSplashLoader;
 import engine.scenes.SceneLoader;
 import engine.utils.Debug;
@@ -14,6 +15,17 @@ import game.scenes.loaders.TestSceneLoader;
  *
  */
 public class GameInitializer implements IGameInitializer {
+
+	/**
+	 * Constructor that is called before the engine is started
+	 */
+	public GameInitializer() {
+		// Sets the ambient light at the beginning of the scene 
+		// - we don't need to reset it every time
+		Light.setAmbientLightColor(1, 1, 1);
+		Light.setAmbientLightBrightness(2);
+	}
+
 	@Override
 	public ApplicationSplashLoader getApplicationSplashLoader() {
 		return new SplashLoader();

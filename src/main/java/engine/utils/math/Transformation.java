@@ -12,7 +12,7 @@ import engine.common.Transform;
  * @author brandon.porter
  *
  */
-public class Transformation {
+public final class Transformation {
 	private static final Matrix4f WORLD_MATRIX = new Matrix4f();
 	private static final Matrix4f WORLD_VIEW_MATRIX = new Matrix4f();
 	

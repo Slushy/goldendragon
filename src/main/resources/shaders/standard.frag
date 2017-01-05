@@ -6,15 +6,21 @@ out vec4 out_color;
 
 uniform sampler2D modelTexture;
 
+uniform vec3 ambientLight;
 uniform vec3 color;
 uniform bool useTexture;
 
 void main() {
+	vec4 baseColor;
+	
 	if (useTexture) {
 		// Set the texture for the pixel
-		out_color = texture(modelTexture, pass_textureCoords);
+		baseColor = texture(modelTexture, pass_textureCoords);
 	} else {
 		// Set each fragments color
-		out_color = vec4(color, 1.0);
+		baseColor = vec4(color, 1.0);
 	}
+	
+	// Applies the ambient light to every pixel
+	out_color = baseColor * vec4(ambientLight, 1.0);
 }

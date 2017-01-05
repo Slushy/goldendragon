@@ -1,5 +1,7 @@
 package engine.common;
 
+import org.joml.Vector3f;
+
 /**
  * Contains any default values to be consumed by the engine or app
  * 
@@ -119,9 +121,10 @@ public class Defaults {
 		 * introduce minor input lag.
 		 */
 		public static final boolean VSYNC = true;
-		
+
 		/**
-		 * Whether or not to display the FPS (frames per second) on the window title bar
+		 * Whether or not to display the FPS (frames per second) on the window
+		 * title bar
 		 */
 		public static final boolean SHOW_FPS = false;
 
@@ -130,5 +133,24 @@ public class Defaults {
 		 */
 		private Window() {
 		}
+	}
+
+	/**
+	 * Defaults for lighting in a scene
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	public static class Lighting {
+
+		/**
+		 * The default brightness of any light in the scene
+		 */
+		public static float LIGHT_INTENSITY = 1;
+
+		/**
+		 * The default color for any light in the scene
+		 */
+		public static Vector3f LIGHT_COLOR = new Vector3f(1, 1, 1);
 	}
 }

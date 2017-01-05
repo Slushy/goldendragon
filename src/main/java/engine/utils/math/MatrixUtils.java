@@ -9,7 +9,7 @@ import org.joml.Vector3f;
  * @author brandon.porter
  *
  */
-public class MatrixUtils {
+public final class MatrixUtils {
 
 	/*
 	 * Prevent manual instantiation
