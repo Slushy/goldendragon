@@ -22,8 +22,8 @@ public class GameInitializer implements IGameInitializer {
 	public GameInitializer() {
 		// Sets the ambient light at the beginning of the scene 
 		// - we don't need to reset it every time
-		Light.setAmbientLightColor(1, 1, 1);
-		Light.setAmbientLightBrightness(2);
+		Light.AMBIENT_LIGHT.setColor(1, 1, 1);
+		Light.AMBIENT_LIGHT.setBrightness(1);
 	}
 
 	@Override

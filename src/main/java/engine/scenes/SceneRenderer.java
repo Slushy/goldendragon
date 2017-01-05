@@ -89,7 +89,7 @@ public class SceneRenderer {
 
 		// Sets the variables that will not change between render cycles
 		shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
-		shaderProgram.setAmbientLight(Light.getAmbientLight());
+		shaderProgram.setAmbientLight(Light.AMBIENT_LIGHT.getLight());
 		
 		// For each similar mesh
 		for (long meshId : _meshMaterials.keySet()) {
