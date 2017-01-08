@@ -15,7 +15,6 @@ import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
 import engine.lighting.DirectionalLight;
 import engine.lighting.Light;
-import engine.utils.Debug;
 import engine.utils.math.Transformation;
 
 /**
@@ -36,10 +35,11 @@ public class SceneRenderer {
 		return _instance;
 	}
 
+	private final Transformation _transformation = new Transformation();
 	private final Map<Long, LinkedList<Long>> _meshMaterials = new LinkedHashMap<>();
 	private final Map<Long, LinkedList<MeshRenderer>> _materialRenderers = new LinkedHashMap<>();
 	private DirectionalLight _directionalLight = null;
-
+	
 	// Singleton class
 	private SceneRenderer() {
 	}
@@ -111,12 +111,11 @@ public class SceneRenderer {
 		
 		// Lighting 
 		shaderProgram.setAmbientLight(Light.AMBIENT_LIGHT.getLight());
-		shaderProgram.setHasDirectionalLight(_directionalLight != null);
 		if (_directionalLight != null) {
 			// Remember, we only care about a directional lights direction from
 			// its rotation, not the position
 			Vector3f dirLightRotation = _directionalLight.getGameObject().getTransform().getRotation();
-			Vector3f dirLightDirection = Transformation.getDirectionalLightDirection(dirLightRotation,
+			Vector3f dirLightDirection = _transformation.getDirectionalLightDirection(dirLightRotation,
 					camera.getViewMatrix());
 			shaderProgram.setDirectionalLight(_directionalLight.getColor(), dirLightDirection,
 					_directionalLight.getBrightness());
@@ -131,7 +130,7 @@ public class SceneRenderer {
 				mat.renderStart(shaderProgram);
 				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
 					// Set the transformation matrix
-					shaderProgram.setWorldViewMatrix(Transformation
+					shaderProgram.setWorldViewMatrix(_transformation
 							.buildWorldViewMatrix(renderer.getGameObject().getTransform(), camera.getViewMatrix()));
 					// Tell the renderer to render
 					renderer.render();
