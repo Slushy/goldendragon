@@ -9,6 +9,7 @@ import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
 import engine.lighting.DirectionalLight;
+import engine.lighting.PointLight;
 import engine.scenes.SceneLoader;
 import game.GameResources;
 import game.scenes.TestSceneBehavior;
@@ -73,6 +74,15 @@ public class TestSceneLoader extends SceneLoader {
 		GameObject sun = new GameObject("Sun");
 		sun.addComponent(light);
 		gameObjects.add(sun);
+		
+		// Create a point light
+		PointLight pointLight = new PointLight();
+		GameObject fakeLamp = new GameObject("Fake Lamp");
+		fakeLamp.getTransform().setPosZ(-8);
+		fakeLamp.addComponent(pointLight);
+		fakeLamp.addComponent(new MeshRenderer(mesh, mat));
+		fakeLamp.getTransform().setScale(0.3f);
+		gameObjects.add(fakeLamp);
 
 		// return all game objects for our test scene
 		return gameObjects;

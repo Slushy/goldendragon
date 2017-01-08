@@ -155,10 +155,35 @@ public class Defaults {
 
 		/**
 		 * The z-axis normalized position of where the directional light (i.e.
-		 * the sun) will remain. Since we are doing directional light positioning
-		 * based off of rotation this will be the "home-position" of the directional
-		 * light if no rotation is applied. This should really only ever be 1 or -1.
+		 * the sun) will remain. Since we are doing directional light
+		 * positioning based off of rotation this will be the "home-position" of
+		 * the directional light if no rotation is applied. This should really
+		 * only ever be 1 or -1.
 		 */
 		public static final int DIRECTIONAL_Z_POSITION = -1;
+
+		/**
+		 * The default range for any point light with unspecified range (the
+		 * point light's range is also known as the distance traveled from the
+		 * middle of the light source before being fully diminished)
+		 */
+		public static final float POINT_LIGHT_RANGE = 5;
+
+		/**
+		 * The attenuation constant is represented as the variable 'a' in the
+		 * following equation (function of light intensity over distance):
+		 * 
+		 * att(a, b) = 1 / (a + b*r*r)
+		 */
+		public static final float ATTENUATION_CONSTANT = 1;
+
+		/**
+		 * The attenuation quadratic constant is represented as the variable 'b'
+		 * in the following equation (function of light intensity over
+		 * distance):
+		 * 
+		 * att(a, b) = 1 / (a + b*r*r)
+		 */
+		public static final float ATTENUATION_QUADRATIC = 25f;
 	}
 }

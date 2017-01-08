@@ -12,13 +12,13 @@ import engine.utils.Debug;
  *
  */
 public class DirectionalLight extends Light {
-	public static final int Z_POSITION = -1;
+	private static final String COMPONENT_NAME = "Directional Light";
 	
 	/**
-	 * Creats a new directional light component
+	 * Constructs a new directional light component
 	 */
 	public DirectionalLight() {
-		super("Directional Light");
+		super(COMPONENT_NAME);
 	}
 
 	// Called once when the scene becomes active

@@ -36,8 +36,9 @@ public class StandardShaderProgram extends ShaderProgram {
 	private static final String PROJECTION_MATRIX = "projectionMatrix";
 	private static final String WORLD_VIEW_MATRIX = "worldViewMatrix";
 	private static final String AMBIENT_LIGHT = "ambientLight";
-	private static final String HAS_DIRECTIONAL_LIGHT = "hasDirectionalLight";
 	private static final String DIRECTIONAL_LIGHT = "directionalLight";
+	private static final String POINT_LIGHT = "pointLight";
+	private static final String ATTENUATION = "attenuation";
 
 	// Singleton shader
 	private StandardShaderProgram() throws Exception {
@@ -57,10 +58,15 @@ public class StandardShaderProgram extends ShaderProgram {
 		super.registerUniform(PROJECTION_MATRIX);
 		super.registerUniform(WORLD_VIEW_MATRIX);
 		super.registerUniform(AMBIENT_LIGHT);
-		super.registerUniform(HAS_DIRECTIONAL_LIGHT);
 		super.registerUniform(DIRECTIONAL_LIGHT + ".color");
-		super.registerUniform(DIRECTIONAL_LIGHT + ".direction");
 		super.registerUniform(DIRECTIONAL_LIGHT + ".intensity");
+		super.registerUniform(DIRECTIONAL_LIGHT + ".direction");
+		super.registerUniform(POINT_LIGHT + ".color");
+		super.registerUniform(POINT_LIGHT + ".intensity");
+		super.registerUniform(POINT_LIGHT + ".position");
+		super.registerUniform(POINT_LIGHT + ".range");
+		super.registerUniform(ATTENUATION + ".constant");
+		super.registerUniform(ATTENUATION + ".quadratic");
 	}
 
 	/**
@@ -86,12 +92,30 @@ public class StandardShaderProgram extends ShaderProgram {
 	}
 
 	/**
-	 * Sets the shader to use directional light calculations
+	 * Sets a point light
 	 * 
-	 * @param hasDirectionaLight
+	 * @param color
+	 * @param position
+	 * @param intensity
+	 * @param radius
 	 */
-	public void setHasDirectionalLight(boolean hasDirectionaLight) {
-		super.setUniform(HAS_DIRECTIONAL_LIGHT, hasDirectionaLight);
+	public void setPointLight(Vector3f color, Vector3f position, float intensity, float range) {
+		super.setUniform(POINT_LIGHT + ".color", color);
+		super.setUniform(POINT_LIGHT + ".intensity", intensity);
+		super.setUniform(POINT_LIGHT + ".position", position);
+		super.setUniform(POINT_LIGHT + ".range", range);
+	}
+
+	/**
+	 * Sets the light attenuation equation constants
+	 * 
+	 * @param constant
+	 * @param linear
+	 * @param quadratic
+	 */
+	public void setLightAttenuation(float constant, float quadratic) {
+		super.setUniform(ATTENUATION + ".constant", constant);
+		super.setUniform(ATTENUATION + ".quadratic", quadratic);
 	}
 
 	/**

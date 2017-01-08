@@ -8,8 +8,8 @@ import engine.common.Defaults;
 import engine.common.Transform;
 
 /**
- * Holds instances of matrices for calculations to reduce the amount of
- * instantiated matrices our game uses
+ * Holds instances of matrices and vectors for calculations to reduce the amount
+ * of instantiated math objects our game uses
  * 
  * @author brandon.porter
  *
@@ -155,8 +155,7 @@ public final class Transformation {
 	 * @return a "shared" 3-component vector representing the transformed local
 	 *         vector in view space
 	 */
-	public Vector3f buildWorldViewVector(Vector3f localSpaceVector, Matrix4f viewMatrix,
-			boolean includeTranslation) {
+	public Vector3f buildWorldViewVector(Vector3f localSpaceVector, Matrix4f viewMatrix, boolean includeTranslation) {
 		VIEW_VECTOR4f.set(localSpaceVector, includeTranslation ? 1 : 0);
 		VIEW_VECTOR4f.mul(viewMatrix);
 

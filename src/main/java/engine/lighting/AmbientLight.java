@@ -15,7 +15,6 @@ public final class AmbientLight {
 	private boolean _isDirty = true;
 	private float _intensity = Defaults.Lighting.LIGHT_INTENSITY;
 	private final Vector3f _color = new Vector3f(Defaults.Lighting.LIGHT_COLOR);
-
 	private final Vector3f _totalLight = new Vector3f();
 
 	/**

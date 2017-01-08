@@ -4,6 +4,7 @@ import org.joml.Vector3f;
 
 import engine.common.Component;
 import engine.common.Defaults;
+import engine.utils.math.MathUtils;
 
 /**
  * Represents a light source in our scene
@@ -30,7 +31,6 @@ public abstract class Light extends Component {
 	 */
 	public Light(String componentName) {
 		super(componentName);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

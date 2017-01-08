@@ -14,6 +14,7 @@ import engine.common.Camera;
 import engine.common.GameObject;
 import engine.graphics.components.MeshRenderer;
 import engine.lighting.Light;
+import engine.lighting.PointLight;
 import engine.utils.inputs.Key;
 import game.scenes.loaders.TestSceneLoader;
 
@@ -56,12 +57,12 @@ public class TestSceneBehavior extends Behavior {
 		// This should be used on a per-scene basis as it is basically used to
 		// control nighttime/daytime brightness
 		Light.AMBIENT_LIGHT.setColor(1, 1, 1);
-		Light.AMBIENT_LIGHT.setBrightness(0.6f);
+		Light.AMBIENT_LIGHT.setBrightness(0.2f);
 
 		this._cube = this.getScene().findGameObject("cube");
 		_gameObjects.add(_cube);
 		this._rend = _cube.getComponentByType(MeshRenderer.class);
-		this._sun = getScene().findGameObject("sun");
+		this._sun = getScene().findGameObject("Fake Lamp");
 	}
 
 	/**
@@ -105,9 +106,11 @@ public class TestSceneBehavior extends Behavior {
 
 	// Test script that rotates our "sun" directional light on input
 	private void rotateSun(float deltaTime) {
-		float rotSpeed = SUN_ROT_STEP * deltaTime;
+		PointLight light = _sun.getComponentByType(PointLight.class);
+		// float rotSpeed = SUN_ROT_STEP * deltaTime;
+		float rotSpeed = 10 * deltaTime;
 		_sunRot.set(0, 0);
-		
+
 		// X-axis
 		if (Input.keyDown(Key.K)) {
 			_sunRot.x = -rotSpeed;
@@ -121,8 +124,18 @@ public class TestSceneBehavior extends Behavior {
 			_sunRot.y = rotSpeed;
 		}
 
+		float range = light.getRange();
+		// Y-axis
+		if (Input.keyDown(Key.N)) {
+			light.setRange(range-1);
+		} else if (Input.keyDown(Key.M)) {
+			light.setRange(range+1);
+		}
+
 		// Rotates the sun
-		_sun.getTransform().rotate(_sunRot.x, _sunRot.y, 0);
+		// _sun.getTransform().rotate(_sunRot.x, _sunRot.y, 0);
+		_sun.getTransform().move(_sunRot.x, _sunRot.y, 0);
+		
 	}
 
 	// Moves our camera throughout the scene on input
