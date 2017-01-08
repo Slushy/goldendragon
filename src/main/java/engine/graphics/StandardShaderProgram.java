@@ -36,6 +36,8 @@ public class StandardShaderProgram extends ShaderProgram {
 	private static final String PROJECTION_MATRIX = "projectionMatrix";
 	private static final String WORLD_VIEW_MATRIX = "worldViewMatrix";
 	private static final String AMBIENT_LIGHT = "ambientLight";
+	private static final String HAS_DIRECTIONAL_LIGHT = "hasDirectionalLight";
+	private static final String DIRECTIONAL_LIGHT = "directionalLight";
 
 	// Singleton shader
 	private StandardShaderProgram() throws Exception {
@@ -55,6 +57,10 @@ public class StandardShaderProgram extends ShaderProgram {
 		super.registerUniform(PROJECTION_MATRIX);
 		super.registerUniform(WORLD_VIEW_MATRIX);
 		super.registerUniform(AMBIENT_LIGHT);
+		super.registerUniform(HAS_DIRECTIONAL_LIGHT);
+		super.registerUniform(DIRECTIONAL_LIGHT + ".color");
+		super.registerUniform(DIRECTIONAL_LIGHT + ".direction");
+		super.registerUniform(DIRECTIONAL_LIGHT + ".intensity");
 	}
 
 	/**
@@ -64,6 +70,28 @@ public class StandardShaderProgram extends ShaderProgram {
 	 */
 	public void setColor(Vector3f color) {
 		super.setUniform(COLOR, color);
+	}
+
+	/**
+	 * Sets the directional light
+	 * 
+	 * @param color
+	 * @param direction
+	 * @param intensity
+	 */
+	public void setDirectionalLight(Vector3f color, Vector3f direction, float intensity) {
+		super.setUniform(DIRECTIONAL_LIGHT + ".color", color);
+		super.setUniform(DIRECTIONAL_LIGHT + ".direction", direction);
+		super.setUniform(DIRECTIONAL_LIGHT + ".intensity", intensity);
+	}
+
+	/**
+	 * Sets the shader to use directional light calculations
+	 * 
+	 * @param hasDirectionaLight
+	 */
+	public void setHasDirectionalLight(boolean hasDirectionaLight) {
+		super.setUniform(HAS_DIRECTIONAL_LIGHT, hasDirectionaLight);
 	}
 
 	/**

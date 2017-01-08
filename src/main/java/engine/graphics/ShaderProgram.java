@@ -122,8 +122,24 @@ public abstract class ShaderProgram {
 		GL20.glUniform3f(getUniform(uniform), value.x, value.y, value.z);
 	}
 
+	/**
+	 * Sets a boolean uniform
+	 * 
+	 * @param uniform
+	 * @param value
+	 */
 	protected void setUniform(String uniform, boolean value) {
 		GL20.glUniform1i(getUniform(uniform), value ? 1 : 0);
+	}
+
+	/**
+	 * Sets a float uniform
+	 * 
+	 * @param uniform
+	 * @param value
+	 */
+	protected void setUniform(String uniform, float value) {
+		GL20.glUniform1f(getUniform(uniform), value);
 	}
 
 	/**

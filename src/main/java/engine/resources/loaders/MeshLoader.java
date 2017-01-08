@@ -90,9 +90,12 @@ public class MeshLoader {
 		VAO vao = new VAO();
 		vao.use();
 
-		// Create all VBOS
+		// Create all VBOS (Cannot change this order, if you do
+		// you will have to edit the hardcoded VBO locations in
+		// the actual shader files - maybe that should be changed?)
 		vao.bindVBO(VBO.POSITION, vboData.vertexPositions);
 		vao.bindVBO(VBO.TEXTURE, vboData.textureCoords);
+		vao.bindVBO(VBO.NORMAL, vboData.vertexNormals);
 		vao.bindVBO(VBO.INDEX, vboData.indices);
 
 		// Unbind and return new vao

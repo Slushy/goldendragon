@@ -1,6 +1,7 @@
 package engine.common;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import engine.utils.math.MatrixUtils;
 
@@ -79,7 +80,8 @@ public final class Camera extends GameObject {
 	 * @return updated view matrix
 	 */
 	public Matrix4f updateViewMatrix() {
-		return MatrixUtils.setViewMatrix(_viewMatrix, getTransform().getPosition(), getTransform().getRotation());
+		Vector3f pos = getTransform().getPosition();
+		return MatrixUtils.setViewMatrix(_viewMatrix, -pos.x, -pos.y, -pos.z, getTransform().getRotation());
 	}
 
 	/**

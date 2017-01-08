@@ -8,6 +8,7 @@ import engine.common.GameObject;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
+import engine.lighting.DirectionalLight;
 import engine.scenes.SceneLoader;
 import game.GameResources;
 import game.scenes.TestSceneBehavior;
@@ -57,13 +58,21 @@ public class TestSceneLoader extends SceneLoader {
 		// Create a bunny
 		GameObject bunny = new GameObject("Bunny");
 		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, Material.DEFAULT));
-		bunny.getTransform().setPosZ(-3);
+		bunny.getTransform().setPosZ(-10);
 		gameObjects.add(bunny);
 
 		// Create our scene script
 		GameObject script = new GameObject("Scene Behavior");
 		script.addComponent(new TestSceneBehavior());
 		gameObjects.add(script);
+		
+		// Create a sun
+		DirectionalLight light = new DirectionalLight();
+		light.setBrightness(1);
+		light.setColor(1, 1, 1);
+		GameObject sun = new GameObject("Sun");
+		sun.addComponent(light);
+		gameObjects.add(sun);
 
 		// return all game objects for our test scene
 		return gameObjects;

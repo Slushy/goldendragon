@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.joml.Vector3f;
+
 import engine.Display;
 import engine.common.Camera;
 import engine.graphics.GraphicsManager;
@@ -11,7 +13,9 @@ import engine.graphics.ShaderType;
 import engine.graphics.StandardShaderProgram;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
+import engine.lighting.DirectionalLight;
 import engine.lighting.Light;
+import engine.utils.Debug;
 import engine.utils.math.Transformation;
 
 /**
@@ -34,6 +38,7 @@ public class SceneRenderer {
 
 	private final Map<Long, LinkedList<Long>> _meshMaterials = new LinkedHashMap<>();
 	private final Map<Long, LinkedList<MeshRenderer>> _materialRenderers = new LinkedHashMap<>();
+	private DirectionalLight _directionalLight = null;
 
 	// Singleton class
 	private SceneRenderer() {
@@ -76,21 +81,47 @@ public class SceneRenderer {
 	}
 
 	/**
+	 * Adds a directional light to scene. If two are added the last one to be
+	 * added becomes the current directional light. Currently we will only
+	 * support one directional light - why? do we have more than 1 sun?
+	 * 
+	 * @param dirLight
+	 *            the directional light component to be added
+	 */
+	public void setDirectionalLight(DirectionalLight dirLight) {
+		this._directionalLight = dirLight;
+	}
+
+	/**
 	 * Renders the meshes to screen
 	 */
 	protected void render(Scene scene) {
 		Camera camera = scene.getCamera();
 		StandardShaderProgram shaderProgram = GraphicsManager.getShader(ShaderType.STANDARD);
-		
+
 		// Starts the rendering process
 		// Clear the current frame before we render the next frame
 		Display.MAIN.getGraphicsController().clearGraphics();
 		shaderProgram.bind();
 
 		// Sets the variables that will not change between render cycles
-		shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
-		shaderProgram.setAmbientLight(Light.AMBIENT_LIGHT.getLight());
 		
+		// Viewport projection matrix (Camera bounds, field of view, display width/height)
+		shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
+		
+		// Lighting 
+		shaderProgram.setAmbientLight(Light.AMBIENT_LIGHT.getLight());
+		shaderProgram.setHasDirectionalLight(_directionalLight != null);
+		if (_directionalLight != null) {
+			// Remember, we only care about a directional lights direction from
+			// its rotation, not the position
+			Vector3f dirLightRotation = _directionalLight.getGameObject().getTransform().getRotation();
+			Vector3f dirLightDirection = Transformation.getDirectionalLightDirection(dirLightRotation,
+					camera.getViewMatrix());
+			shaderProgram.setDirectionalLight(_directionalLight.getColor(), dirLightDirection,
+					_directionalLight.getBrightness());
+		}
+
 		// For each similar mesh
 		for (long meshId : _meshMaterials.keySet()) {
 			// For each similar material

@@ -13,6 +13,7 @@ import engine.common.Behavior;
 import engine.common.Camera;
 import engine.common.GameObject;
 import engine.graphics.components.MeshRenderer;
+import engine.lighting.Light;
 import engine.utils.inputs.Key;
 import game.scenes.loaders.TestSceneLoader;
 
@@ -23,15 +24,17 @@ import game.scenes.loaders.TestSceneLoader;
  *
  */
 public class TestSceneBehavior extends Behavior {
-	private static final float CAMERA_POS_STEP = 7f;
+	private static final float CAMERA_POS_STEP = 10f;
 	private static final float CAMERA_ROT_STEP = 120;
 
 	private Vector3f _cameraInc = new Vector3f();
 	private Vector2f _cameraRot = new Vector2f();
-
+	private Vector2f _sunRot = new Vector2f();
+	
 	private List<GameObject> _gameObjects = new ArrayList<>();
 	private GameObject _cube;
 	private MeshRenderer _rend;
+	private GameObject _sun;	
 
 	/**
 	 * Constructs a new behavior for the Test Scene
@@ -42,9 +45,18 @@ public class TestSceneBehavior extends Behavior {
 
 	@SuppressWarnings("unused")
 	private void start() {
+		// Sets the ambient light (base brightness of every pixel) at the
+		// beginning of the scene
+		//
+		// This should be used on a per-scene basis as it is basically used to
+		// control nighttime/daytime brightness
+		Light.AMBIENT_LIGHT.setColor(1, 1, 1);
+		Light.AMBIENT_LIGHT.setBrightness(0.6f);
+
 		this._cube = this.getScene().findGameObject("cube");
-		this._rend = _cube.getComponentByType(MeshRenderer.class);
 		_gameObjects.add(_cube);
+		this._rend = _cube.getComponentByType(MeshRenderer.class);
+		this._sun = getScene().findGameObject("sun");
 	}
 
 	@SuppressWarnings("unused")
@@ -60,8 +72,8 @@ public class TestSceneBehavior extends Behavior {
 				_cameraRot.y * CAMERA_ROT_STEP * deltaTime, 0);
 		camera.updateViewMatrix();
 
+		float rot = 90 * deltaTime;
 		for (GameObject obj : _gameObjects) {
-			float rot = 90 * deltaTime;
 			obj.getTransform().rotate(rot, rot, rot);
 		}
 
@@ -78,6 +90,30 @@ public class TestSceneBehavior extends Behavior {
 			getScene().addGameObject(cube);
 			_gameObjects.add(cube);
 		}
+
+		rotateSun();
+	}
+
+	// Test script that rotates our "sun" directional light on input
+	private void rotateSun() {
+		int rotSpeed = 1;
+		_sunRot.set(0, 0);
+		
+		// X-axis
+		if (Input.keyDown(Key.K)) {
+			_sunRot.x = -rotSpeed;
+		} else if (Input.keyDown(Key.L)) {
+			_sunRot.x = rotSpeed;
+		}
+		// Y-axis
+		if (Input.keyDown(Key.I)) {
+			_sunRot.y = -rotSpeed;
+		} else if (Input.keyDown(Key.O)) {
+			_sunRot.y = rotSpeed;
+		}
+
+		// Rotates the sun
+		_sun.getTransform().rotate(_sunRot.x, _sunRot.y, 0);
 	}
 
 	/**

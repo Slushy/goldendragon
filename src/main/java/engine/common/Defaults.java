@@ -146,11 +146,19 @@ public class Defaults {
 		/**
 		 * The default brightness of any light in the scene
 		 */
-		public static float LIGHT_INTENSITY = 1;
+		public static final float LIGHT_INTENSITY = 1;
 
 		/**
 		 * The default color for any light in the scene
 		 */
-		public static Vector3f LIGHT_COLOR = new Vector3f(1, 1, 1);
+		public static final Vector3f LIGHT_COLOR = new Vector3f(1, 1, 1);
+
+		/**
+		 * The z-axis normalized position of where the directional light (i.e.
+		 * the sun) will remain. Since we are doing directional light positioning
+		 * based off of rotation this will be the "home-position" of the directional
+		 * light if no rotation is applied. This should really only ever be 1 or -1.
+		 */
+		public static final int DIRECTIONAL_Z_POSITION = -1;
 	}
 }
