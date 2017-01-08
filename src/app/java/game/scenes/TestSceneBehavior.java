@@ -24,17 +24,19 @@ import game.scenes.loaders.TestSceneLoader;
  *
  */
 public class TestSceneBehavior extends Behavior {
-	private static final float CAMERA_POS_STEP = 10f;
+	private static final float CAMERA_POS_STEP = 10;
 	private static final float CAMERA_ROT_STEP = 120;
+	private static final float GAMEOBJECT_ROT_STEP = 90;
+	private static final float SUN_ROT_STEP = 90;
 
 	private Vector3f _cameraInc = new Vector3f();
 	private Vector2f _cameraRot = new Vector2f();
 	private Vector2f _sunRot = new Vector2f();
-	
+
 	private List<GameObject> _gameObjects = new ArrayList<>();
 	private GameObject _cube;
 	private MeshRenderer _rend;
-	private GameObject _sun;	
+	private GameObject _sun;
 
 	/**
 	 * Constructs a new behavior for the Test Scene
@@ -43,6 +45,9 @@ public class TestSceneBehavior extends Behavior {
 		super(TestSceneLoader.NAME);
 	}
 
+	/**
+	 * Called once at the beginning of the scene
+	 */
 	@SuppressWarnings("unused")
 	private void start() {
 		// Sets the ambient light (base brightness of every pixel) at the
@@ -59,25 +64,25 @@ public class TestSceneBehavior extends Behavior {
 		this._sun = getScene().findGameObject("sun");
 	}
 
+	/**
+	 * Called once per frame to update the scene
+	 */
 	@SuppressWarnings("unused")
 	private void update() {
-		processInput();
-
-		Camera camera = this.getScene().getCamera();
-
 		float deltaTime = TimeManager.getDeltaTime();
-		camera.move(_cameraInc.x * CAMERA_POS_STEP * deltaTime, _cameraInc.y * CAMERA_POS_STEP * deltaTime,
-				_cameraInc.z * CAMERA_POS_STEP * deltaTime);
-		camera.getTransform().rotate(_cameraRot.x * CAMERA_ROT_STEP * deltaTime,
-				_cameraRot.y * CAMERA_ROT_STEP * deltaTime, 0);
-		camera.updateViewMatrix();
 
-		float rot = 90 * deltaTime;
-		for (GameObject obj : _gameObjects) {
-			obj.getTransform().rotate(rot, rot, rot);
-		}
+		// Lets us move around our test scene
+		moveCamera(deltaTime);
+		// Can manually position sun for testing
+		rotateSun(deltaTime);
 
-		// Add new game object
+		// Game object updates
+		updateGameObjects(deltaTime);
+	}
+
+	// Any updates to any gameobjects for testing purposes
+	private void updateGameObjects(float deltaTime) {
+		// Add new game object dynamically to our scene
 		if (Input.keyDown(Key.SPACE)) {
 			GameObject cube = new GameObject("Cube");
 			cube.addComponent(new MeshRenderer(_rend.getMesh(), _rend.getMaterial()));
@@ -91,12 +96,16 @@ public class TestSceneBehavior extends Behavior {
 			_gameObjects.add(cube);
 		}
 
-		rotateSun();
+		// Rotates any new game objects
+		float rotSpeed = GAMEOBJECT_ROT_STEP * deltaTime;
+		for (GameObject obj : _gameObjects) {
+			obj.getTransform().rotate(rotSpeed, rotSpeed, rotSpeed);
+		}
 	}
 
 	// Test script that rotates our "sun" directional light on input
-	private void rotateSun() {
-		int rotSpeed = 1;
+	private void rotateSun(float deltaTime) {
+		float rotSpeed = SUN_ROT_STEP * deltaTime;
 		_sunRot.set(0, 0);
 		
 		// X-axis
@@ -116,12 +125,9 @@ public class TestSceneBehavior extends Behavior {
 		_sun.getTransform().rotate(_sunRot.x, _sunRot.y, 0);
 	}
 
-	/**
-	 * TODO: REMOVE, Temporary only processing input similar to game class
-	 * 
-	 * @param handler
-	 */
-	private void processInput() {
+	// Moves our camera throughout the scene on input
+	private void moveCamera(float deltaTime) {
+		Camera camera = this.getScene().getCamera();
 		_cameraInc.set(0, 0, 0);
 		_cameraRot.set(0, 0);
 
@@ -151,5 +157,11 @@ public class TestSceneBehavior extends Behavior {
 			_cameraRot.x = -1;
 		else if (Input.keyDown(Key.DOWN))
 			_cameraRot.x = 1;
+
+		camera.move(_cameraInc.x * CAMERA_POS_STEP * deltaTime, _cameraInc.y * CAMERA_POS_STEP * deltaTime,
+				_cameraInc.z * CAMERA_POS_STEP * deltaTime);
+		camera.getTransform().rotate(_cameraRot.x * CAMERA_ROT_STEP * deltaTime,
+				_cameraRot.y * CAMERA_ROT_STEP * deltaTime, 0);
+		camera.updateViewMatrix();
 	}
 }
