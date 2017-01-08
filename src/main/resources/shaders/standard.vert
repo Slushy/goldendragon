@@ -1,5 +1,7 @@
 #version 330
 
+const int MAX_LIGHTS = 4;
+
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 textureCoords;
 layout (location = 2) in vec3 normals;
@@ -35,7 +37,7 @@ uniform mat4 worldViewMatrix;  // Matrix representing current object transformat
 // Lighting uniforms
 uniform vec3 ambientLight;
 uniform DirectionalLight directionalLight; // the directional light (our sun)
-uniform PointLight pointLight; // a point light in our scene
+uniform PointLight pointLights[MAX_LIGHTS]; // a point light in our scene
 uniform Attenuation attenuation; // the attenuation constants for our point lights
 
 // Calculates the directional light diffuse which is a float that represents
@@ -61,7 +63,7 @@ vec4 calcLightComponents(vec3 normalizedLightVector, vec3 lightColor, float inte
 }
 
 // Calculates the total value of lighting to be applied per vertex
-vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, PointLight pointLight, vec3 worldViewNormals, vec3 worldViewPosition) {
+vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, PointLight pointLights[MAX_LIGHTS], vec3 worldViewNormals, vec3 worldViewPosition) {
 	vec4 appliedLighting = vec4(ambientLight, 1.0);
 	
 	// Calculate directional light
@@ -70,8 +72,13 @@ vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, P
 		appliedLighting += calcLightComponents(directionalLight.direction, directionalLight.color, directionalLight.intensity, worldViewNormals);
 	} 
 	
-	// Calculate point light
-	if (pointLight.intensity > 0 && pointLight.range > 0) {
+	// Calculate each point light
+	for (int i = 0; i < MAX_LIGHTS; i++) {
+		PointLight pointLight = pointLights[i];
+		if (pointLight.intensity <= 0 || pointLight.range <= 0) {
+			continue;
+		}
+		
 		vec3 distanceToLight = pointLight.position - worldViewPosition;
 		vec4 pLightColor = calcLightComponents(normalize(distanceToLight), pointLight.color, pointLight.intensity, worldViewNormals);
 		
@@ -107,6 +114,6 @@ void main() {
 	// world view space
 	vec3 worldViewNormals = normalize(worldViewMatrix * vec4(normals, 0)).xyz;
 	
-	// The total applied light value is the ambient light + directional light + point light
-	pass_light = calcAppliedLighting(ambientLight, directionalLight, pointLight, worldViewNormals, worldViewPosition.xyz);
+	// The total applied light value is the ambient light + directional light + point lights
+	pass_light = calcAppliedLighting(ambientLight, directionalLight, pointLights, worldViewNormals, worldViewPosition.xyz);
 }

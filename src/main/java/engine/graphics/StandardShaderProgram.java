@@ -3,6 +3,8 @@ package engine.graphics;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import engine.common.Defaults;
+
 /**
  * A Scene shader program to hold all of the scene uniforms and shader data
  * 
@@ -37,7 +39,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	private static final String WORLD_VIEW_MATRIX = "worldViewMatrix";
 	private static final String AMBIENT_LIGHT = "ambientLight";
 	private static final String DIRECTIONAL_LIGHT = "directionalLight";
-	private static final String POINT_LIGHT = "pointLight";
+	private static final String POINT_LIGHT = "pointLights";
 	private static final String ATTENUATION = "attenuation";
 
 	// Singleton shader
@@ -61,10 +63,12 @@ public class StandardShaderProgram extends ShaderProgram {
 		super.registerUniform(DIRECTIONAL_LIGHT + ".color");
 		super.registerUniform(DIRECTIONAL_LIGHT + ".intensity");
 		super.registerUniform(DIRECTIONAL_LIGHT + ".direction");
-		super.registerUniform(POINT_LIGHT + ".color");
-		super.registerUniform(POINT_LIGHT + ".intensity");
-		super.registerUniform(POINT_LIGHT + ".position");
-		super.registerUniform(POINT_LIGHT + ".range");
+		for (int i = 0; i < Defaults.Lighting.MAX_RENDERED_POINT_LIGHTS_PER_OBJECT; i++) {
+			super.registerUniform(POINT_LIGHT + "[" + i + "].color");
+			super.registerUniform(POINT_LIGHT + "[" + i + "].intensity");
+			super.registerUniform(POINT_LIGHT + "[" + i + "].position");
+			super.registerUniform(POINT_LIGHT + "[" + i + "].range");
+		}
 		super.registerUniform(ATTENUATION + ".constant");
 		super.registerUniform(ATTENUATION + ".quadratic");
 	}
@@ -94,16 +98,17 @@ public class StandardShaderProgram extends ShaderProgram {
 	/**
 	 * Sets a point light
 	 * 
+	 * @param idx
 	 * @param color
 	 * @param position
 	 * @param intensity
 	 * @param radius
 	 */
-	public void setPointLight(Vector3f color, Vector3f position, float intensity, float range) {
-		super.setUniform(POINT_LIGHT + ".color", color);
-		super.setUniform(POINT_LIGHT + ".intensity", intensity);
-		super.setUniform(POINT_LIGHT + ".position", position);
-		super.setUniform(POINT_LIGHT + ".range", range);
+	public void setPointLight(int idx, Vector3f color, Vector3f position, float intensity, float range) {
+		super.setUniform(POINT_LIGHT + "[" + idx + "].color", color);
+		super.setUniform(POINT_LIGHT + "[" + idx + "].intensity", intensity);
+		super.setUniform(POINT_LIGHT + "[" + idx + "].position", position);
+		super.setUniform(POINT_LIGHT + "[" + idx + "].range", range);
 	}
 
 	/**

@@ -66,7 +66,7 @@ public class TestSceneLoader extends SceneLoader {
 		GameObject script = new GameObject("Scene Behavior");
 		script.addComponent(new TestSceneBehavior());
 		gameObjects.add(script);
-		
+
 		// Create a sun
 		DirectionalLight light = new DirectionalLight();
 		light.setBrightness(1);
@@ -74,7 +74,7 @@ public class TestSceneLoader extends SceneLoader {
 		GameObject sun = new GameObject("Sun");
 		sun.addComponent(light);
 		gameObjects.add(sun);
-		
+
 		// Create a point light
 		PointLight pointLight = new PointLight();
 		GameObject fakeLamp = new GameObject("Fake Lamp");
@@ -83,6 +83,16 @@ public class TestSceneLoader extends SceneLoader {
 		fakeLamp.addComponent(new MeshRenderer(mesh, mat));
 		fakeLamp.getTransform().setScale(0.3f);
 		gameObjects.add(fakeLamp);
+
+		// Create another point light
+		PointLight pointLight2 = new PointLight();
+		pointLight2.setColor(0, 1, 0);
+		GameObject fakeLamp2 = new GameObject("Fake Lamp2");
+		fakeLamp2.getTransform().setPosZ(-8);
+		fakeLamp2.addComponent(pointLight2);
+		fakeLamp2.addComponent(new MeshRenderer(mesh, mat));
+		fakeLamp2.getTransform().setScale(0.3f);
+		gameObjects.add(fakeLamp2);
 
 		// return all game objects for our test scene
 		return gameObjects;

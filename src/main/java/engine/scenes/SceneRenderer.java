@@ -11,6 +11,7 @@ import org.joml.Vector3f;
 
 import engine.Display;
 import engine.common.Camera;
+import engine.common.Defaults;
 import engine.graphics.GraphicsManager;
 import engine.graphics.ShaderType;
 import engine.graphics.StandardShaderProgram;
@@ -183,14 +184,15 @@ public class SceneRenderer {
 					_directionalLight.getBrightness());
 		}
 
-		// Point lights
-		if (_pointLights.size() > 0) {
-			// Only doing 1 point light right now
-			PointLight pointLight = _pointLights.get(0);
-
+		// Render each point light (or up until the max allowed point lights)
+		// TODO: This will have to change per game object eventually
+		int maxLights = Defaults.Lighting.MAX_RENDERED_POINT_LIGHTS_PER_OBJECT;
+		for (int i = 0; i < maxLights && i < _pointLights.size(); i++) {
+			PointLight pointLight = _pointLights.get(i);
+			
 			Vector3f viewSpacePosition = _transformation
 					.buildWorldViewVector(pointLight.getGameObject().getTransform().getPosition(), viewMatrix, true);
-			shaderProgram.setPointLight(pointLight.getColor(), viewSpacePosition, pointLight.getBrightness(), pointLight.getRange());
+			shaderProgram.setPointLight(i, pointLight.getColor(), viewSpacePosition, pointLight.getBrightness(), pointLight.getRange());
 		}
 		
 		// Attenuation

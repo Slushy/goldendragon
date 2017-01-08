@@ -185,5 +185,14 @@ public class Defaults {
 		 * att(a, b) = 1 / (a + b*r*r)
 		 */
 		public static final float ATTENUATION_QUADRATIC = 25f;
+
+		/**
+		 * The max amount of point lights that can affect a given game object
+		 * each render cycle.
+		 * 
+		 * NOTE: THIS SHOULD MATCH THE SAME CONSTANT "MAX_LIGHTS" DEFINED IN THE
+		 * SHADER FILE
+		 */
+		public static final int MAX_RENDERED_POINT_LIGHTS_PER_OBJECT = 4;
 	}
 }
