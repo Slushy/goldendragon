@@ -70,6 +70,28 @@ public class Defaults {
 	}
 
 	/**
+	 * Defaults related to a game scene
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	public static class Scene {
+
+		/**
+		 * Any object being added to the scene will by default have this facing
+		 * direction. This will be useful in determining direction vectors from
+		 * rotations
+		 */
+		public static final Vector3f OBJECT_FACING_DIRECTION = new Vector3f(0, 0, -1);
+
+		/*
+		 * Prevent outside classes from creating an instance
+		 */
+		private Scene() {
+		}
+	}
+
+	/**
 	 * Defaults for how our graphics display on screen
 	 * 
 	 * @author Brandon Porter
@@ -154,20 +176,17 @@ public class Defaults {
 		public static final Vector3f LIGHT_COLOR = new Vector3f(1, 1, 1);
 
 		/**
-		 * The z-axis normalized position of where the directional light (i.e.
-		 * the sun) will remain. Since we are doing directional light
-		 * positioning based off of rotation this will be the "home-position" of
-		 * the directional light if no rotation is applied. This should really
-		 * only ever be 1 or -1.
+		 * The default range for any point light (the point light's range is
+		 * also known as the distance traveled from the middle of the light
+		 * source before being fully diminished)
 		 */
-		public static final int DIRECTIONAL_Z_POSITION = -1;
+		public static final float POINT_LIGHT_RANGE = 10;
 
 		/**
-		 * The default range for any point light with unspecified range (the
-		 * point light's range is also known as the distance traveled from the
-		 * middle of the light source before being fully diminished)
+		 * The default cone angle for any spotlight. Determines the size of the
+		 * light cone emitted from the spotlight light source
 		 */
-		public static final float POINT_LIGHT_RANGE = 5;
+		public static final float SPOTLIGHT_ANGLE = 30;
 
 		/**
 		 * The attenuation constant is represented as the variable 'a' in the

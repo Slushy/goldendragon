@@ -68,6 +68,10 @@ public class StandardShaderProgram extends ShaderProgram {
 			super.registerUniform(POINT_LIGHT + "[" + i + "].intensity");
 			super.registerUniform(POINT_LIGHT + "[" + i + "].position");
 			super.registerUniform(POINT_LIGHT + "[" + i + "].range");
+			// Spotlight specific
+			super.registerUniform(POINT_LIGHT + "[" + i + "].direction");
+			super.registerUniform(POINT_LIGHT + "[" + i + "].cosHalfAngle");
+			super.registerUniform(POINT_LIGHT + "[" + i + "].isSpot");
 		}
 		super.registerUniform(ATTENUATION + ".constant");
 		super.registerUniform(ATTENUATION + ".quadratic");
@@ -109,6 +113,19 @@ public class StandardShaderProgram extends ShaderProgram {
 		super.setUniform(POINT_LIGHT + "[" + idx + "].intensity", intensity);
 		super.setUniform(POINT_LIGHT + "[" + idx + "].position", position);
 		super.setUniform(POINT_LIGHT + "[" + idx + "].range", range);
+	}
+
+	/**
+	 * Sets a spot light
+	 * 
+	 * @param idx
+	 * @param direction
+	 * @param cosHalfAngle
+	 */
+	public void setSpotLight(int idx, Vector3f direction, float cosHalfAngle) {
+		super.setUniform(POINT_LIGHT + "[" + idx + "].direction", direction);
+		super.setUniform(POINT_LIGHT + "[" + idx + "].cosHalfAngle", cosHalfAngle);
+		super.setUniform(POINT_LIGHT + "[" + idx + "].isSpot", true);
 	}
 
 	/**

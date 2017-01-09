@@ -12,6 +12,7 @@ import org.joml.Vector3f;
 import engine.Display;
 import engine.common.Camera;
 import engine.common.Defaults;
+import engine.common.Transform;
 import engine.graphics.GraphicsManager;
 import engine.graphics.ShaderType;
 import engine.graphics.StandardShaderProgram;
@@ -21,6 +22,7 @@ import engine.lighting.Attenuation;
 import engine.lighting.DirectionalLight;
 import engine.lighting.Light;
 import engine.lighting.PointLight;
+import engine.lighting.SpotLight;
 import engine.utils.math.Transformation;
 
 /**
@@ -45,6 +47,7 @@ public class SceneRenderer {
 	private final Map<Long, LinkedList<Long>> _meshMaterials = new LinkedHashMap<>();
 	private final Map<Long, LinkedList<MeshRenderer>> _materialRenderers = new LinkedHashMap<>();
 	private final List<PointLight> _pointLights = new ArrayList<PointLight>();
+	private final List<SpotLight> _spotLights = new ArrayList<SpotLight>();
 
 	private DirectionalLight _directionalLight = null;
 
@@ -97,6 +100,16 @@ public class SceneRenderer {
 	 */
 	public void addLightToScene(PointLight light) {
 		_pointLights.add(light);
+	}
+
+	/**
+	 * Adds a spot light to scene
+	 * 
+	 * @param light
+	 *            a spot light component
+	 */
+	public void addLightToScene(SpotLight light) {
+		_spotLights.add(light);
 	}
 
 	/**
@@ -184,17 +197,38 @@ public class SceneRenderer {
 					_directionalLight.getBrightness());
 		}
 
-		// Render each point light (or up until the max allowed point lights)
 		// TODO: This will have to change per game object eventually
+		// Right now we just display point lights and then if we have room do
+		// spot lights.
+		// Eventually we will get the closest light sources per game object.
+
+		// Render each point light (or up until the max allowed point lights)
 		int maxLights = Defaults.Lighting.MAX_RENDERED_POINT_LIGHTS_PER_OBJECT;
-		for (int i = 0; i < maxLights && i < _pointLights.size(); i++) {
+		int i = 0;
+		for (i = 0; i < maxLights && i < _pointLights.size(); i++) {
 			PointLight pointLight = _pointLights.get(i);
-			
+
 			Vector3f viewSpacePosition = _transformation
 					.buildWorldViewVector(pointLight.getGameObject().getTransform().getPosition(), viewMatrix, true);
-			shaderProgram.setPointLight(i, pointLight.getColor(), viewSpacePosition, pointLight.getBrightness(), pointLight.getRange());
+			shaderProgram.setPointLight(i, pointLight.getColor(), viewSpacePosition, pointLight.getBrightness(),
+					pointLight.getRange());
 		}
-		
+
+		// Render each spot light (or up until the max allowed spot lights)
+		for (int j = 0; i < maxLights && j < _spotLights.size(); i++, j++) {
+			SpotLight spotLight = _spotLights.get(j);
+			Transform transform = spotLight.getGameObject().getTransform();
+
+			// Set the point light of the spotlight first
+			Vector3f viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
+					true);
+			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(), spotLight.getRange());
+			
+			// Then set spotlight specific
+			Vector3f viewSpaceDirection = _transformation.getLightDirection(transform.getRotation(), viewMatrix);
+			shaderProgram.setSpotLight(i, viewSpaceDirection, spotLight.getCosHalfAngle());
+		}
+
 		// Attenuation
 		Attenuation att = PointLight.ATTENUATION;
 		shaderProgram.setLightAttenuation(att.getConstant(), att.getQuadratic());

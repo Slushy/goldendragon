@@ -10,6 +10,7 @@ import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
 import engine.lighting.DirectionalLight;
 import engine.lighting.PointLight;
+import engine.lighting.SpotLight;
 import engine.scenes.SceneLoader;
 import game.GameResources;
 import game.scenes.TestSceneBehavior;
@@ -60,6 +61,7 @@ public class TestSceneLoader extends SceneLoader {
 		GameObject bunny = new GameObject("Bunny");
 		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, Material.DEFAULT));
 		bunny.getTransform().setPosZ(-10);
+		bunny.getTransform().setPosY(-0.5f);
 		gameObjects.add(bunny);
 
 		// Create our scene script
@@ -69,17 +71,18 @@ public class TestSceneLoader extends SceneLoader {
 
 		// Create a sun
 		DirectionalLight light = new DirectionalLight();
-		light.setBrightness(1);
+		light.setBrightness(0f);
 		light.setColor(1, 1, 1);
 		GameObject sun = new GameObject("Sun");
 		sun.addComponent(light);
 		gameObjects.add(sun);
 
-		// Create a point light
-		PointLight pointLight = new PointLight();
+		// Create a spot light
+		SpotLight spotLight = new SpotLight(60f, 50f);
+		spotLight.setColor(1, 0, 0);
 		GameObject fakeLamp = new GameObject("Fake Lamp");
-		fakeLamp.getTransform().setPosZ(-8);
-		fakeLamp.addComponent(pointLight);
+		fakeLamp.getTransform().setPosZ(-6);
+		fakeLamp.addComponent(spotLight);
 		fakeLamp.addComponent(new MeshRenderer(mesh, mat));
 		fakeLamp.getTransform().setScale(0.3f);
 		gameObjects.add(fakeLamp);
@@ -87,7 +90,7 @@ public class TestSceneLoader extends SceneLoader {
 		// Create another point light
 		PointLight pointLight2 = new PointLight();
 		pointLight2.setColor(0, 1, 0);
-		GameObject fakeLamp2 = new GameObject("Fake Lamp2");
+		GameObject fakeLamp2 = new GameObject("Fake Lamp");
 		fakeLamp2.getTransform().setPosZ(-8);
 		fakeLamp2.addComponent(pointLight2);
 		fakeLamp2.addComponent(new MeshRenderer(mesh, mat));

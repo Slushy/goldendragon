@@ -15,6 +15,8 @@ import engine.common.GameObject;
 import engine.graphics.components.MeshRenderer;
 import engine.lighting.Light;
 import engine.lighting.PointLight;
+import engine.lighting.SpotLight;
+import engine.utils.Debug;
 import engine.utils.inputs.Key;
 import game.scenes.loaders.TestSceneLoader;
 
@@ -106,9 +108,10 @@ public class TestSceneBehavior extends Behavior {
 
 	// Test script that rotates our "sun" directional light on input
 	private void rotateSun(float deltaTime) {
-		PointLight light = _sun.getComponentByType(PointLight.class);
+		SpotLight light = _sun.getComponentByType(SpotLight.class);
 		// float rotSpeed = SUN_ROT_STEP * deltaTime;
-		float rotSpeed = 10 * deltaTime;
+		float rotSpeed = 40 * deltaTime;
+		float movSpeed = 10 * deltaTime;
 		_sunRot.set(0, 0);
 
 		// X-axis
@@ -123,19 +126,30 @@ public class TestSceneBehavior extends Behavior {
 		} else if (Input.keyDown(Key.O)) {
 			_sunRot.y = rotSpeed;
 		}
-
+		
 		float range = light.getRange();
+		float z = 0;
+		if (Input.keyDown(Key.PERIOD)) {
+			light.setRange(range+1);
+			Debug.log(String.format("Light Range: %.2f", light.getRange()));
+		} else if (Input.keyDown(Key.COMMA)) {
+			light.setRange(range-1);
+			Debug.log(String.format("Light Range: %.2f", light.getRange()));
+		}
+
+		float angle = light.getSpotAngle();
+		
 		// Y-axis
 		if (Input.keyDown(Key.N)) {
-			light.setRange(range-1);
+			light.setSpotAngle(angle-1);
+			Debug.log(String.format("Spot Angle: %.2f, CosHalf: %.8f", light.getSpotAngle(), light.getCosHalfAngle()));
 		} else if (Input.keyDown(Key.M)) {
-			light.setRange(range+1);
+			light.setSpotAngle(angle+1);
+			Debug.log(String.format("Spot Angle: %.2f, CosHalf: %.8f", light.getSpotAngle(), light.getCosHalfAngle()));
 		}
 
 		// Rotates the sun
-		// _sun.getTransform().rotate(_sunRot.x, _sunRot.y, 0);
-		_sun.getTransform().move(_sunRot.x, _sunRot.y, 0);
-		
+		_sun.getTransform().rotate(_sunRot.x, _sunRot.y, 0);
 	}
 
 	// Moves our camera throughout the scene on input

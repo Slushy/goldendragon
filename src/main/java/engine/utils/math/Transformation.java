@@ -40,8 +40,8 @@ public final class Transformation {
 		// return WORLD_MATRIX.translationRotateScale(position.x, position.y,
 		// position.z, rotation.x, rotation.y, rotation.z,
 		// rotation.w, scale, scale, scale);
-		return WORLD_MATRIX.translation(position).rotateX((float) Math.toRadians(-rotation.x))
-				.rotateY((float) Math.toRadians(-rotation.y)).rotateZ((float) Math.toRadians(-rotation.z)).scale(scale);
+		return WORLD_MATRIX.translation(position).rotateY((float) Math.toRadians(-rotation.y))
+				.rotateX((float) Math.toRadians(-rotation.x)).rotateZ((float) Math.toRadians(-rotation.z)).scale(scale);
 	}
 
 	/**
@@ -81,29 +81,18 @@ public final class Transformation {
 		// NOTE 2: "rotationY clears out any existing data by making it an
 		// identity matrix and then setting the y rotation. where as
 		// "rotateX" applies the rotation to any existing data
-		LIGHT_VIEW_MATRIX.rotationY(-(float) Math.toRadians(lightRotation.y))
-				.rotateX((float) Math.toRadians(lightRotation.x))
-				.translate(0, 0, Defaults.Lighting.DIRECTIONAL_Z_POSITION);
+		
+		LIGHT_VIEW_MATRIX.rotationY((float) Math.toRadians(-lightRotation.y))
+				.rotateX((float) Math.toRadians(lightRotation.x)).translate(Defaults.Scene.OBJECT_FACING_DIRECTION);
 
 		// Temporarily clear the main cameras current translation since
 		// we do not want it to affect the directional light position
 		// (we only want rotation)
-		float posX = viewMatrix.m30();
-		float posY = viewMatrix.m31();
-		float posZ = viewMatrix.m32();
-		viewMatrix.setTranslation(0, 0, 0);
-
-		// Multiplies the camera's view matrix by the light view matrix to get
-		// our final position
-		viewMatrix.mul(LIGHT_VIEW_MATRIX, LIGHT_VIEW_MATRIX);
-
-		// Restore the cameras translation
-		viewMatrix.setTranslation(posX, posY, posZ);
+		MatrixUtils.transformMatrixWithoutTranslation(LIGHT_VIEW_MATRIX, viewMatrix);
 
 		// Gets the new directional light position based off of its
 		// and the cameras rotation (This should already be normalized, if it
-		// were
-		// not we would have to do DIRECTIONAL_LIGHT.normalize() before
+		// were not we would have to do VIEW_VECTOR3f.normalize() before
 		// returning)
 		return LIGHT_VIEW_MATRIX.getTranslation(VIEW_VECTOR3f);
 	}
@@ -117,6 +106,30 @@ public final class Transformation {
 	 */
 	public Matrix4f buildWorldMatrix(Transform transform) {
 		return buildWorldMatrix(transform.getPosition(), transform.getRotation(), transform.getScale());
+	}
+
+	/**
+	 * Returns a direction for a specified rotation augmented by the viewmatrix
+	 * 
+	 * @param rotation
+	 *            the rotation of the light transform
+	 * @param viewMatrix
+	 *            the view matrix of the camera
+	 * @return new facing direction of the light
+	 */
+	public Vector3f getLightDirection(Vector3f rotation, Matrix4f viewMatrix) {
+		// Apply the rotation to a preset position
+		MatrixUtils.setObjectViewMatrix(LIGHT_VIEW_MATRIX, Defaults.Scene.OBJECT_FACING_DIRECTION, rotation);
+		
+		// Temporarily clear the main cameras current translation since
+		// we do not want it to affect the light position
+		// (we only want rotation)
+		MatrixUtils.transformMatrixWithoutTranslation(LIGHT_VIEW_MATRIX, viewMatrix);
+
+		// Gets the new light direction based off of its and the cameras
+		// rotation (This should already be normalized, if it were not we would
+		// have to do VIEW_VECTOR3f.normalize() before returning)
+		return LIGHT_VIEW_MATRIX.getTranslation(VIEW_VECTOR3f);
 	}
 
 	/**

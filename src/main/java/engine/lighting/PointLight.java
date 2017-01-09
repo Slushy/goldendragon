@@ -28,7 +28,7 @@ public class PointLight extends Light {
 	 * Constructs a new point light component of default range
 	 */
 	public PointLight() {
-		super(COMPONENT_NAME);
+		this(COMPONENT_NAME);
 	}
 
 	/**
@@ -42,6 +42,17 @@ public class PointLight extends Light {
 	public PointLight(float range) {
 		this();
 		this.setRange(range);
+	}
+
+	/**
+	 * Constructs a new point light (from inheriting class) with the specified
+	 * component name
+	 * 
+	 * @param componentName
+	 *            name of the component inheriting this class
+	 */
+	protected PointLight(String componentName) {
+		super(componentName);
 	}
 
 	/**
@@ -64,9 +75,9 @@ public class PointLight extends Light {
 	public void setRange(float range) {
 		this._range = Math.max(0, range);
 	}
-	
+
 	/*
-	 *  Called once at the beginning of the scene
+	 * Called once at the beginning of the scene
 	 */
 	@SuppressWarnings("unused")
 	private void start() {
