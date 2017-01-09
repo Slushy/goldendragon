@@ -50,7 +50,7 @@ public class Defaults {
 		/**
 		 * The field of view the camera can see
 		 */
-		public static final float FIELD_OF_VIEW = (float) Math.toRadians(70.0f);
+		public static final float FIELD_OF_VIEW = (float) Math.toRadians(60.0f);
 
 		/**
 		 * Starting clipping distance for camera
