@@ -192,7 +192,7 @@ public class SceneRenderer {
 			// Remember, we only care about a directional lights direction from
 			// its rotation, not the position
 			Vector3f dirLightRotation = _directionalLight.getGameObject().getTransform().getRotation();
-			Vector3f dirLightDirection = _transformation.getDirectionalLightDirection(dirLightRotation, viewMatrix);
+			Vector3f dirLightDirection = _transformation.getFacingDirection(dirLightRotation, viewMatrix);
 			shaderProgram.setDirectionalLight(_directionalLight.getColor(), dirLightDirection,
 					_directionalLight.getBrightness());
 		}
@@ -225,8 +225,8 @@ public class SceneRenderer {
 			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(), spotLight.getRange());
 			
 			// Then set spotlight specific
-			Vector3f viewSpaceDirection = _transformation.getLightDirection(transform.getRotation(), viewMatrix);
-			shaderProgram.setSpotLight(i, viewSpaceDirection, spotLight.getCosHalfAngle());
+			Vector3f facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
+			shaderProgram.setSpotLight(i, facingDirection, spotLight.getCosHalfAngle());
 		}
 
 		// Attenuation

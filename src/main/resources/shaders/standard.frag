@@ -71,8 +71,8 @@ vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, P
 	
 	// Calculate directional light
 	if (directionalLight.intensity > 0) {
-		// We don't need to subtract position for directional light becaue directional light is everywhere, all we care about is its direction
-		appliedLighting += calcLightComponents(directionalLight.direction, directionalLight.color, directionalLight.intensity, worldViewNormals);
+		// We don't need to subtract position for directional light because directional light is everywhere, all we care about is its direction
+		appliedLighting += calcLightComponents(-directionalLight.direction, directionalLight.color, directionalLight.intensity, worldViewNormals);
 	} 
 	
 	// Calculate each point light (includes spot lights)
@@ -103,6 +103,7 @@ vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, P
 			attFactor = 1 - (1 - angleDiff)/(1 - pointLight.cosHalfAngle);
 		}
 		
+		// Calculate the light color based on diffuse/specular
 		vec4 pLightColor = calcLightComponents(normalDistance, pointLight.color, pointLight.intensity, worldViewNormals);
 		
 		// Apply attenuation (brightness factor based on distance)

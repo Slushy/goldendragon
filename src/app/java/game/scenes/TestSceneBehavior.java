@@ -64,7 +64,7 @@ public class TestSceneBehavior extends Behavior {
 		this._cube = this.getScene().findGameObject("cube");
 		_gameObjects.add(_cube);
 		this._rend = _cube.getComponentByType(MeshRenderer.class);
-		this._sun = getScene().findGameObject("Fake Lamp");
+		this._sun = getScene().findGameObject("Sun");
 	}
 
 	/**
@@ -108,10 +108,7 @@ public class TestSceneBehavior extends Behavior {
 
 	// Test script that rotates our "sun" directional light on input
 	private void rotateSun(float deltaTime) {
-		SpotLight light = _sun.getComponentByType(SpotLight.class);
-		// float rotSpeed = SUN_ROT_STEP * deltaTime;
-		float rotSpeed = 40 * deltaTime;
-		float movSpeed = 10 * deltaTime;
+		float rotSpeed = SUN_ROT_STEP * deltaTime;
 		_sunRot.set(0, 0);
 
 		// X-axis
@@ -125,27 +122,6 @@ public class TestSceneBehavior extends Behavior {
 			_sunRot.y = -rotSpeed;
 		} else if (Input.keyDown(Key.O)) {
 			_sunRot.y = rotSpeed;
-		}
-		
-		float range = light.getRange();
-		float z = 0;
-		if (Input.keyDown(Key.PERIOD)) {
-			light.setRange(range+1);
-			Debug.log(String.format("Light Range: %.2f", light.getRange()));
-		} else if (Input.keyDown(Key.COMMA)) {
-			light.setRange(range-1);
-			Debug.log(String.format("Light Range: %.2f", light.getRange()));
-		}
-
-		float angle = light.getSpotAngle();
-		
-		// Y-axis
-		if (Input.keyDown(Key.N)) {
-			light.setSpotAngle(angle-1);
-			Debug.log(String.format("Spot Angle: %.2f, CosHalf: %.8f", light.getSpotAngle(), light.getCosHalfAngle()));
-		} else if (Input.keyDown(Key.M)) {
-			light.setSpotAngle(angle+1);
-			Debug.log(String.format("Spot Angle: %.2f, CosHalf: %.8f", light.getSpotAngle(), light.getCosHalfAngle()));
 		}
 
 		// Rotates the sun

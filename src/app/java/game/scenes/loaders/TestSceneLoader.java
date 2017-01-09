@@ -71,7 +71,7 @@ public class TestSceneLoader extends SceneLoader {
 
 		// Create a sun
 		DirectionalLight light = new DirectionalLight();
-		light.setBrightness(0f);
+		light.setBrightness(1f);
 		light.setColor(1, 1, 1);
 		GameObject sun = new GameObject("Sun");
 		sun.addComponent(light);
