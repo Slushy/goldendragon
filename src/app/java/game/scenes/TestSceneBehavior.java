@@ -14,9 +14,6 @@ import engine.common.Camera;
 import engine.common.GameObject;
 import engine.graphics.components.MeshRenderer;
 import engine.lighting.Light;
-import engine.lighting.PointLight;
-import engine.lighting.SpotLight;
-import engine.utils.Debug;
 import engine.utils.inputs.Key;
 import game.scenes.loaders.TestSceneLoader;
 
@@ -59,7 +56,7 @@ public class TestSceneBehavior extends Behavior {
 		// This should be used on a per-scene basis as it is basically used to
 		// control nighttime/daytime brightness
 		Light.AMBIENT_LIGHT.setColor(1, 1, 1);
-		Light.AMBIENT_LIGHT.setBrightness(0.2f);
+		Light.AMBIENT_LIGHT.setBrightness(0.3f);
 
 		this._cube = this.getScene().findGameObject("cube");
 		_gameObjects.add(_cube);

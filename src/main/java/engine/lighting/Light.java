@@ -4,7 +4,6 @@ import org.joml.Vector3f;
 
 import engine.common.Component;
 import engine.common.Defaults;
-import engine.utils.math.MathUtils;
 
 /**
  * Represents a light source in our scene

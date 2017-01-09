@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 
 import engine.resources.RequestManager;
 import engine.scenes.ApplicationSplashLoader;
-import engine.scenes.SceneLoader;
 
 /**
  * Our game loader that is run right after the engine is initialized. It loads

@@ -1,7 +1,6 @@
 package game;
 
 import engine.IGameInitializer;
-import engine.lighting.Light;
 import engine.scenes.ApplicationSplashLoader;
 import engine.scenes.SceneLoader;
 import engine.utils.Debug;

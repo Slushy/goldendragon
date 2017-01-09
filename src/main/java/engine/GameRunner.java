@@ -3,7 +3,6 @@ package engine;
 import engine.Engine.EngineOptions;
 import engine.resources.RequestManager;
 import engine.scenes.Scene;
-import engine.utils.Debug;
 
 /**
  * This game runner is ran by the engine to load update the game
