@@ -5,13 +5,11 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
-
-import engine.input.Key;
-import engine.utils.debug.Logger;
 
 /**
  * An OpenGL window that the user sees when interacting with the game
@@ -20,14 +18,12 @@ import engine.utils.debug.Logger;
  *
  */
 public class OpenGLWindow extends Window {
-	private static final Logger _log = new Logger("OpenGLWindow", Logger.LoggerLevel.DEBUG);
-
 	// Store references to callbacks to prevent java from doing any
 	// garbage collection on them while they are still in use
 	private GLFWErrorCallback _errorCallback;
 	private GLFWKeyCallback _keyCallback;
 	private GLFWWindowSizeCallback _windowSizeCallback;
-	
+
 	/**
 	 * Constructs an OpenGL window
 	 * 
@@ -55,8 +51,16 @@ public class OpenGLWindow extends Window {
 	}
 
 	@Override
-	public void render() {
-		// TODO: More Information
+	public void refresh() {
+		// If enabled, show the FPS in the title bar
+		if (windowOptions.showFPS) {
+			int fps = TimeManager.getFPS();
+			if (fps > -1) {
+				updateWindowTitle(getTitle() + " - " + fps + " FPS");
+			}
+		}
+
+		// Updates the window with the new drawn buffer
 		glfwSwapBuffers(getWindowId());
 		glfwPollEvents();
 	}
@@ -73,10 +77,16 @@ public class OpenGLWindow extends Window {
 
 	@Override
 	public void dispose() {
+		// Destroy window and free window callbacks
 		long windowId = getWindowId();
 		if (windowId != NULL) {
 			glfwDestroyWindow(windowId);
+			Callbacks.glfwFreeCallbacks(windowId);
 		}
+
+		// Terminate GLFW & free error callback
+		glfwTerminate();
+		_errorCallback.free();
 	}
 
 	@Override
@@ -112,10 +122,8 @@ public class OpenGLWindow extends Window {
 		checkIfWindowCoordinatesDifferFromPixels(windowId, width, height);
 
 		// Set V-Sync for window if enabled
-		if (isVSync()) {
-			// note: 1 is for full frame rate, 2 is for half, etc.
-			glfwSwapInterval(1);
-		}
+		// note:0 for no vsync, 1 is for full frame rate, 2 is for half, etc.
+		glfwSwapInterval(isVSync() ? 1 : 0);
 
 		// Make the window visible
 		return windowId;
@@ -165,7 +173,7 @@ public class OpenGLWindow extends Window {
 					if (this.onWindowResizedCallback != null)
 						this.onWindowResizedCallback.run();
 				}));
-		
+
 		// Key press callback - gets fired when a key is pressed
 		glfwSetKeyCallback(windowId,
 				this._keyCallback = GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
@@ -188,7 +196,6 @@ public class OpenGLWindow extends Window {
 		// Set a scale that we can use to get the actual width/height
 		if (actualWidth[0] != setWidth && setWidth != 0) {
 			this.sizeScale = actualWidth[0] / setWidth;
-			_log.warn("OS window resolution is different by a scale of %.2f", sizeScale);
 		}
 	}
 }

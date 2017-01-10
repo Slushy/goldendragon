@@ -1,0 +1,120 @@
+package engine.graphics.geometry;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+/**
+ * A VAO (Vertex Array Object) holds all of our VBO's (Vertex Buffer Object) for
+ * each mesh. These "lists" of vbos are typically called attribute lists
+ * 
+ * @author brandon.porter
+ *
+ */
+public class VAO implements IBindable {
+	private final int _vaoId;
+	private final List<Integer> _vbos = new ArrayList<>();
+
+	private int _attributeCount = 0;
+
+	/**
+	 * Constructs a vertex array object
+	 */
+	public VAO() {
+		this._vaoId = GL30.glGenVertexArrays();
+	}
+
+	/**
+	 * Sets this as the active VAO for openGL
+	 */
+	@Override
+	public void use() {
+		// Bind the VAO
+		GL30.glBindVertexArray(_vaoId);
+
+		// Bind each attribute
+		for (int i = 0; i < _attributeCount; i++) {
+			GL20.glEnableVertexAttribArray(i);
+		}
+	}
+
+	/**
+	 * Creates a vertex buffer object for this VAO
+	 * 
+	 * @param vboType
+	 * @param data
+	 * @throws Exception
+	 */
+	public void bindVBO(VBO vbo, float[] data) throws Exception {
+		_vbos.add(vbo.bindData(data));
+		storeVBO(vbo, GL11.GL_FLOAT);
+	}
+
+	/**
+	 * Creates a vertex buffer object for this VAO
+	 * 
+	 * @param vboType
+	 * @param data
+	 * @throws Exception
+	 */
+	public void bindVBO(VBO vbo, int[] data) throws Exception {
+		_vbos.add(vbo.bindData(data));
+		storeVBO(vbo, GL11.GL_INT);
+	}
+
+	/**
+	 * Tell OpenGL that we are done rendering this VAO
+	 */
+	@Override
+	public void done() {
+		// Unbind each attribute
+		for (int i = 0; i < _attributeCount; i++) {
+			GL20.glDisableVertexAttribArray(i);
+		}
+
+		// Unbind the VAO
+		GL30.glBindVertexArray(0);
+	}
+
+	/**
+	 * Disposes the VAO and any attached VBOS
+	 */
+	@Override
+	public void dispose() {
+		// Unbind and dispose any attached vbos
+		int attrCount = 0;
+		for (int vbo : _vbos) {
+			// Unbind attribute
+			if (attrCount < _attributeCount)
+				GL20.glDisableVertexAttribArray(attrCount++);
+
+			// Delete the VBO
+			GL15.glDeleteBuffers(vbo);
+		}
+
+		// clear any vbo data
+		_vbos.clear();
+		_attributeCount = 0;
+
+		// Unbind and delete the VAO
+		done();
+		GL30.glDeleteVertexArrays(_vaoId);
+	}
+
+	/*
+	 * Stores the vbo in memory and adds to attribute list if applicable
+	 */
+	private void storeVBO(VBO vbo, int attrType) {
+		// Check and add vbo to attribute list
+		if (vbo.isAttribute()) {
+			GL20.glVertexAttribPointer(_attributeCount++, vbo.getAttrSize(), attrType, false, 0, 0);
+		}
+
+		// Tell the VBO we are done with it
+		vbo.done();
+	}
+}

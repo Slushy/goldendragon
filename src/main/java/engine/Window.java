@@ -1,5 +1,7 @@
 package engine;
 
+import engine.common.Defaults;
+
 /**
  * Base implementation of all windows
  * 
@@ -179,10 +181,10 @@ public abstract class Window {
 	public abstract boolean shouldClose();
 
 	/**
-	 * Renders the window, continually called from the game loop several times a
+	 * Refreshes the window, continually called from the game loop several times a
 	 * second
 	 */
-	public abstract void render();
+	public abstract void refresh();
 
 	/**
 	 * Makes the window visible on screen
@@ -230,14 +232,19 @@ public abstract class Window {
 		/**
 		 * Whether the window is resizable
 		 */
-		public boolean resizable = WindowDefaults.RESIZABLE;
+		public boolean resizable = Defaults.Window.RESIZABLE;
 
 		/**
 		 * Whether to limit the GPU to output frames as high as the refresh rate
 		 * of the monitor. If enabled it prevents screen tearing but can also
 		 * introduce minor input lag.
 		 */
-		public boolean vSync = WindowDefaults.VSYNC;
+		public boolean vSync = Defaults.Window.VSYNC;
+		
+		/**
+		 * Whether or not to display the FPS (frames per second) on the window title bar
+		 */
+		public boolean showFPS = Defaults.Window.SHOW_FPS;
 	}
 
 	@FunctionalInterface

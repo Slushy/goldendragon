@@ -1,7 +1,8 @@
 
 
-import engine.GameEngine;
-import game.Game;
+import engine.Engine;
+import engine.utils.Debug;
+import game.GameInitializer;
 
 /*
  * Entry point for running the GD game engine by itself
@@ -15,15 +16,19 @@ public class Main {
 	 * Entry point 
 	 */
 	public static void main(String[] args) {
-		System.out.println("Starting Game Engine...");
-		GameEngine engine = null;
+		Debug.ENABLED = true;
+		Debug.log("Starting Game Engine...");
+		
+		Engine engine = null;
 		try {
-			GameEngine.EngineOptions options = new GameEngine.EngineOptions();
+			Engine.EngineOptions options = new Engine.EngineOptions();
 			options.windowOptions.resizable = true;
+			options.windowOptions.showFPS = true;
+			options.windowOptions.vSync = true;
 			options.graphicsOptions.polygonMode = false;
 			
-			engine = new GameEngine(new Game(), GAME_TITLE, WIDTH, HEIGHT, options);
-			engine.initializeAndRun();
+			engine = new Engine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, options);
+			engine.run();
 		} catch (Exception e) {
 			// TODO: Catch a specific exception, possibly implement a restart
 			e.printStackTrace();
@@ -34,6 +39,6 @@ public class Main {
 			}
 		}
 		
-		System.out.println("Stopping Game Engine...");
+		Debug.log("Stopping Game Engine...");
 	}
 }
