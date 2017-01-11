@@ -1,6 +1,7 @@
 #version 330
 
 const int MAX_LIGHTS = 4;
+const float SHININESS_FACTOR = 128;
 
 in vec2 pass_textureCoords;
 in vec3 pass_viewSpaceNormals;
@@ -42,37 +43,51 @@ uniform vec3 ambientLight;
 uniform DirectionalLight directionalLight; // the directional light (our sun)
 uniform PointLight pointLights[MAX_LIGHTS]; // a point light in our scene
 uniform Attenuation attenuation; // the attenuation constants for our point lights
+uniform float shininess; // how shiny something is on scale of [0-1]
+uniform vec3 specularColor; // color of the shininess
 
 // Calculates the light diffuse which is a float that represents
 // how bright a vertex is by comparing the direction of the vertex normal
 // with the direction of the light vector
 float calcDiffuse(vec3 normalizedLightVector, vec3 normalVec) {
 	// Dot product returns between [-1 (pointing opposite light vector) and 1 (pointing in same direction)]
-	float lightDiff = dot(normalizedLightVector, normalVec);
+	highp float lightDiff = dot(normalVec, normalizedLightVector);
 	
 	// If the normal is pointing > 90 degrees away from the light then
 	// it will be less than 0, but really we just want 0 to say it wont
 	// be any brighter
-	return max(0, lightDiff);
+	return max(0.0, lightDiff);
 }
 
-// Calculates the final value of a light source combining its color, intensity and calculated diffuse
-vec4 calcLightComponents(vec3 normalizedLightVector, vec3 lightColor, float intensity, vec3 worldViewNormals) {
-		// Calculates diffuse for a light source	
-		float diffuse = calcDiffuse(normalizedLightVector, worldViewNormals);
+// blinn phong model
+// Calculates the light specular, which is the amount of light that is reflected in smooth or metallic surfaces
+float calcSpecular(vec3 normalizedLightVector, vec3 worldViewNormal, vec3 worldViewPosition) {
+	vec3 cameraDirection = normalize(-worldViewPosition);
+	// Compute the halfway vector for an approximation to the phong model
+	vec3 halfwayVec = normalize(normalizedLightVector + cameraDirection);
+	// [0 to 1], 1 means we are looking directly at the light
+	float specAngle = max(dot(worldViewNormal, halfwayVec), 0);
 		
-		// Returns the final light value
-		return vec4(lightColor, 1.0) * intensity * diffuse;
+	// The actual specular component value
+	return pow(specAngle, shininess * SHININESS_FACTOR);
+}
+
+// Calculates the final value of a light source combining its color, intensity and calculated diffuse & specular
+vec4 calcLightComponents(vec3 normalizedLightVector, vec3 lightColor, float intensity, vec3 worldViewNormal, vec3 worldViewPosition) {
+		// Calculates diffuse and specular based on base light color
+		vec4 diffuse = vec4(lightColor, 1.0) * intensity * calcDiffuse(normalizedLightVector, worldViewNormal);
+		vec4 specular = vec4(specularColor, 1.0) * intensity * calcSpecular(normalizedLightVector, worldViewNormal, worldViewPosition);
+		return diffuse + specular;
 }
 
 // Calculates the total value of lighting to be applied per vertex
-vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, PointLight pointLights[MAX_LIGHTS], vec3 worldViewNormals, vec3 worldViewPosition) {
+vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, PointLight pointLights[MAX_LIGHTS], vec3 worldViewNormal, vec3 worldViewPosition) {
 	vec4 appliedLighting = vec4(ambientLight, 1.0);
 	
 	// Calculate directional light
 	if (directionalLight.intensity > 0) {
 		// We don't need to subtract position for directional light because directional light is everywhere, all we care about is its direction
-		appliedLighting += calcLightComponents(-directionalLight.direction, directionalLight.color, directionalLight.intensity, worldViewNormals);
+		appliedLighting += calcLightComponents(-directionalLight.direction, directionalLight.color, directionalLight.intensity, worldViewNormal, worldViewPosition);
 	} 
 	
 	// Calculate each point light (includes spot lights)
@@ -104,7 +119,7 @@ vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, P
 		}
 		
 		// Calculate the light color based on diffuse/specular
-		vec4 pLightColor = calcLightComponents(normalDistance, pointLight.color, pointLight.intensity, worldViewNormals);
+		vec4 pLightColor = calcLightComponents(normalDistance, pointLight.color, pointLight.intensity, worldViewNormal, worldViewPosition);
 		
 		// Apply attenuation (brightness factor based on distance)
 		// att(r) = 1 / (c + q*r*r)

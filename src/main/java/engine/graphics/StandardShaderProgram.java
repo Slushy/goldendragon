@@ -41,6 +41,8 @@ public class StandardShaderProgram extends ShaderProgram {
 	private static final String DIRECTIONAL_LIGHT = "directionalLight";
 	private static final String POINT_LIGHT = "pointLights";
 	private static final String ATTENUATION = "attenuation";
+	private static final String SHININESS = "shininess";
+	private static final String SPECULAR_COLOR = "specularColor";
 
 	// Singleton shader
 	private StandardShaderProgram() throws Exception {
@@ -75,6 +77,8 @@ public class StandardShaderProgram extends ShaderProgram {
 		}
 		super.registerUniform(ATTENUATION + ".constant");
 		super.registerUniform(ATTENUATION + ".quadratic");
+		super.registerUniform(SHININESS);
+		super.registerUniform(SPECULAR_COLOR);
 	}
 
 	/**
@@ -147,6 +151,17 @@ public class StandardShaderProgram extends ShaderProgram {
 	 */
 	public void setAmbientLight(Vector3f ambientLight) {
 		super.setUniform(AMBIENT_LIGHT, ambientLight);
+	}
+
+	/**
+	 * Sets the specular shininess & color
+	 * 
+	 * @param shininess
+	 * @param specularColor
+	 */
+	public void setSpecular(float shininess, Vector3f specularColor) {
+		super.setUniform(SHININESS, shininess);
+		super.setUniform(SPECULAR_COLOR, specularColor);
 	}
 
 	/**

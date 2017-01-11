@@ -59,7 +59,10 @@ public class TestSceneLoader extends SceneLoader {
 
 		// Create a bunny
 		GameObject bunny = new GameObject("Bunny");
-		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, Material.DEFAULT));
+		Material bunnyMaterial = new Material(Material.DEFAULT);
+		bunnyMaterial.setSpecularColor(0, 0, 1);
+		bunnyMaterial.setShininess(1);
+		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, bunnyMaterial));
 		bunny.getTransform().setPosZ(-10);
 		bunny.getTransform().setPosY(-0.5f);
 		gameObjects.add(bunny);

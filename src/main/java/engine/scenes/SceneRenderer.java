@@ -157,6 +157,9 @@ public class SceneRenderer {
 				// For each renderer with the shared mesh & material
 				Material mat = _materialRenderers.get(matId).peekFirst().getMaterial();
 				mat.renderStart(shaderProgram);
+				// Specular/shininess component
+				shaderProgram.setSpecular(mat.getShininess(), mat.getSpecularColor());
+
 				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
 					// Set the transformation matrix
 					shaderProgram.setWorldViewMatrix(_transformation
@@ -222,8 +225,9 @@ public class SceneRenderer {
 			// Set the point light of the spotlight first
 			Vector3f viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
 					true);
-			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(), spotLight.getRange());
-			
+			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(),
+					spotLight.getRange());
+
 			// Then set spotlight specific
 			Vector3f facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
 			shaderProgram.setSpotLight(i, facingDirection, spotLight.getCosHalfAngle());

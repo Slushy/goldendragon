@@ -4,9 +4,11 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import engine.common.Defaults;
 import engine.common.Entity;
 import engine.graphics.ShaderType;
 import engine.graphics.StandardShaderProgram;
+import engine.utils.math.MathUtils;
 
 /**
  * A material is representative of how a game object looks; e.g. with textures,
@@ -17,10 +19,12 @@ import engine.graphics.StandardShaderProgram;
  */
 public class Material extends Entity {
 	public static final Material DEFAULT = new Material();
+	
 	private ShaderType _shaderType = ShaderType.STANDARD;
-
-	private Vector3f _color = MaterialDefaults.COLOR;
 	private Texture _texture = null;
+	private Vector3f _color = new Vector3f(Defaults.Materials.COLOR);
+	private Vector3f _specularColor = new Vector3f(Defaults.Materials.SPECULAR_COLOR);
+	private float _shininess = Defaults.Materials.SHININESS_MIN;
 
 	/**
 	 * Constructs a new material with a default color
@@ -37,8 +41,10 @@ public class Material extends Entity {
 	 */
 	public Material(Material material) {
 		this();
-		this.setColor(material.getColor());
+		this.setColor(material.getColor().x, material.getColor().y, material.getColor().z);
 		this.setTexture(material.getTexture());
+		this.setSpecularColor(material.getSpecularColor().x, material.getSpecularColor().y, material.getSpecularColor().z);
+		this.setShininess(material.getShininess());
 	}
 
 	/**
@@ -55,12 +61,12 @@ public class Material extends Entity {
 	/**
 	 * Constructs a new colored material
 	 * 
-	 * @param vector3f
+	 * @param color
 	 *            color of the material
 	 */
-	public Material(Vector3f vector3f) {
+	public Material(Vector3f color) {
 		this();
-		this._color = vector3f;
+		this.setColor(color.x, color.y, color.z);
 	}
 
 	/**
@@ -70,11 +76,11 @@ public class Material extends Entity {
 	 */
 	public final void renderStart(StandardShaderProgram shaderProgram) {
 		shaderProgram.setColor(getColor());
-		
+
 		// Sets whether or not to use a texture
 		boolean hasTexture = hasTexture();
 		shaderProgram.useTexture(hasTexture);
-		
+
 		if (hasTexture) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, getTexture().getTextureId());
@@ -107,10 +113,15 @@ public class Material extends Entity {
 	/**
 	 * Sets the color of this material
 	 * 
-	 * @param color
+	 * @param r
+	 *            RED-value [0-1]
+	 * @param g
+	 *            GREEN-value [0-1]
+	 * @param b
+	 *            BLUE-value [0-1]
 	 */
-	public void setColor(Vector3f color) {
-		this._color = color;
+	public void setColor(float r, float g, float b) {
+		this._color.set(r, g, b);
 	}
 
 	/**
@@ -138,6 +149,49 @@ public class Material extends Entity {
 	}
 
 	/**
+	 * @return The shininess factor of the material [0.01 - 1.0]
+	 */
+	public float getShininess() {
+		return _shininess;
+	}
+
+	/**
+	 * Sets the shininess factor of this material [0.01 - 1.0]
+	 * 
+	 * @param shininess
+	 *            the closer to 1 the value is the more shiny the material
+	 *            appears in the light
+	 */
+	public void setShininess(float shininess) {
+		this._shininess = MathUtils.clamp(shininess, Defaults.Materials.SHININESS_MIN,
+				Defaults.Materials.SHININESS_MAX);
+	}
+
+	/**
+	 * @return the specular color for this material
+	 */
+	public Vector3f getSpecularColor() {
+		return _specularColor;
+	}
+
+	/**
+	 * Sets the specular color for this material is the color that appears when
+	 * the light is shining into it by calculating the specular value and
+	 * multiplying it against the color. For no additional shining color this
+	 * should be black (0, 0, 0)
+	 * 
+	 * @param r
+	 *            RED-value [0-1]
+	 * @param g
+	 *            GREEN-value [0-1]
+	 * @param b
+	 *            BLUE-value [0-1]
+	 */
+	public void setSpecularColor(float r, float g, float b) {
+		this._specularColor.set(r, g, b);
+	}
+
+	/**
 	 * Cleans up the material
 	 */
 	@Override
@@ -146,12 +200,5 @@ public class Material extends Entity {
 		// a shared element, so it should dispose itself
 		// if (hasTexture())
 		// _texture.dispose();
-	}
-
-	public static class MaterialDefaults {
-		/**
-		 * The default color of a non-textured material is White (255, 255, 255)
-		 */
-		public static final Vector3f COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
 	}
 }

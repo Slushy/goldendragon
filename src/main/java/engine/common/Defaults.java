@@ -92,6 +92,43 @@ public class Defaults {
 	}
 
 	/**
+	 * Defaults for materials
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	public static class Materials {
+		/**
+		 * The default color of a non-textured material is White (255, 255, 255)
+		 */
+		public static final Vector3f COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
+
+		/**
+		 * The default color of the material shininess when the light is shining
+		 * into it is black (which shows up as no reflectance since the final
+		 * specular calculated value is multiplied against the specular color)
+		 */
+		public static final Vector3f SPECULAR_COLOR = new Vector3f(0.0f, 0.0f, 0.0f);
+
+		/**
+		 * The min the shininess factor for a material can be
+		 */
+		public static final float SHININESS_MIN = 0.01f;
+
+		/**
+		 * The max the shininess factor for a material can be
+		 */
+		public static final float SHININESS_MAX = 1.0f;
+
+		/*
+		 * Prevent outside classes from creating an instance
+		 */
+		private Materials() {
+
+		}
+	}
+
+	/**
 	 * Defaults for how our graphics display on screen
 	 * 
 	 * @author Brandon Porter
