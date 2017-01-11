@@ -2,8 +2,9 @@ package engine.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-import engine.graphics.components.MeshRenderer;
+import engine.guis.RectTransform;
 import engine.scenes.Scene;
 
 /**
@@ -15,11 +16,14 @@ import engine.scenes.Scene;
 public class GameObject extends Entity {
 	private final List<Component> _components = new ArrayList<>();
 
-	// Special components that can be referenced individually
-	private final Transform _transform = new Transform();
+	// Every transform is actually a rect transform secretly, but the default
+	// type return for getTransform() is still Transform. At any time this
+	// can be cast to a rect transform, but changing any of the extra properties
+	// added in the rect transform is only useful for GUI components.
+	private final Transform _transform = new RectTransform();
 
-	private MeshRenderer _renderer = null;
 	private Scene _scene = null;
+	private Consumer<Component> _onAddedComponentCallback;
 
 	/**
 	 * Constructs a new game object entity
@@ -47,12 +51,12 @@ public class GameObject extends Entity {
 	 *            component to attach to this game object
 	 */
 	public void addComponent(Component component) {
-		// Throw exception later if renderer exists
-		if (component instanceof MeshRenderer)
-			this._renderer = (MeshRenderer) component;
-
+		// TODO: Throw exception later if duplicate component exists
 		_components.add(component);
 		component.setGameObject(this);
+		// Pass the new component to the scene to register it
+		if (_onAddedComponentCallback != null)
+			_onAddedComponentCallback.accept(component);
 	}
 
 	/**
@@ -83,9 +87,13 @@ public class GameObject extends Entity {
 	 * 
 	 * @param scene
 	 *            the scene this object was added to
+	 * @param onAddedComponentCallback
+	 *            this callback is called every time a new component is added to
+	 *            this game object during the active scene.
 	 */
-	public void addedToScene(Scene scene) {
+	public void addedToScene(Scene scene, Consumer<Component> onAddedComponentCallback) {
 		this._scene = scene;
+		this._onAddedComponentCallback = onAddedComponentCallback;
 	}
 
 	/**
@@ -93,13 +101,6 @@ public class GameObject extends Entity {
 	 */
 	public Scene getScene() {
 		return _scene;
-	}
-
-	/**
-	 * @return the renderer for this game object
-	 */
-	public MeshRenderer getRenderer() {
-		return _renderer;
 	}
 
 	/**
@@ -133,5 +134,8 @@ public class GameObject extends Entity {
 		}
 
 		_components.clear();
+
+		this._scene = null;
+		this._onAddedComponentCallback = null;
 	}
 }

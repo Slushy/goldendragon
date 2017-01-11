@@ -26,7 +26,8 @@ public class Scene extends Entity {
 	private final List<GameObject> _gameObjects = new LinkedList<>();
 
 	private SceneState _sceneState = SceneState.INACTIVE;
-
+	private Map<EventDispatcher.ExecutionEvent, Method> _compEvents = new HashMap<>();
+	
 	/**
 	 * Constructs a new scene with the specified name
 	 * 
@@ -71,55 +72,19 @@ public class Scene extends Entity {
 	}
 
 	/**
-	 * Adds the game object to the scene
+	 * Adds the game object to the scene and processes each of its components
 	 * 
 	 * @param gameObject
+	 *            the game object instance to add to the scene
 	 */
 	public void addGameObject(GameObject gameObject) {
 		// Adds object to scene
 		_gameObjects.add(gameObject);
-		gameObject.addedToScene(this);
+		gameObject.addedToScene(this, this::processComponent);
 
-		// TODO: Fix to only check classes we have not previously checked before
-		Map<EventDispatcher.ExecutionEvent, Method> compEvents = new HashMap<>();
+		// Loop over and process each component in the added game object
 		for (Component comp : gameObject.getComponents()) {
-			for (Method m : comp.getClass().getDeclaredMethods()) {
-
-				// Loop over every execution method a component can have
-				for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
-					if (m.getName().equals(evt.methodName())) {
-						// Set the method as essentially "public" so we can
-						// invoke it, as these methods are usually defined as
-						// private or protected.
-						m.setAccessible(true);
-
-						// If the scene is in any state other than
-						// INACTIVE, this means they are being added from
-						// other components so we can go ahead and
-						// initialize them now.
-						if (evt == ExecutionEvent.INITIALIZE && _sceneState.greaterThan(SceneState.INACTIVE)) {
-							_eventDispatcher.invokeMethod(comp, m);
-						} else {
-							// Dont add the initialize event to those game
-							// objects that are being added dynamically
-							// because we only initialize once
-							compEvents.put(evt, m);
-						}
-
-						// If the scene has already started then lets invoke the
-						// START method on the new supported component (we still
-						// want to subscribe it since it could be called later
-						// if a disabled game object becomes enabled again)
-						if (evt == ExecutionEvent.START && _sceneState.greaterThan(SceneState.READY)) {
-							_eventDispatcher.invokeMethod(comp, m);
-						}
-					}
-				}
-			}
-
-			// Subscribe the component to the events
-			_eventDispatcher.subscribeComponent(comp, compEvents);
-			compEvents.clear();
+			processComponent(comp);
 		}
 	}
 
@@ -211,6 +176,55 @@ public class Scene extends Entity {
 		for (GameObject gameObject : _gameObjects) {
 			gameObject.dispose();
 		}
+	}
+
+	/**
+	 * Called for each component in the scene once to set it up for the proper
+	 * events
+	 * 
+	 * @param comp
+	 *            the component that is part of the scene
+	 */
+	private void processComponent(Component comp) {
+		_compEvents.clear();
+		
+		// TODO: Fix to only check classes we have not previously checked before
+		for (Method m : comp.getClass().getDeclaredMethods()) {
+
+			// Loop over every execution method a component can have
+			for (EventDispatcher.ExecutionEvent evt : EventDispatcher.ExecutionEvent.values()) {
+				if (m.getName().equals(evt.methodName())) {
+					// Set the method as essentially "public" so we can
+					// invoke it, as these methods are usually defined as
+					// private or protected.
+					m.setAccessible(true);
+
+					// If the scene is in any state other than
+					// INACTIVE, this means they are being added from
+					// other components so we can go ahead and
+					// initialize them now.
+					if (evt == ExecutionEvent.INITIALIZE && _sceneState.greaterThan(SceneState.INACTIVE)) {
+						_eventDispatcher.invokeMethod(comp, m);
+					} else {
+						// Dont add the initialize event to those game
+						// objects that are being added dynamically
+						// because we only initialize once
+						_compEvents.put(evt, m);
+					}
+
+					// If the scene has already started then lets invoke the
+					// START method on the new supported component (we still
+					// want to subscribe it since it could be called later
+					// if a disabled game object becomes enabled again)
+					if (evt == ExecutionEvent.START && _sceneState.greaterThan(SceneState.READY)) {
+						_eventDispatcher.invokeMethod(comp, m);
+					}
+				}
+			}
+		}
+
+		// Subscribe the component to the events
+		_eventDispatcher.subscribeComponent(comp, _compEvents);
 	}
 
 	/**

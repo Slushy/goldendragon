@@ -12,6 +12,8 @@ import engine.utils.math.VectorUtils;
  *
  */
 public class Transform extends Component {
+	private static final String COMPONENT_NAME = "Transform";
+	
 	private final Vector3f _position = new Vector3f();
 	private final Vector3f _rotation = new Vector3f();
 	private final Vector3f _scale = new Vector3f(1, 1, 1);
@@ -20,7 +22,7 @@ public class Transform extends Component {
 	 * Constructs a transform component
 	 */
 	public Transform() {
-		super("Transform");
+		super(COMPONENT_NAME);
 	}
 
 	/**

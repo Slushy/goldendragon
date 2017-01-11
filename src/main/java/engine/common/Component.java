@@ -24,8 +24,15 @@ public abstract class Component extends Entity {
 	/**
 	 * @return the game object owning this component
 	 */
-	public GameObject getGameObject() {
+	public final GameObject getGameObject() {
 		return _gameObject;
+	}
+
+	/**
+	 * @return the transform of the game object owning this component
+	 */
+	public Transform getTransform() {
+		return _gameObject != null ? _gameObject.getTransform() : null;
 	}
 
 	/**
