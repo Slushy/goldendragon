@@ -66,6 +66,7 @@ public class TestSceneLoader extends SceneLoader {
 		bunny.getTransform().setPosZ(-10);
 		bunny.getTransform().setPosY(-0.5f);
 		gameObjects.add(bunny);
+		
 
 		// Create our scene script
 		GameObject script = new GameObject("Scene Behavior");
@@ -89,11 +90,14 @@ public class TestSceneLoader extends SceneLoader {
 		fakeLamp.addComponent(new MeshRenderer(mesh, mat));
 		fakeLamp.getTransform().setScale(0.3f);
 		gameObjects.add(fakeLamp);
-
+		
+		// Set the spotlight parent to be the bunny
+		spotLight.getTransform().setParent(bunny.getTransform());
+		
 		// Create another point light
 		PointLight pointLight2 = new PointLight();
 		pointLight2.setColor(0, 1, 0);
-		GameObject fakeLamp2 = new GameObject("Fake Lamp");
+		GameObject fakeLamp2 = new GameObject("Fake Lamp2");
 		fakeLamp2.getTransform().setPosZ(-8);
 		fakeLamp2.addComponent(pointLight2);
 		fakeLamp2.addComponent(new MeshRenderer(mesh, mat));

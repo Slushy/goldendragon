@@ -1,7 +1,7 @@
 package engine.utils.math;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 /**
  * Utility helper class for common matrix manipulation/calculations
@@ -12,9 +12,29 @@ import org.joml.Vector3f;
 public final class MatrixUtils {
 
 	/*
-	 * Prevent manual instantiation
+	 * Static class
 	 */
 	private MatrixUtils() {
+	}
+
+	/**
+	 * Helper function to set the 3D world matrix from position, rotation and
+	 * scale vectors
+	 * 
+	 * @param matrix
+	 *            the matrix to transform
+	 * @param position
+	 *            position vector to translate the matrix
+	 * @param rotation
+	 *            rotation vector to rotate the matrix
+	 * @param scale
+	 *            scale vector to scale the matrix
+	 * @return the update matrix
+	 */
+	public static Matrix4f setWorldMatrix(Matrix4f matrix, Vector3fc position, Vector3fc rotation, Vector3fc scale) {
+		return matrix.translation(position).rotateY((float) Math.toRadians(-rotation.y()))
+				.rotateX((float) Math.toRadians(-rotation.x())).rotateZ((float) Math.toRadians(-rotation.z()))
+				.scale(scale);
 	}
 
 	/**
@@ -31,12 +51,12 @@ public final class MatrixUtils {
 	 *            rotation vector of the object
 	 * @return the updated matrix
 	 */
-	public static Matrix4f setObjectViewMatrix(Matrix4f matrix, Vector3f position, Vector3f rotation) {
+	public static Matrix4f setObjectViewMatrix(Matrix4f matrix, Vector3fc position, Vector3fc rotation) {
 		// Do rotation first so rotation applies over its position
 		// We do "rotation" instead of "rotate" to clear out any previous set
 		// data
-		return matrix.rotationYXZ((float) Math.toRadians(-rotation.y), (float) Math.toRadians(-rotation.x),
-				(float) Math.toRadians(-rotation.z)).translate(position.x, position.y, position.z);
+		return matrix.rotationYXZ((float) Math.toRadians(-rotation.y()), (float) Math.toRadians(-rotation.x()),
+				(float) Math.toRadians(-rotation.z())).translate(position.x(), position.y(), position.z());
 	}
 
 	/**
@@ -53,42 +73,11 @@ public final class MatrixUtils {
 	 *            rotation vector of the camera
 	 * @return the updated matrix
 	 */
-	public static Matrix4f setCameraViewMatrix(Matrix4f matrix, Vector3f position, Vector3f rotation) {
+	public static Matrix4f setCameraViewMatrix(Matrix4f matrix, Vector3fc position, Vector3fc rotation) {
 		// Do rotation first so rotation applies over its position
 		// We do "rotation" instead of "rotate" to clear out any previous set
 		// data
-		return matrix.rotationXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y),
-				(float) Math.toRadians(rotation.z)).translate(-position.x, -position.y, -position.z);
-	}
-
-	/**
-	 * To transform a matrix without being offset by translation, we temporarily
-	 * clear the view matrix's current translation, do the transform, and reset
-	 * the translation
-	 * 
-	 * @param matrixToTransform
-	 *            the matrix to be transformed by the view matrix
-	 * @param viewMatrix
-	 *            the matrix to temporarily remove translation to transform the
-	 *            other matrix
-	 * @return the matrixToTransform instance is returned
-	 */
-	public static Matrix4f transformMatrixWithoutTranslation(Matrix4f matrixToTransform, Matrix4f viewMatrix) {
-		// Temporarily clear the main cameras current translation since
-		// we do not want it to affect the directional light position
-		// (we only want rotation)
-		float posX = viewMatrix.m30();
-		float posY = viewMatrix.m31();
-		float posZ = viewMatrix.m32();
-		viewMatrix.setTranslation(0, 0, 0);
-
-		// Multiplies the camera's view matrix by the light view matrix to get
-		// our final position
-		viewMatrix.mul(matrixToTransform, matrixToTransform);
-
-		// Restore the cameras translation
-		viewMatrix.setTranslation(posX, posY, posZ);
-
-		return matrixToTransform;
+		return matrix.rotationXYZ((float) Math.toRadians(rotation.x()), (float) Math.toRadians(rotation.y()),
+				(float) Math.toRadians(rotation.z())).translate(-position.x(), -position.y(), -position.z());
 	}
 }

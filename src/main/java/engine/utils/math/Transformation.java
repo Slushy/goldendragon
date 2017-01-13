@@ -1,7 +1,9 @@
 package engine.utils.math;
 
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.joml.Vector4f;
 
 import engine.common.Defaults;
@@ -15,9 +17,7 @@ import engine.common.Transform;
  *
  */
 public final class Transformation {
-	private final Matrix4f WORLD_MATRIX = new Matrix4f();
 	private final Matrix4f WORLD_VIEW_MATRIX = new Matrix4f();
-
 	private final Matrix4f LIGHT_VIEW_MATRIX = new Matrix4f();
 	private final Vector3f VIEW_VECTOR3f = new Vector3f();
 	private final Vector4f VIEW_VECTOR4f = new Vector4f();
@@ -29,33 +29,6 @@ public final class Transformation {
 	}
 
 	/**
-	 * Returns a matrix representing the position, rotation and scale passed in
-	 * 
-	 * @param position
-	 * @param rotation
-	 * @param scale
-	 * @return transformed matrix in view space
-	 */
-	public Matrix4f buildWorldMatrix(Vector3f position, Vector3f rotation, Vector3f scale) {
-		// return WORLD_MATRIX.translationRotateScale(position.x, position.y,
-		// position.z, rotation.x, rotation.y, rotation.z,
-		// rotation.w, scale, scale, scale);
-		return WORLD_MATRIX.translation(position).rotateY((float) Math.toRadians(-rotation.y))
-				.rotateX((float) Math.toRadians(-rotation.x)).rotateZ((float) Math.toRadians(-rotation.z)).scale(scale);
-	}
-
-	/**
-	 * Returns a matrix representing the position, rotation and scale of the
-	 * game object
-	 * 
-	 * @param transform
-	 * @return transformed matrix in view space
-	 */
-	public Matrix4f buildWorldMatrix(Transform transform) {
-		return buildWorldMatrix(transform.getPosition(), transform.getRotation(), transform.getScale());
-	}
-
-	/**
 	 * Returns a matrix representing the position, rotation and scale of the
 	 * game object in relation to the passed in view matrix
 	 * 
@@ -63,10 +36,10 @@ public final class Transformation {
 	 * @param viewMatrix
 	 * @return transformed matrix in view space
 	 */
-	public Matrix4f buildWorldViewMatrix(Transform transform, Matrix4f viewMatrix) {
-		return viewMatrix.mul(buildWorldMatrix(transform), WORLD_VIEW_MATRIX);
+	public Matrix4f buildWorldViewMatrix(Transform transform, Matrix4fc viewMatrix) {
+		return viewMatrix.mul(transform.getLocalToWorldMatrix(), WORLD_VIEW_MATRIX);
 	}
-	
+
 	/**
 	 * Returns the facing direction of a transform in view space
 	 * 
@@ -76,19 +49,19 @@ public final class Transformation {
 	 *            the view matrix of the camera
 	 * @return facing direction of the transform in relation to the camera
 	 */
-	public Vector3f getFacingDirection(Vector3f rotation, Matrix4f viewMatrix) {
+	public Vector3f getFacingDirection(Vector3fc rotation, Matrix4fc viewMatrix) {
 		// Apply the rotation to a preset position
 		MatrixUtils.setObjectViewMatrix(LIGHT_VIEW_MATRIX, Defaults.Scene.OBJECT_FACING_DIRECTION, rotation);
 
-		// Temporarily clear the main cameras current translation since
-		// we do not want it to affect the light position
-		// (we only want rotation)
-		MatrixUtils.transformMatrixWithoutTranslation(LIGHT_VIEW_MATRIX, viewMatrix);
+		// Multiply the view matrix without translation to the objects view
+		// matrix
+		WORLD_VIEW_MATRIX.set(viewMatrix).setTranslation(0, 0, 0).mul(LIGHT_VIEW_MATRIX);
 
-		// Gets the new light direction based off of its and the cameras
-		// rotation (This should already be normalized, if it were not we would
-		// have to do VIEW_VECTOR3f.normalize() before returning)
-		return LIGHT_VIEW_MATRIX.getTranslation(VIEW_VECTOR3f);
+		// Gets the new facing direction based off of its and the cameras
+		// rotation (This should already be normalized because of the value in
+		// OBJECT_FACING_DIRECTION, if it were not we would have to do
+		// VIEW_VECTOR3f.normalize() before returning)
+		return WORLD_VIEW_MATRIX.getTranslation(VIEW_VECTOR3f);
 	}
 
 	/**
@@ -115,7 +88,7 @@ public final class Transformation {
 	 * @return a "shared" 3-component vector representing the transformed local
 	 *         vector in view space
 	 */
-	public Vector3f buildWorldViewVector(Vector3f localSpaceVector, Matrix4f viewMatrix, boolean includeTranslation) {
+	public Vector3f buildWorldViewVector(Vector3fc localSpaceVector, Matrix4fc viewMatrix, boolean includeTranslation) {
 		VIEW_VECTOR4f.set(localSpaceVector, includeTranslation ? 1 : 0);
 		VIEW_VECTOR4f.mul(viewMatrix);
 

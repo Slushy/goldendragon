@@ -48,13 +48,13 @@ public final class Camera extends GameObject {
 		float offsetZ = 0;
 
 		if (dz != 0) {
-			offsetX += (float) Math.sin(Math.toRadians(transform.getRotation().y)) * -1.0f * dz;
-			offsetZ += (float) Math.cos(Math.toRadians(transform.getRotation().y)) * dz;
+			offsetX += (float) Math.sin(Math.toRadians(transform.getRotation().y())) * -1.0f * dz;
+			offsetZ += (float) Math.cos(Math.toRadians(transform.getRotation().y())) * dz;
 		}
 
 		if (dx != 0) {
-			offsetX += (float) Math.sin(Math.toRadians(transform.getRotation().y - deg90Rad)) * -1.0f * dx;
-			offsetZ += (float) Math.cos(Math.toRadians(transform.getRotation().y - deg90Rad)) * dx;
+			offsetX += (float) Math.sin(Math.toRadians(transform.getRotation().y() - deg90Rad)) * -1.0f * dx;
+			offsetZ += (float) Math.cos(Math.toRadians(transform.getRotation().y() - deg90Rad)) * dx;
 		}
 
 		if (dy != 0) {
