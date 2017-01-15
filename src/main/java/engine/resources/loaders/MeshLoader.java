@@ -93,9 +93,20 @@ public class MeshLoader {
 		// Create all VBOS (Cannot change this order, if you do
 		// you will have to edit the hardcoded VBO locations in
 		// the actual shader files - maybe that should be changed?)
-		vao.bindVBO(VBO.POSITION, vboData.vertexPositions);
-		vao.bindVBO(VBO.TEXTURE, vboData.textureCoords);
-		vao.bindVBO(VBO.NORMAL, vboData.vertexNormals);
+		VBO[] vbos = {
+				VBO.POSITION,
+				VBO.TEXTURE,
+				VBO.NORMAL
+		};
+		
+		float[][] vboDataArrays = {
+				vboData.vertexPositions,
+				vboData.textureCoords,
+				vboData.vertexNormals
+		};
+		
+		// Interleaved VBOs are much better performance-wise
+		vao.bindInterleavedVBO(vboData.vertexPositions.length / 3, vbos, vboDataArrays);
 		vao.bindVBO(VBO.INDEX, vboData.indices);
 
 		// Unbind and return new vao

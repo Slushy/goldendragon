@@ -12,7 +12,8 @@ import org.lwjgl.BufferUtils;
  *
  */
 public final class Utils {
-
+	public static final int FLOAT_SIZE_BYTES = 4;
+	
 	// Static class
 	private Utils() {
 	}
