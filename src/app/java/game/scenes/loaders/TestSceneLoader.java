@@ -92,7 +92,7 @@ public class TestSceneLoader extends SceneLoader {
 		gameObjects.add(fakeLamp);
 		
 		// Set the spotlight parent to be the bunny
-		spotLight.getTransform().setParent(bunny.getTransform());
+		fakeLamp.setParent(bunny);
 		
 		// Create another point light
 		PointLight pointLight2 = new PointLight();

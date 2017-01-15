@@ -21,15 +21,80 @@ public class GameObject extends Entity {
 	// can be cast to a rect transform, but changing any of the extra properties
 	// added in the rect transform is only useful for GUI components.
 	private final Transform _transform = new RectTransform();
+	private final List<GameObject> _children = new ArrayList<>();
 
 	private Scene _scene = null;
 	private Consumer<Component> _onAddedComponentCallback;
+	private GameObject _parent = null;
 
 	/**
 	 * Constructs a new game object entity
 	 */
 	public GameObject() {
 		this("GameObject");
+	}
+
+	/**
+	 * @return the parent game object of the current game object, null if it has
+	 *         no parent
+	 */
+	public GameObject getParent() {
+		return _parent;
+	}
+
+	/**
+	 * @return All children directly under this game object, if none it will
+	 *         return an empty list
+	 */
+	public List<GameObject> getChildren() {
+		return _children;
+	}
+
+	/**
+	 * Sets the parent game object of the current game object, also if this game
+	 * object already had an existing parent then it will no longer be a child
+	 * of that game object
+	 * 
+	 * @param parent
+	 *            the parent game object
+	 */
+	public void setParent(GameObject parent) {
+		// Remove itself from existing parent
+		if (_parent != null)
+			_parent.removeChild(this);
+
+		// Set the parent
+		this._parent = parent;
+
+		// Add itself to new parent
+		if (parent != null)
+			parent.addChild(this);
+
+		// We have changed parents, so our transformation properties most likely
+		// need to be changed too
+		_transform.setChanged();
+	}
+
+	/**
+	 * Removes the game object from its children. This game object is no longer
+	 * the child's parent.
+	 * 
+	 * @param child
+	 *            game object to remove from children
+	 */
+	public void removeChild(GameObject child) {
+		_children.remove(child);
+	}
+
+	/**
+	 * Adds the game object to its children. This game object is now the child's
+	 * parent.
+	 * 
+	 * @param child
+	 *            game object to add to children
+	 */
+	public void addChild(GameObject child) {
+		_children.add(child);
 	}
 
 	/**
@@ -104,6 +169,13 @@ public class GameObject extends Entity {
 	}
 
 	/**
+	 * @return the transform of the game object
+	 */
+	public final Transform getTransform() {
+		return _transform;
+	}
+
+	/**
 	 * Removes the component from this game object
 	 * 
 	 * @param component
@@ -114,17 +186,26 @@ public class GameObject extends Entity {
 	}
 
 	/**
-	 * @return the transform of the game object
-	 */
-	public final Transform getTransform() {
-		return _transform;
-	}
-
-	/**
 	 * Disposes the game object by disposing each attached component
 	 */
 	@Override
 	protected void onDispose() {
+		// Remove itself from its parent
+		if (_parent != null) {
+			_parent.removeChild(this);
+			_parent = null;
+		}
+		
+		// Dispose each child
+		for (GameObject child : _children) {
+			child._parent = null; // We don't want the child to remove itself
+									// from our children as we are looping over
+									// it or set the transform to changed
+			child.dispose();
+		}
+		_children.clear();
+
+		// Dispose each component
 		for (Component component : _components) {
 			// It's necessary to set the components game object to null
 			// to let it know the game object is being disposed and it
@@ -132,7 +213,6 @@ public class GameObject extends Entity {
 			component.setGameObject(null);
 			component.dispose();
 		}
-
 		_components.clear();
 
 		this._scene = null;
