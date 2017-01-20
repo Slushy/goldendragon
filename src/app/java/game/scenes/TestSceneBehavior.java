@@ -59,8 +59,11 @@ public class TestSceneBehavior extends Behavior {
 		Light.AMBIENT_LIGHT.setBrightness(0.3f);
 
 		this._cube = this.getScene().findGameObject("cube");
-		_gameObjects.add(_cube);
-		this._rend = _cube.getComponentByType(MeshRenderer.class);
+		if (_cube != null) {
+			_gameObjects.add(_cube);
+			this._rend = _cube.getComponentByType(MeshRenderer.class);
+		}
+		
 		this._sun = getScene().findGameObject("Sun");
 	}
 

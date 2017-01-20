@@ -67,7 +67,7 @@ public class MeshRenderer extends Component {
 	 */
 	public void render() {
 		if (!_mesh.isLoaded()) {
-			Debug.error("Trying to render a mesh that isn't loaded yet: " + _mesh.getFileName());
+			Debug.error("Trying to render a mesh that isn't loaded yet: " + _mesh.getName());
 			return;
 		}
 		// Bind VAO

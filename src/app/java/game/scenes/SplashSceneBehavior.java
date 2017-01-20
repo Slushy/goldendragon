@@ -25,7 +25,7 @@ public class SplashSceneBehavior extends Behavior {
 
 	@SuppressWarnings("unused")
 	private void start() {
-		this._cube = this.getScene().findGameObject("cube");
+		this._cube = this.getScene().findGameObject("Cube");
 	}
 
 	@SuppressWarnings("unused")

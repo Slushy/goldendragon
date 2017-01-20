@@ -11,18 +11,27 @@ import engine.common.Entity;
  *
  */
 public class Texture extends Entity {
+	private static final String ENTITY_NAME = "Texture";
+
 	private int _id = -1;
 	private int _width;
 	private int _height;
 
 	/**
-	 * Constructs a new texture with the filename
-	 * 
-	 * @param fileName
-	 *            the filename (including extension) of the texture
+	 * Constructs a new texture with the name "Texture"
 	 */
-	public Texture(String fileName) {
-		super(fileName);
+	public Texture() {
+		this(ENTITY_NAME);
+	}
+
+	/**
+	 * Constructs a new texture with the specified name
+	 * 
+	 * @param name
+	 *            the name of the texture
+	 */
+	public Texture(String name) {
+		super(name);
 	}
 
 	/**
@@ -34,14 +43,7 @@ public class Texture extends Entity {
 	public final boolean isLoaded() {
 		return getTextureId() >= 0;
 	}
-
-	/**
-	 * @return the texture file name
-	 */
-	public String getFileName() {
-		return getName();
-	}
-
+	
 	/**
 	 * @return OpenGL reference id for the texture
 	 */

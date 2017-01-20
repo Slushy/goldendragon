@@ -12,6 +12,8 @@ import engine.lighting.DirectionalLight;
 import engine.lighting.PointLight;
 import engine.lighting.SpotLight;
 import engine.scenes.SceneLoader;
+import engine.utils.Debug;
+import engine.utils.performance.SceneOptimizer;
 import game.GameResources;
 import game.scenes.TestSceneBehavior;
 
@@ -38,23 +40,26 @@ public class TestSceneLoader extends SceneLoader {
 	protected List<GameObject> loadGameObjectsForScene() throws Exception {
 		List<GameObject> gameObjects = new ArrayList<>();
 
+		GameObject cubes = new GameObject("Cubes");
+		
 		// Create mesh and set texture material
 		Mesh mesh = GameResources.Meshes.CUBE;
 		Material mat = new Material(GameResources.Textures.GRASS_BLOCK);
 
 		String cubeName = "Cube";
 		// Create dynamic placed cubes
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 100; i++) {
 			// Create game object with mesh renderer
-			GameObject cube = new GameObject(cubeName);
+			GameObject cube = new GameObject(cubeName + i);
 			cube.addComponent(new MeshRenderer(mesh, mat));
 
-			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
+			int randomX = ThreadLocalRandom.current().nextInt(-40, 40);
+			int randomY = ThreadLocalRandom.current().nextInt(-40, 40);
+			int randomZ = ThreadLocalRandom.current().nextInt(-40, 40);
 			cube.getTransform().setPosition(randomX, randomY, randomZ);
-
-			gameObjects.add(cube);
+			//cube.getTransform().rotate(45, 56, 2);
+			cube.setParent(cubes);
+			//gameObjects.add(cube);
 		}
 
 		// Create a bunny
@@ -65,8 +70,14 @@ public class TestSceneLoader extends SceneLoader {
 		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, bunnyMaterial));
 		bunny.getTransform().setPosZ(-10);
 		bunny.getTransform().setPosY(-0.5f);
-		gameObjects.add(bunny);
 		
+		bunny.setParent(cubes);
+		
+		Debug.log("Cubes children before batch: " + cubes.getChildren().size());
+		SceneOptimizer.batchChildren(cubes, false);
+		Debug.log("Cubes children after batch: " + cubes.getChildren().size());
+		
+		gameObjects.add(cubes);
 
 		// Create our scene script
 		GameObject script = new GameObject("Scene Behavior");

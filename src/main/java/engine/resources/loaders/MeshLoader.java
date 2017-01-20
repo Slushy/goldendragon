@@ -1,8 +1,6 @@
 package engine.resources.loaders;
 
 import engine.graphics.geometry.Mesh;
-import engine.graphics.geometry.VAO;
-import engine.graphics.geometry.VBO;
 import engine.resources.RequestManager;
 import engine.resources.ResourceManager;
 import engine.utils.Debug;
@@ -32,7 +30,7 @@ public class MeshLoader {
 	 */
 	public static Mesh loadMesh(String fileName) throws Exception {
 		Mesh mesh = new Mesh(fileName);
-		loadMesh(mesh);
+		loadMesh(mesh, fileName);
 		return mesh;
 	}
 
@@ -41,10 +39,12 @@ public class MeshLoader {
 	 * 
 	 * @param mesh
 	 *            existing mesh to load
+	 * @param fileName
+	 *            file name (with extension) of the mesh to load
 	 * @throws Exception
 	 */
-	public static void loadMesh(Mesh mesh) throws Exception {
-		MeshVBOData vboData;
+	public static void loadMesh(Mesh mesh, String fileName) throws Exception {
+		Mesh.MeshVBOData vboData;
 
 		// If the mesh is already loaded we
 		// just return
@@ -52,7 +52,6 @@ public class MeshLoader {
 			return;
 
 		// Parses the file type so we can support multiple types
-		String fileName = mesh.getFileName();
 		switch (ResourceManager.getFileType(fileName)) {
 		case OBJ:
 			vboData = OBJLoader.loadVBOData(fileName);
@@ -70,8 +69,7 @@ public class MeshLoader {
 		// This needs to be on main thread
 		boolean wasImmediate = RequestManager.makeGLRequestImmediate(() -> {
 			try {
-				VAO vao = createNewVAO(vboData);
-				mesh.setVAO(vao, vboData.indices.length);
+				mesh.loadVAO(vboData);
 			} catch (Exception e) {
 				Debug.error("Error creating VAO for mesh: " + fileName);
 				e.printStackTrace();
@@ -81,64 +79,61 @@ public class MeshLoader {
 		Debug.log("GL request to register mesh (" + mesh.getName() + ") was immediate: " + wasImmediate);
 	}
 
-	/*
-	 * Registers the vbo data with opengl. [WARNING] - This MUST be called from
-	 * the main thread.
-	 */
-	private static VAO createNewVAO(MeshVBOData vboData) throws Exception {
-		// Create and bind new VAO
-		VAO vao = new VAO();
-		vao.use();
-
-		// Create all VBOS (Cannot change this order, if you do
-		// you will have to edit the hardcoded VBO locations in
-		// the actual shader files - maybe that should be changed?)
-		VBO[] vbos = {
-				VBO.POSITION,
-				VBO.TEXTURE,
-				VBO.NORMAL
-		};
-		
-		float[][] vboDataArrays = {
-				vboData.vertexPositions,
-				vboData.textureCoords,
-				vboData.vertexNormals
-		};
-		
-		// Interleaved VBOs are much better performance-wise
-		vao.bindInterleavedVBO(vboData.vertexPositions.length / 3, vbos, vboDataArrays);
-		vao.bindVBO(VBO.INDEX, vboData.indices);
-
-		// Unbind and return new vao
-		vao.done();
-		return vao;
-	}
-
 	/**
-	 * Container used to hold data for loading in the new mesh
+	 * Loads each mesh into one big mesh. This MUST BE CALLED FROM THE MAIN
+	 * THREAD
 	 * 
-	 * @author Brandon Porter
-	 *
+	 * @param meshVboDatas
+	 * @return the combined mesh of all the meshes
 	 */
-	protected static class MeshVBOData {
-		public final float[] vertexPositions;
-		public final float[] textureCoords;
-		public final float[] vertexNormals;
-		public final int[] indices;
+	public static Mesh loadCombinedMesh(Mesh.MeshVBOData[] meshVboDatas) {
+		Mesh combinedMesh = new Mesh();
 
-		/**
-		 * Constructs a new mesh vbo data wrapper
-		 * 
-		 * @param vertexPositions
-		 * @param textureCoords
-		 * @param vertexNormals
-		 * @param indices
-		 */
-		public MeshVBOData(float[] vertexPositions, float[] textureCoords, float[] vertexNormals, int[] indices) {
-			this.vertexPositions = vertexPositions;
-			this.textureCoords = textureCoords;
-			this.vertexNormals = vertexNormals;
-			this.indices = indices;
+		// Get the total count of vertices we will have for the combined mesh
+		int posCt = 0, texCt = 0, normCt = 0, indCt = 0;
+		for (Mesh.MeshVBOData vboData : meshVboDatas) {
+			posCt += vboData.vertexPositions.length;
+			texCt += vboData.textureCoords.length;
+			normCt += vboData.vertexNormals.length;
+			indCt += vboData.indices.length;
 		}
+
+		float[] positions = new float[posCt];
+		float[] texCoords = new float[texCt];
+		float[] norms = new float[normCt];
+		int[] indices = new int[indCt];
+
+		posCt = 0;
+		texCt = 0;
+		normCt = 0;
+		indCt = 0;
+		for (Mesh.MeshVBOData vboData : meshVboDatas) {
+			// Copy positions
+			for (float val : vboData.vertexPositions)
+				positions[posCt++] = val;
+			// Copy texture coords
+			for (float val : vboData.textureCoords)
+				texCoords[texCt++] = val;
+			// Copy normals
+			for (float val : vboData.vertexNormals)
+				norms[normCt++] = val;
+			// Copy indices
+			for (int val : vboData.indices)
+				indices[indCt++] = val;
+		}
+
+		// Loading the new mesh needs to be on main thread
+		boolean wasImmediate = RequestManager.makeGLRequestImmediate(() -> {
+			try {
+				combinedMesh.loadVAO(new Mesh.MeshVBOData(positions, texCoords, norms, indices));
+			} catch (Exception e) {
+				Debug.error("Error creating VAO for combined mesh");
+				e.printStackTrace();
+			}
+		});
+
+		Debug.log("GL request to register a combined mesh was immediate: " + wasImmediate);
+
+		return combinedMesh;
 	}
 }

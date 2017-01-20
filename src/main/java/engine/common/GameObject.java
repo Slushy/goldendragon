@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import engine.graphics.components.MeshRenderer;
 import engine.guis.RectTransform;
 import engine.scenes.Scene;
 
@@ -14,6 +15,7 @@ import engine.scenes.Scene;
  *
  */
 public class GameObject extends Entity {
+	private static final String ENTITY_NAME = "GameObject";
 	private final List<Component> _components = new ArrayList<>();
 
 	// Every transform is actually a rect transform secretly, but the default
@@ -26,12 +28,25 @@ public class GameObject extends Entity {
 	private Scene _scene = null;
 	private Consumer<Component> _onAddedComponentCallback;
 	private GameObject _parent = null;
+	private MeshRenderer _renderer = null;
 
 	/**
 	 * Constructs a new game object entity
 	 */
 	public GameObject() {
-		this("GameObject");
+		this(ENTITY_NAME);
+	}
+	
+	/**
+	 * Constructs a new game object entity with the specified name
+	 * 
+	 * @param name
+	 *            name to represent the game object
+	 */
+	public GameObject(String name) {
+		super(name);
+		// Every game object must have a transform
+		this.addComponent(_transform);
 	}
 
 	/**
@@ -74,41 +89,7 @@ public class GameObject extends Entity {
 		// need to be changed too
 		_transform.setChanged();
 	}
-
-	/**
-	 * Removes the game object from its children. This game object is no longer
-	 * the child's parent.
-	 * 
-	 * @param child
-	 *            game object to remove from children
-	 */
-	public void removeChild(GameObject child) {
-		_children.remove(child);
-	}
-
-	/**
-	 * Adds the game object to its children. This game object is now the child's
-	 * parent.
-	 * 
-	 * @param child
-	 *            game object to add to children
-	 */
-	public void addChild(GameObject child) {
-		_children.add(child);
-	}
-
-	/**
-	 * Constructs a new game object entity with the specified name
-	 * 
-	 * @param name
-	 *            name to represent the game object
-	 */
-	public GameObject(String name) {
-		super(name);
-		// Every game object must have a transform
-		this.addComponent(_transform);
-	}
-
+	
 	/**
 	 * Adds a new component to this game object
 	 * 
@@ -116,6 +97,9 @@ public class GameObject extends Entity {
 	 *            component to attach to this game object
 	 */
 	public void addComponent(Component component) {
+		if (component instanceof MeshRenderer)
+			this._renderer = (MeshRenderer) component;
+
 		// TODO: Throw exception later if duplicate component exists
 		_components.add(component);
 		component.setGameObject(this);
@@ -176,6 +160,14 @@ public class GameObject extends Entity {
 	}
 
 	/**
+	 * @return the current renderer of the game object, or null if it doesn't
+	 *         have one
+	 */
+	public final MeshRenderer getRenderer() {
+		return _renderer;
+	}
+
+	/**
 	 * Removes the component from this game object
 	 * 
 	 * @param component
@@ -195,7 +187,7 @@ public class GameObject extends Entity {
 			_parent.removeChild(this);
 			_parent = null;
 		}
-		
+
 		// Dispose each child
 		for (GameObject child : _children) {
 			child._parent = null; // We don't want the child to remove itself
@@ -217,5 +209,27 @@ public class GameObject extends Entity {
 
 		this._scene = null;
 		this._onAddedComponentCallback = null;
+	}
+	
+	/**
+	 * Removes the game object from its children. This game object is no longer
+	 * the child's parent.
+	 * 
+	 * @param child
+	 *            game object to remove from children
+	 */
+	private void removeChild(GameObject child) {
+		_children.remove(child);
+	}
+
+	/**
+	 * Adds the game object to its children. This game object is now the child's
+	 * parent.
+	 * 
+	 * @param child
+	 *            game object to add to children
+	 */
+	private void addChild(GameObject child) {
+		_children.add(child);
 	}
 }

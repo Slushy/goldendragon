@@ -6,6 +6,8 @@ import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import engine.graphics.geometry.Mesh;
+import engine.graphics.geometry.Mesh.MeshVBOData;
 import engine.resources.ResourceManager;
 
 /**
@@ -28,7 +30,7 @@ class OBJLoader {
 	 * @return new vbo data representing the OBJ file
 	 * @throws Exception
 	 */
-	public static MeshLoader.MeshVBOData loadVBOData(String fileName) throws Exception {
+	public static Mesh.MeshVBOData loadVBOData(String fileName) throws Exception {
 		List<Vector3f> vertices = new ArrayList<>();
 		List<Vector2f> textureCoords = new ArrayList<>();
 		List<Vector3f> normals = new ArrayList<>();
@@ -82,7 +84,7 @@ class OBJLoader {
 	 * Processes each vertex face to map the textures and normals to an index array. This returns
 	 * a container vbo with the wrapped data
 	 */
-	private static MeshLoader.MeshVBOData parseEachVertexListIntoVBOArrays(List<Vector3f> positionVectors,
+	private static Mesh.MeshVBOData parseEachVertexListIntoVBOArrays(List<Vector3f> positionVectors,
 			List<Vector2f> texCoordVectors, List<Vector3f> normalVectors, List<VertexFace> vertexFaces) {
 
 		// Define empty arrays
@@ -114,7 +116,7 @@ class OBJLoader {
 		}
 
 		// Return the new mesh vbo
-		return new MeshLoader.MeshVBOData(positions, texCoords, normals, indices);
+		return new Mesh.MeshVBOData (positions, texCoords, normals, indices);
 	}
 
 	/*

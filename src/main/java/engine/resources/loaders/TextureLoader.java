@@ -54,7 +54,7 @@ public class TextureLoader {
 	 */
 	public static Texture loadTexture(String fileName, Texture.TextureOptions textureOptions) throws Exception {
 		Texture texture = new Texture(fileName);
-		loadTexture(texture);
+		loadTexture(texture, fileName, textureOptions);
 		return texture;
 	}
 
@@ -65,8 +65,8 @@ public class TextureLoader {
 	 *            the existing texture object
 	 * @throws Exception
 	 */
-	public static void loadTexture(Texture texture) throws Exception {
-		loadTexture(texture, Texture.TextureOptions.Default);
+	public static void loadTexture(Texture texture, String fileName) throws Exception {
+		loadTexture(texture, fileName, Texture.TextureOptions.Default);
 	}
 
 	/**
@@ -78,11 +78,10 @@ public class TextureLoader {
 	 *            the additional options to load the texture with
 	 * @throws Exception
 	 */
-	public static void loadTexture(Texture texture, Texture.TextureOptions textureOptions) throws Exception {
+	public static void loadTexture(Texture texture, String fileName, Texture.TextureOptions textureOptions) throws Exception {
 		TextureData data; // Must be
 
 		// Get the path to the texture file
-		String fileName = texture.getFileName();
 		String pathToFile = ResourceManager.TEXTURES_PATH + fileName;
 
 		// Parses the file type so we can support multiple types

@@ -45,7 +45,7 @@ public final class GameResources {
 		public static void loadAll() throws Exception {
 			for (Texture texture : _texturesToLoad) {
 				if (!texture.isLoaded())
-					TextureLoader.loadTexture(texture);
+					TextureLoader.loadTexture(texture, texture.getName());
 			}
 		}
 
@@ -91,7 +91,7 @@ public final class GameResources {
 		public static void loadAll() throws Exception {
 			for (Mesh mesh : _meshesToLoad) {
 				if (!mesh.isLoaded())
-					MeshLoader.loadMesh(mesh);
+					MeshLoader.loadMesh(mesh, mesh.getName());
 			}
 		}
 

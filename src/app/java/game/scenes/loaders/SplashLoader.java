@@ -56,7 +56,7 @@ public class SplashLoader extends ApplicationSplashLoader {
 	// bare-bone as possible so we can get a splash displayed quickly
 	private void loadResourcesForSceneSync() throws Exception {
 		// Load cube mesh and textures
-		MeshLoader.loadMesh(GameResources.Meshes.CUBE);
-		TextureLoader.loadTexture(GameResources.Textures.GRASS_BLOCK);
+		MeshLoader.loadMesh(GameResources.Meshes.CUBE, GameResources.Meshes.CUBE.getName());
+		TextureLoader.loadTexture(GameResources.Textures.GRASS_BLOCK, GameResources.Textures.GRASS_BLOCK.getName());
 	}
 }

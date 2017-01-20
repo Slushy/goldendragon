@@ -19,7 +19,7 @@ import engine.utils.math.MathUtils;
  */
 public class Material extends Entity {
 	public static final Material DEFAULT = new Material();
-	
+
 	private ShaderType _shaderType = ShaderType.STANDARD;
 	private Texture _texture = null;
 	private Vector3f _color = new Vector3f(Defaults.Materials.COLOR);
@@ -43,7 +43,8 @@ public class Material extends Entity {
 		this();
 		this.setColor(material.getColor().x, material.getColor().y, material.getColor().z);
 		this.setTexture(material.getTexture());
-		this.setSpecularColor(material.getSpecularColor().x, material.getSpecularColor().y, material.getSpecularColor().z);
+		this.setSpecularColor(material.getSpecularColor().x, material.getSpecularColor().y,
+				material.getSpecularColor().z);
 		this.setShininess(material.getShininess());
 	}
 
@@ -189,6 +190,17 @@ public class Material extends Entity {
 	 */
 	public void setSpecularColor(float r, float g, float b) {
 		this._specularColor.set(r, g, b);
+	}
+
+	/**
+	 * Compares the material for equality against the current material
+	 * 
+	 * @param mat
+	 *            the material to compare
+	 * @return true if they are equal in content
+	 */
+	public boolean compare(Material mat) {
+		return false;
 	}
 
 	/**
