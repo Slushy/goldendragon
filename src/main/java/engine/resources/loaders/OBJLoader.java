@@ -7,7 +7,6 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import engine.graphics.geometry.Mesh;
-import engine.graphics.geometry.Mesh.MeshVBOData;
 import engine.resources.ResourceManager;
 
 /**
