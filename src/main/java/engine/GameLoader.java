@@ -38,8 +38,7 @@ final class GameLoader {
 	 */
 	public void load(Consumer<String> onLoadingComplete) {
 		// First thing is first, load splash screen (Should be synchronous since
-		// we are on main thread
-		// so we can wait on it)
+		// we are on main thread so we can wait on it)
 		ApplicationSplashLoader appSplashLoader = _gameInitializer.getApplicationSplashLoader();
 		if (appSplashLoader != null) {
 			try {

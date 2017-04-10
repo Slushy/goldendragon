@@ -69,7 +69,7 @@ public final class SceneManager {
 				onComplete.accept(loadScene(sceneName));
 			} catch (Exception e) {
 				e.printStackTrace();
-				Engine.runtimeFailureMsg = "Failed to load " + sceneName + " asynchronously";
+				Engine.crash("Failed to load " + sceneName + " asynchronously");
 			}
 		});
 	}

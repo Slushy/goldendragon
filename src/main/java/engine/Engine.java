@@ -16,11 +16,6 @@ public class Engine {
 	 * The name of the main thread this engine is running on
 	 */
 	public static final String MAIN_THREAD = Thread.currentThread().getName();
-	/**
-	 * By setting an failure message statically the next update iteration in
-	 * this engine will handle it by throwing an exception
-	 */
-	public static String runtimeFailureMsg = null;
 
 	private final GameRunner _gameRunner;
 
@@ -116,14 +111,15 @@ public class Engine {
 
 		// Runs the main loop
 		_gameRunner.loadAndRun();
-		
+
 		// If we get here the game has successfully run with no exceptions
 		// and a close has been requested, so we dispose of the engine and
 		// quit.
-		// 
-		// EDIT: May implement exception handling on app side to determine whether to continue
-		//       running the game or dispose
-		// 
+		//
+		// EDIT: May implement exception handling on app side to determine
+		// whether to continue
+		// running the game or dispose
+		//
 		// dispose();
 	}
 
@@ -146,6 +142,16 @@ public class Engine {
 		RequestManager.dispose();
 	}
 
+	/**
+	 * Sets a runtime failure message, and alerts the game runner to escape on
+	 * next game update frame
+	 * 
+	 * @param crashFailureMsg
+	 *            the message that caused the crash
+	 */
+	public static void crash(String crashFailureMsg) {
+		GameRunner.abort(crashFailureMsg);
+	}
 
 	/**
 	 * Defines the starting values to initialize the engine

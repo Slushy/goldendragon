@@ -11,9 +11,11 @@ import engine.scenes.Scene;
  *
  */
 class GameRunner {
+	private static String ABORT_MSG = null;
+	
 	private final EngineOptions _options;
 	private final GameLoader _gameLoader;
-
+	
 	/**
 	 * Constructs a game runner
 	 * 
@@ -38,7 +40,7 @@ class GameRunner {
 		// asynchronously
 		_gameLoader.load((errMsg) -> {
 			if (errMsg != null)
-				Engine.runtimeFailureMsg = errMsg;
+				abort(errMsg);
 		});
 
 		// Starts the game loop
@@ -104,8 +106,8 @@ class GameRunner {
 	protected void update() throws Exception {
 		// First thing we do is throw an exception if
 		// one occurred
-		if (Engine.runtimeFailureMsg != null)
-			throw new Exception(Engine.runtimeFailureMsg);
+		if (ABORT_MSG != null)
+			throw new Exception(ABORT_MSG);
 
 		// If the game has decided to load a new scene,
 		// we check that here first, switch to it if true,
@@ -139,10 +141,20 @@ class GameRunner {
 		RequestManager.executeSomeGLRequests();
 	}
 
+	
 	/**
 	 * Done with the game, dispose any state
 	 */
 	protected void dispose() {
 		_gameLoader.dispose();
+	}
+
+	/**
+	 * Stops the game by throwing an exception with the specified message
+	 * 
+	 * @param abortMessage the message that caused the runner to crash
+	 */
+	protected static void abort(String abortMessage) {
+		ABORT_MSG = abortMessage;
 	}
 }
