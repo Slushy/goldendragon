@@ -86,7 +86,7 @@ public class TestSceneBehavior extends Behavior {
 	// Any updates to any gameobjects for testing purposes
 	private void updateGameObjects(float deltaTime) {
 		// Add new game object dynamically to our scene
-		if (Input.keyDown(Key.SPACE)) {
+		if (Input.keyDown(Key.SPACE) && _rend != null) {
 			GameObject cube = new GameObject("Cube");
 			cube.addComponent(new MeshRenderer(_rend.getMesh(), _rend.getMaterial()));
 
