@@ -53,7 +53,7 @@ public class Scene extends Entity {
 	}
 
 	/**
-	 * Finds all game object in the scene by name
+	 * Finds all game objects in the scene by name
 	 * 
 	 * @param name
 	 *            of the game object to locate
@@ -145,6 +145,8 @@ public class Scene extends Entity {
 		this._sceneState = SceneState.ACTIVE;
 
 		// Reset the scene renderer to inform it a new scene is ready to start
+		// TODO: might want to make the scene renderer instanced per scene
+		// so we don't time stopping/starting rendering between scenes
 		SceneRenderer.instance().reset();
 
 		// Starts any components that require it

@@ -74,7 +74,7 @@ public final class RequestManager {
 			return true;
 		}
 
-		// We are not on the graphics thread, so add it to the queu
+		// We are not on the graphics thread, so add it to the queue
 		makeGLRequest(request);
 		return false;
 	}
