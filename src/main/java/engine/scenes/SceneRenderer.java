@@ -1,10 +1,8 @@
 package engine.scenes;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
@@ -13,11 +11,13 @@ import engine.Display;
 import engine.common.Camera;
 import engine.common.Defaults;
 import engine.common.Transform;
-import engine.graphics.GraphicsManager;
+import engine.graphics.Material;
+import engine.graphics.MaterialPropertyBlock;
+import engine.graphics.ShaderProgram;
 import engine.graphics.ShaderType;
-import engine.graphics.StandardShaderProgram;
+import engine.graphics.UniformData;
+import engine.graphics.UniformType;
 import engine.graphics.components.MeshRenderer;
-import engine.graphics.geometry.Material;
 import engine.lighting.Attenuation;
 import engine.lighting.DirectionalLight;
 import engine.lighting.Light;
@@ -43,73 +43,86 @@ public class SceneRenderer {
 		return _instance;
 	}
 
-	private final Transformation _transformation = new Transformation();
-	private final Map<Long, LinkedList<Long>> _meshMaterials = new LinkedHashMap<>();
-	private final Map<Long, LinkedList<MeshRenderer>> _materialRenderers = new LinkedHashMap<>();
-	private final List<PointLight> _pointLights = new ArrayList<PointLight>();
-	private final List<SpotLight> _spotLights = new ArrayList<SpotLight>();
+	@SuppressWarnings("unchecked")
+	private final LinkedList<MeshRenderer>[] _renderersPerShader = (LinkedList<MeshRenderer>[]) new LinkedList<?>[ShaderType
+			.values().length];
 
+	private final Transformation _transformation = new Transformation();
+	private final List<PointLight> _pointLights = new ArrayList<PointLight>();
 	private DirectionalLight _directionalLight = null;
 
 	// Singleton class
 	private SceneRenderer() {
+		for (int i = 0; i < _renderersPerShader.length; i++)
+			_renderersPerShader[i] = new LinkedList<MeshRenderer>();
 	}
 
 	/**
 	 * Clears the stored objects for new scene
 	 */
 	public void reset() {
-		_meshMaterials.clear();
-		_materialRenderers.clear();
 		_pointLights.clear();
+		for (LinkedList<MeshRenderer> rendererList : _renderersPerShader)
+			rendererList.clear();
 	}
 
 	/**
 	 * Adds renderer to scene
 	 * 
+	 * INTERNAL USE ONLY
+	 * 
 	 * @param renderer
+	 *            the renderer to add to the rendering pipeline for this scene
 	 */
 	public void submitRendererForRenderering(MeshRenderer renderer) {
-		long meshId = renderer.getMesh().getInstanceId();
-		long matId = renderer.getMaterial().getInstanceId();
+		Material newMat = renderer.getMaterial();
+		MaterialPropertyBlock newProps = renderer.getProperties();
 
-		// Check if mesh exists
-		LinkedList<Long> materials = _meshMaterials.get(meshId);
-		if (materials == null) {
-			materials = new LinkedList<>();
-			_meshMaterials.put(meshId, materials);
+		// -1 because the sort is 1-indexed base
+		LinkedList<MeshRenderer> shaderList = _renderersPerShader[newMat.getShaderType().getSort() - 1];
+
+		// Find the place in the linked list that the renderer should be added
+		// to
+		int placementIdx = 0;
+		boolean sameMaterial = false;
+		for (MeshRenderer currRenderer : shaderList) {
+			// Don't re-add the same renderer
+			if (currRenderer == renderer)
+				return;
+
+			Material currMat = currRenderer.getMaterial();
+			MaterialPropertyBlock currProps = currRenderer.getProperties();
+
+			// If mats are equal then we next check properties
+			if (currMat.compare(newMat)) {
+				sameMaterial = true;
+			}
+			// If the materials are not equal, but the previous one was
+			// then break because we found the placement
+			else if (sameMaterial) {
+				break;
+			}
+
+			// If the property block is the same, then we break ONLY IF they
+			// have the same material
+			if (currProps.compare(newProps) && sameMaterial)
+				break;
+
+			placementIdx++;
 		}
 
-		// Check if material exists
-		LinkedList<MeshRenderer> renderers = _materialRenderers.get(matId);
-		if (renderers == null) {
-			materials.add(matId);
-			renderers = new LinkedList<>();
-			_materialRenderers.put(matId, renderers);
-		}
-
-		// Add Renderer to list
-		renderers.add(renderer);
+		// Adds the renderer to the list in correct order
+		shaderList.add(placementIdx, renderer);
 	}
 
 	/**
-	 * Adds a point light to scene
+	 * Adds a point light or spotlight to scene
 	 * 
 	 * @param light
 	 *            a point light component
 	 */
 	public void addLightToScene(PointLight light) {
 		_pointLights.add(light);
-	}
-
-	/**
-	 * Adds a spot light to scene
-	 * 
-	 * @param light
-	 *            a spot light component
-	 */
-	public void addLightToScene(SpotLight light) {
-		_spotLights.add(light);
 	}
 
 	/**
@@ -133,46 +146,38 @@ public class SceneRenderer {
 	 */
 	protected void render(Scene scene) {
 		Camera camera = scene.getCamera();
-		StandardShaderProgram shaderProgram = GraphicsManager.getShader(ShaderType.STANDARD);
-
-		// Starts the rendering process
 		// Clear the current frame before we render the next frame
 		Display.MAIN.getGraphicsController().clearGraphics();
-		shaderProgram.bind();
 
-		// Sets the variables that will not change between render cycles here to
-		// reduce the amount of opengl calls
+		// Start the rendering loop
+		for (LinkedList<MeshRenderer> rendererList : _renderersPerShader) {
+			if (rendererList.size() == 0)
+				continue;
 
-		// Viewport projection matrix (Camera bounds, field of view, display
-		// width/height)
-		shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
+			// Binds the next shader program for use
+			ShaderProgram shaderProgram = rendererList.getFirst().getMaterial().getShaderType().getShaderProgram();
+			shaderProgram.bind();
 
-		// Adds the scene lightings to the shader
-		renderLighting(shaderProgram, camera.getViewMatrix());
+			// Sets the shader "global" variables i.e. projection matrix
+			UniformData uniformData = shaderProgram.getUniformData();
+			uniformData.set(UniformType.PROJECTION_MATRIX, camera.getProjectionMatrix());
 
-		// For each similar mesh
-		for (long meshId : _meshMaterials.keySet()) {
-			// For each similar material
-			for (long matId : _meshMaterials.get(meshId)) {
-				// For each renderer with the shared mesh & material
-				Material mat = _materialRenderers.get(matId).peekFirst().getMaterial();
-				mat.renderStart(shaderProgram);
-				// Specular/shininess component
-				shaderProgram.setSpecular(mat.getShininess(), mat.getSpecularColor());
+			// Render the per-scene lighting like the sun & ambient light
+			// Point lights will eventually not be in this list because we
+			// have a limit on how many point lights we can render in a single
+			// pass. So we will eventually limit/change this based on lighting
+			// maps or game object position
+			renderLighting(uniformData, camera.getViewMatrix());
 
-				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
-					// Set the transformation matrix
-					shaderProgram.setWorldViewMatrix(_transformation
-							.buildWorldViewMatrix(renderer.getGameObject().getTransform(), camera.getViewMatrix()));
-					// Tell the renderer to render
-					renderer.render();
-				}
-				mat.renderEnd();
+			// Loop over each renderer
+			for (MeshRenderer currRenderer : rendererList) {
+				// Delegate the material and entity rendering to each renderer
+				currRenderer.render(_transformation, camera, uniformData);
 			}
-		}
 
-		// Ends the rendering process
-		shaderProgram.unbind();
+			// Current shader is done
+			shaderProgram.unbind();
+		}
 	}
 
 	/**
@@ -186,9 +191,9 @@ public class SceneRenderer {
 	 * Adds all lighting components that we are using in the scene to the shader
 	 * program
 	 */
-	private void renderLighting(StandardShaderProgram shaderProgram, Matrix4f viewMatrix) {
+	private void renderLighting(UniformData uniformData, Matrix4f viewMatrix) {
 		// Set ambient light - base color/brightness of every fragment
-		shaderProgram.setAmbientLight(Light.AMBIENT_LIGHT.getLight());
+		uniformData.set(UniformType.AMBIENT_LIGHT, Light.AMBIENT_LIGHT.getLight());
 
 		// Directional light (i.e. the sun)
 		if (_directionalLight != null && !_directionalLight.isDisposed()) {
@@ -196,13 +201,13 @@ public class SceneRenderer {
 			// its rotation, not the position
 			Vector3fc dirLightRotation = _directionalLight.getGameObject().getTransform().getRotation();
 			Vector3fc dirLightDirection = _transformation.getFacingDirection(dirLightRotation, viewMatrix);
-			shaderProgram.setDirectionalLight(_directionalLight.getColor(), dirLightDirection,
-					_directionalLight.getBrightness());
+
+			uniformData.set(UniformType.DIRECTIONAL_LIGHT_COLOR, _directionalLight.getColor());
+			uniformData.set(UniformType.DIRECTIONAL_LIGHT_DIRECTION, dirLightDirection);
+			uniformData.set(UniformType.DIRECTIONAL_LIGHT_INTENSITY, _directionalLight.getBrightness());
 		}
 
 		// TODO: This will have to change per game object eventually
-		// Right now we just display point lights and then if we have room do
-		// spot lights.
 		// Eventually we will get the closest light sources per game object.
 
 		// Render each point light (or up until the max allowed point lights)
@@ -210,31 +215,28 @@ public class SceneRenderer {
 		int i = 0;
 		for (i = 0; i < maxLights && i < _pointLights.size(); i++) {
 			PointLight pointLight = _pointLights.get(i);
+			Transform transform = pointLight.getGameObject().getTransform();
 
-			Vector3fc viewSpacePosition = _transformation
-					.buildWorldViewVector(pointLight.getGameObject().getTransform().getPosition(), viewMatrix, true);
-			shaderProgram.setPointLight(i, pointLight.getColor(), viewSpacePosition, pointLight.getBrightness(),
-					pointLight.getRange());
-		}
-
-		// Render each spot light (or up until the max allowed spot lights)
-		for (int j = 0; i < maxLights && j < _spotLights.size(); i++, j++) {
-			SpotLight spotLight = _spotLights.get(j);
-			Transform transform = spotLight.getGameObject().getTransform();
-
-			// Set the point light of the spotlight first
 			Vector3fc viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
 					true);
-			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(),
-					spotLight.getRange());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_COLOR.getName(), i), pointLight.getColor());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_INTENSITY.getName(), i), pointLight.getBrightness());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_POSITION.getName(), i), viewSpacePosition);
+			uniformData.set(String.format(UniformType.POINT_LIGHT_RANGE.getName(), i), pointLight.getRange());
 
-			// Then set spotlight specific
-			Vector3fc facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
-			shaderProgram.setSpotLight(i, facingDirection, spotLight.getCosHalfAngle());
+			// If it's a spotlight, register spotlight specific uniforms
+			if (pointLight instanceof SpotLight) {
+				Vector3fc facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
+				uniformData.set(String.format(UniformType.POINT_LIGHT_DIRECTION.getName(), i), facingDirection);
+				uniformData.set(String.format(UniformType.POINT_LIGHT_COS_HALF_ANGLE.getName(), i),
+						((SpotLight) pointLight).getCosHalfAngle());
+				uniformData.set(String.format(UniformType.POINT_LIGHT_IS_SPOT.getName(), i), true);
+			}
 		}
 
 		// Attenuation
 		Attenuation att = PointLight.ATTENUATION;
-		shaderProgram.setLightAttenuation(att.getConstant(), att.getQuadratic());
+		uniformData.set(UniformType.ATTENUATION_CONSTANT, att.getConstant());
+		uniformData.set(UniformType.ATTENUATION_QUADRATIC, att.getQuadratic());
 	}
 }

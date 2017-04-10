@@ -34,7 +34,7 @@ struct DirectionalLight {
     vec3 direction;
 };
 
-uniform sampler2D modelTexture;
+uniform sampler2D mainTexture;
 uniform vec3 color;
 uniform bool useTexture;
 
@@ -146,7 +146,7 @@ void main() {
 	
 	if (useTexture) {
 		// Set the texture for the pixel
-		baseColor = texture(modelTexture, pass_textureCoords);
+		baseColor = texture(mainTexture, pass_textureCoords);
 	} else {
 		// Set each fragments color
 		baseColor = vec4(color, 1.0);

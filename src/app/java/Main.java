@@ -24,7 +24,7 @@ public class Main {
 			Engine.EngineOptions options = new Engine.EngineOptions();
 			options.windowOptions.resizable = true;
 			options.windowOptions.showFPS = true;
-			options.windowOptions.vSync = true;
+			options.windowOptions.vSync = false;
 			options.graphicsOptions.polygonMode = false;
 			
 			engine = new Engine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, options);

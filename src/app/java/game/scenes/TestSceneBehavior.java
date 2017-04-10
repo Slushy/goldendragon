@@ -56,7 +56,7 @@ public class TestSceneBehavior extends Behavior {
 		// This should be used on a per-scene basis as it is basically used to
 		// control nighttime/daytime brightness
 		Light.AMBIENT_LIGHT.setColor(1, 1, 1);
-		Light.AMBIENT_LIGHT.setBrightness(0.1f);
+		Light.AMBIENT_LIGHT.setBrightness(0.3f);
 
 		this._cube = this.getScene().findGameObject("cube");
 		if (_cube != null) {

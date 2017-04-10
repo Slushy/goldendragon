@@ -1,12 +1,5 @@
 package engine.graphics;
 
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.joml.Matrix4fc;
-import org.joml.Vector3fc;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
 import engine.resources.ResourceManager;
@@ -19,38 +12,18 @@ import engine.utils.Debug;
  * @author brandon.porter
  *
  */
-public abstract class ShaderProgram {
-	private final int _programId;
-	private final ShaderType _shaderType;
-	private final Map<String, Integer> _uniforms = new HashMap<>();
+public class ShaderProgram {
+	private final UniformData _uniformData = new UniformData();
 
-	private int _vertShaderId;
-	private int _fragShaderId;
-
-	private FloatBuffer _fb = BufferUtils.createFloatBuffer(16);
-
+	private int _programId = -1;
+	private int _vertShaderId = -1;
+	private int _fragShaderId = -1;
+	
 	/**
 	 * Constructs a new shader program
 	 * 
-	 * @param shaderType
-	 *            the type of shader for this program
-	 * @throws Exception
 	 */
-	public ShaderProgram(ShaderType shaderType) throws Exception {
-		this._shaderType = shaderType;
-		// Creates a shader program with openGL
-		this._programId = GL20.glCreateProgram();
-		if (_programId == 0) {
-			throw new Exception("Could not create shader program");
-		}
-
-		// Next we register the shaders and link the program
-		// TODO: More information on what link does
-		registerShaders();
-		linkProgram();
-
-		// Register any uniforms
-		registerUniforms();
+	protected ShaderProgram() {
 	}
 
 	/**
@@ -70,11 +43,71 @@ public abstract class ShaderProgram {
 	}
 
 	/**
-	 * Links the program TODO: More information on what link does
-	 * 
-	 * @throws Exception
+	 * @return the uniform data holding all of the uniform values and locations
+	 *         for this shader
 	 */
-	protected void linkProgram() throws Exception {
+	public UniformData getUniformData() {
+		return _uniformData;
+	}
+
+	/**
+	 * Initializes the shader program
+	 * 
+	 * @param shaderType
+	 *            the type of shader for this program
+	 * @param uniformTypes
+	 *            the uniform types to register into the shader
+	 * @throws Exception
+	 *             throws exception if a program cannot be created with OpenGL
+	 */
+	protected void initialize(ShaderType shaderType, UniformType[] uniformTypes) throws Exception {
+		if (_programId > 0) {
+			throw new Exception("This shader program has already been initialized");
+		}
+		
+		// 1.) Create a shader program with openGL
+		this._programId = GL20.glCreateProgram();
+		if (_programId == 0) {
+			throw new Exception("Could not create shader program");
+		}
+
+		// 2.) Loader the shader code and register the shaders
+		String shaderTypeName = shaderType.toString().toLowerCase();
+		registerVertexShader(shaderTypeName);
+		registerFragmentShader(shaderTypeName);
+
+		// 3.) Link the shader program
+		linkProgram();
+
+		// 4.) Register the uniforms that can be used with this shader (the
+		// shader program must be linked and ready before calling this)
+		registerUniforms(uniformTypes);
+	}
+
+	/**
+	 * Cleans up the shader program
+	 */
+	protected void dispose() {
+		// Program might be active, so lets unbind first
+		unbind();
+
+		if (_programId == 0)
+			return;
+
+		// Cleanup the shaders from the program
+		if (_vertShaderId != 0)
+			GL20.glDetachShader(_programId, _vertShaderId);
+		if (_fragShaderId != 0)
+			GL20.glDetachShader(_programId, _fragShaderId);
+
+		// Delete the program from memory
+		GL20.glDeleteProgram(_programId);
+	}
+
+	/*
+	 * Links the program TODO: More information on what link does
+	 */
+	private void linkProgram() throws Exception {
 		GL20.glLinkProgram(_programId);
 		if (GL20.glGetProgrami(_programId, GL20.GL_LINK_STATUS) == 0) {
 			throw new Exception("Error linking shader code: " + GL20.glGetProgramInfoLog(_programId, 1024));
@@ -87,99 +120,24 @@ public abstract class ShaderProgram {
 		}
 	}
 
-	/**
-	 * Registers a uniform (i.e. global variable) for use within our shaders
-	 * 
-	 * @param uniform
-	 *            the name of the uniform variable to register
-	 * @throws Exception
-	 */
-	protected void registerUniform(String uniform) throws Exception {
-		// Try to find the variable name from within our shader code
-		int uniformLocation = GL20.glGetUniformLocation(_programId, uniform);
-		if (uniformLocation < 0) {
-			throw new Exception("Could not find uniform: " + uniform);
-		}
-		// We found it, so add it to the list of uniforms
-		_uniforms.put(uniform, uniformLocation);
-	}
-
-	protected int getUniform(String uniform) {
-		int location = _uniforms.get(uniform);
-		if (!_uniforms.containsKey(uniform) || location < 0) {
-			throw new RuntimeException("Uniform [" + uniform + "] has not been created");
-		}
-		return location;
-	}
-
-	/**
-	 * Sets a vector uniform
-	 * 
-	 * @param uniform
-	 * @param value
-	 */
-	protected void setUniform(String uniform, Vector3fc value) {
-		GL20.glUniform3f(getUniform(uniform), value.x(), value.y(), value.z());
-	}
-
-	/**
-	 * Sets a boolean uniform
-	 * 
-	 * @param uniform
-	 * @param value
-	 */
-	protected void setUniform(String uniform, boolean value) {
-		GL20.glUniform1i(getUniform(uniform), value ? 1 : 0);
-	}
-
-	/**
-	 * Sets a float uniform
-	 * 
-	 * @param uniform
-	 * @param value
-	 */
-	protected void setUniform(String uniform, float value) {
-		GL20.glUniform1f(getUniform(uniform), value);
-	}
-
-	/**
-	 * Sets a matrix uniform
-	 * 
-	 * @param uniform
-	 * @param value
-	 */
-	protected void setUniform(String uniform, Matrix4fc value) {
-		value.get(_fb);
-		GL20.glUniformMatrix4fv(getUniform(uniform), false, _fb);
-	}
-
-	/**
+	/*
 	 * Loads and compiles the vertex shader for this program
-	 * 
-	 * @throws Exception
 	 */
-	protected void registerVertexShader() throws Exception {
-		this._vertShaderId = registerShader(_shaderType.toString().toLowerCase() + ".vert", GL20.GL_VERTEX_SHADER);
+	private void registerVertexShader(String shaderTypeName) throws Exception {
+		this._vertShaderId = registerShader(shaderTypeName + ".vert", GL20.GL_VERTEX_SHADER);
 	}
 
-	/**
+	/*
 	 * Loads and compiles the fragment shader for this program
-	 * 
-	 * @throws Exception
 	 */
-	protected void registerFragmentShader() throws Exception {
-		this._fragShaderId = registerShader(_shaderType.toString().toLowerCase() + ".frag", GL20.GL_FRAGMENT_SHADER);
+	private void registerFragmentShader(String shaderTypeName) throws Exception {
+		this._fragShaderId = registerShader(shaderTypeName + ".frag", GL20.GL_FRAGMENT_SHADER);
 	}
 
-	/**
+	/*
 	 * Loads and compiles a generic shader file and returns the new shaderID
-	 * 
-	 * @param fileName
-	 * @param glShaderType
-	 * @return
-	 * @throws Exception
 	 */
-	protected int registerShader(String fileName, int glShaderType) throws Exception {
+	private int registerShader(String fileName, int glShaderType) throws Exception {
 		// Load the shader file into a String
 		String shaderCode = ResourceManager.loadShaderFile(fileName);
 
@@ -203,35 +161,31 @@ public abstract class ShaderProgram {
 		return shaderId;
 	}
 
-	/**
-	 * Cleans up the shader program
+	/*
+	 * Registers a uniform (i.e. global variable) for use within our shaders
 	 */
-	protected void dispose() {
-		// Program might be active, so lets unbind first
-		unbind();
-
-		if (_programId == 0)
-			return;
-
-		// Cleanup the shaders from the program
-		if (_vertShaderId != 0)
-			GL20.glDetachShader(_programId, _vertShaderId);
-		if (_fragShaderId != 0)
-			GL20.glDetachShader(_programId, _fragShaderId);
-
-		// Delete the program from memory
-		GL20.glDeleteProgram(_programId);
+	private void registerUniform(String uniformName) throws Exception {
+		_uniformData.register(_programId, uniformName);
 	}
 
-	/**
-	 * Register any shaders for this shader program
-	 * 
-	 * @throws Exception
+	/*
+	 * Register all uniforms of this shader type for this shader program
 	 */
-	protected abstract void registerShaders() throws Exception;
+	private void registerUniforms(UniformType[] uniformTypes) throws Exception {
+		for (UniformType uniformType : uniformTypes) {
+			String nameRef = uniformType.getName();
 
-	/**
-	 * Register any uniforms for this shader program
-	 */
-	protected abstract void registerUniforms() throws Exception;
+			// Checks for array
+			if (uniformType.isArray()) {
+				for (int i = 0; i < uniformType.getCount(); i++) {
+					String arrNameRef = String.format(nameRef, i);
+					this.registerUniform(arrNameRef);
+				}
+			}
+			// Default single name uniform (also contains struct)
+			else {
+				this.registerUniform(nameRef);
+			}
+		}
+	}
 }
