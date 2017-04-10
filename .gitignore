@@ -1,5 +1,5 @@
 .DS_STORE
 .classpath
 .settings/
-.log
+*.log
 bin/

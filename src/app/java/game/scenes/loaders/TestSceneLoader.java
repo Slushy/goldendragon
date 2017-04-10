@@ -12,6 +12,8 @@ import engine.lighting.DirectionalLight;
 import engine.lighting.PointLight;
 import engine.lighting.SpotLight;
 import engine.scenes.SceneLoader;
+import engine.utils.Debug;
+import engine.utils.performance.SceneOptimizer;
 import game.GameResources;
 import game.scenes.TestSceneBehavior;
 
@@ -38,31 +40,44 @@ public class TestSceneLoader extends SceneLoader {
 	protected List<GameObject> loadGameObjectsForScene() throws Exception {
 		List<GameObject> gameObjects = new ArrayList<>();
 
+		GameObject cubes = new GameObject("Cubes");
+		
 		// Create mesh and set texture material
 		Mesh mesh = GameResources.Meshes.CUBE;
 		Material mat = new Material(GameResources.Textures.GRASS_BLOCK);
 
 		String cubeName = "Cube";
 		// Create dynamic placed cubes
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 100; i++) {
 			// Create game object with mesh renderer
-			GameObject cube = new GameObject(cubeName);
+			GameObject cube = new GameObject(cubeName + i);
 			cube.addComponent(new MeshRenderer(mesh, mat));
 
-			int randomX = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomY = ThreadLocalRandom.current().nextInt(-20, 20);
-			int randomZ = ThreadLocalRandom.current().nextInt(-20, 20);
+			int randomX = ThreadLocalRandom.current().nextInt(-40, 40);
+			int randomY = ThreadLocalRandom.current().nextInt(-40, 40);
+			int randomZ = ThreadLocalRandom.current().nextInt(-40, 40);
 			cube.getTransform().setPosition(randomX, randomY, randomZ);
-
-			gameObjects.add(cube);
+			//cube.getTransform().rotate(45, 56, 2);
+			cube.setParent(cubes);
+			//gameObjects.add(cube);
 		}
 
 		// Create a bunny
 		GameObject bunny = new GameObject("Bunny");
-		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, Material.DEFAULT));
+		Material bunnyMaterial = new Material(Material.DEFAULT);
+		bunnyMaterial.setSpecularColor(0, 0, 1);
+		bunnyMaterial.setShininess(1);
+		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, bunnyMaterial));
 		bunny.getTransform().setPosZ(-10);
 		bunny.getTransform().setPosY(-0.5f);
-		gameObjects.add(bunny);
+		
+		bunny.setParent(cubes);
+		
+		Debug.log("Cubes children before batch: " + cubes.getChildren().size());
+		SceneOptimizer.batchChildren(cubes, false);
+		Debug.log("Cubes children after batch: " + cubes.getChildren().size());
+		
+		gameObjects.add(cubes);
 
 		// Create our scene script
 		GameObject script = new GameObject("Scene Behavior");
@@ -86,11 +101,14 @@ public class TestSceneLoader extends SceneLoader {
 		fakeLamp.addComponent(new MeshRenderer(mesh, mat));
 		fakeLamp.getTransform().setScale(0.3f);
 		gameObjects.add(fakeLamp);
-
+		
+		// Set the spotlight parent to be the bunny
+		fakeLamp.setParent(bunny);
+		
 		// Create another point light
 		PointLight pointLight2 = new PointLight();
 		pointLight2.setColor(0, 1, 0);
-		GameObject fakeLamp2 = new GameObject("Fake Lamp");
+		GameObject fakeLamp2 = new GameObject("Fake Lamp2");
 		fakeLamp2.getTransform().setPosZ(-8);
 		fakeLamp2.addComponent(pointLight2);
 		fakeLamp2.addComponent(new MeshRenderer(mesh, mat));

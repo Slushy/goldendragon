@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import engine.Display;
 import engine.common.Camera;
@@ -157,6 +157,9 @@ public class SceneRenderer {
 				// For each renderer with the shared mesh & material
 				Material mat = _materialRenderers.get(matId).peekFirst().getMaterial();
 				mat.renderStart(shaderProgram);
+				// Specular/shininess component
+				shaderProgram.setSpecular(mat.getShininess(), mat.getSpecularColor());
+
 				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
 					// Set the transformation matrix
 					shaderProgram.setWorldViewMatrix(_transformation
@@ -191,8 +194,8 @@ public class SceneRenderer {
 		if (_directionalLight != null && !_directionalLight.isDisposed()) {
 			// Remember, we only care about a directional lights direction from
 			// its rotation, not the position
-			Vector3f dirLightRotation = _directionalLight.getGameObject().getTransform().getRotation();
-			Vector3f dirLightDirection = _transformation.getFacingDirection(dirLightRotation, viewMatrix);
+			Vector3fc dirLightRotation = _directionalLight.getGameObject().getTransform().getRotation();
+			Vector3fc dirLightDirection = _transformation.getFacingDirection(dirLightRotation, viewMatrix);
 			shaderProgram.setDirectionalLight(_directionalLight.getColor(), dirLightDirection,
 					_directionalLight.getBrightness());
 		}
@@ -208,7 +211,7 @@ public class SceneRenderer {
 		for (i = 0; i < maxLights && i < _pointLights.size(); i++) {
 			PointLight pointLight = _pointLights.get(i);
 
-			Vector3f viewSpacePosition = _transformation
+			Vector3fc viewSpacePosition = _transformation
 					.buildWorldViewVector(pointLight.getGameObject().getTransform().getPosition(), viewMatrix, true);
 			shaderProgram.setPointLight(i, pointLight.getColor(), viewSpacePosition, pointLight.getBrightness(),
 					pointLight.getRange());
@@ -220,12 +223,13 @@ public class SceneRenderer {
 			Transform transform = spotLight.getGameObject().getTransform();
 
 			// Set the point light of the spotlight first
-			Vector3f viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
+			Vector3fc viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
 					true);
-			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(), spotLight.getRange());
-			
+			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(),
+					spotLight.getRange());
+
 			// Then set spotlight specific
-			Vector3f facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
+			Vector3fc facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
 			shaderProgram.setSpotLight(i, facingDirection, spotLight.getCosHalfAngle());
 		}
 

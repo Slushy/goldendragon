@@ -4,8 +4,8 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.Matrix4fc;
+import org.joml.Vector3fc;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
@@ -118,8 +118,8 @@ public abstract class ShaderProgram {
 	 * @param uniform
 	 * @param value
 	 */
-	protected void setUniform(String uniform, Vector3f value) {
-		GL20.glUniform3f(getUniform(uniform), value.x, value.y, value.z);
+	protected void setUniform(String uniform, Vector3fc value) {
+		GL20.glUniform3f(getUniform(uniform), value.x(), value.y(), value.z());
 	}
 
 	/**
@@ -148,7 +148,7 @@ public abstract class ShaderProgram {
 	 * @param uniform
 	 * @param value
 	 */
-	protected void setUniform(String uniform, Matrix4f value) {
+	protected void setUniform(String uniform, Matrix4fc value) {
 		value.get(_fb);
 		GL20.glUniformMatrix4fv(getUniform(uniform), false, _fb);
 	}

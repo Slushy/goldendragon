@@ -15,8 +15,9 @@ import engine.utils.Utils;
  *
  */
 public enum VBO {
-	POSITION(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE), TEXTURE(GL15.GL_ARRAY_BUFFER,
-			VECTOR_2D_SIZE), NORMAL(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE), INDEX(GL15.GL_ELEMENT_ARRAY_BUFFER, -1);
+	POSITION(GL15.GL_ARRAY_BUFFER, VECTOR_3D_SIZE), TEXTURE(GL15.GL_ARRAY_BUFFER, VECTOR_2D_SIZE), NORMAL(
+			GL15.GL_ARRAY_BUFFER,
+			VECTOR_3D_SIZE), INDEX(GL15.GL_ELEMENT_ARRAY_BUFFER, -1), INTERLEAVED(GL15.GL_ARRAY_BUFFER, 0); // Interleaved is TBD at run time
 
 	private final int _bufferTarget;
 	private final int _attrSize;
@@ -38,7 +39,7 @@ public enum VBO {
 	 * @return
 	 */
 	public boolean isAttribute() {
-		return _attrSize != -1;
+		return _attrSize > -1;
 	}
 
 	/**
@@ -54,8 +55,8 @@ public enum VBO {
 	 * @param data
 	 * @throws Exception
 	 */
-	public int bindData(float[] data) throws Exception {
-		int vboId = createVBO();
+	public int bindData(float[] data) {
+		int vboId = createVBO(_bufferTarget);
 		GL15.glBufferData(_bufferTarget, Utils.loadBuffer(data), GL15.GL_STATIC_DRAW);
 		return vboId;
 	}
@@ -66,8 +67,8 @@ public enum VBO {
 	 * @param data
 	 * @throws Exception
 	 */
-	public int bindData(int[] data) throws Exception {
-		int vboId = createVBO();
+	public int bindData(int[] data) {
+		int vboId = createVBO(_bufferTarget);
 		GL15.glBufferData(_bufferTarget, Utils.loadBuffer(data), GL15.GL_STATIC_DRAW);
 		return vboId;
 	}
@@ -89,9 +90,9 @@ public enum VBO {
 	/*
 	 * Creates a new VBO and binds it for use
 	 */
-	private int createVBO() throws Exception {
+	private static int createVBO(int bufferTarget) {
 		int vboId = GL15.glGenBuffers();
-		GL15.glBindBuffer(_bufferTarget, vboId);
+		GL15.glBindBuffer(bufferTarget, vboId);
 		return vboId;
 	}
 }

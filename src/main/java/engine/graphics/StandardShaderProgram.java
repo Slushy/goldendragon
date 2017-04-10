@@ -1,7 +1,7 @@
 package engine.graphics;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.Matrix4fc;
+import org.joml.Vector3fc;
 
 import engine.common.Defaults;
 
@@ -41,6 +41,8 @@ public class StandardShaderProgram extends ShaderProgram {
 	private static final String DIRECTIONAL_LIGHT = "directionalLight";
 	private static final String POINT_LIGHT = "pointLights";
 	private static final String ATTENUATION = "attenuation";
+	private static final String SHININESS = "shininess";
+	private static final String SPECULAR_COLOR = "specularColor";
 
 	// Singleton shader
 	private StandardShaderProgram() throws Exception {
@@ -75,6 +77,8 @@ public class StandardShaderProgram extends ShaderProgram {
 		}
 		super.registerUniform(ATTENUATION + ".constant");
 		super.registerUniform(ATTENUATION + ".quadratic");
+		super.registerUniform(SHININESS);
+		super.registerUniform(SPECULAR_COLOR);
 	}
 
 	/**
@@ -82,7 +86,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	 * 
 	 * @param color
 	 */
-	public void setColor(Vector3f color) {
+	public void setColor(Vector3fc color) {
 		super.setUniform(COLOR, color);
 	}
 
@@ -93,7 +97,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	 * @param direction
 	 * @param intensity
 	 */
-	public void setDirectionalLight(Vector3f color, Vector3f direction, float intensity) {
+	public void setDirectionalLight(Vector3fc color, Vector3fc direction, float intensity) {
 		super.setUniform(DIRECTIONAL_LIGHT + ".color", color);
 		super.setUniform(DIRECTIONAL_LIGHT + ".direction", direction);
 		super.setUniform(DIRECTIONAL_LIGHT + ".intensity", intensity);
@@ -108,7 +112,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	 * @param intensity
 	 * @param radius
 	 */
-	public void setPointLight(int idx, Vector3f color, Vector3f position, float intensity, float range) {
+	public void setPointLight(int idx, Vector3fc color, Vector3fc position, float intensity, float range) {
 		super.setUniform(POINT_LIGHT + "[" + idx + "].color", color);
 		super.setUniform(POINT_LIGHT + "[" + idx + "].intensity", intensity);
 		super.setUniform(POINT_LIGHT + "[" + idx + "].position", position);
@@ -122,7 +126,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	 * @param direction
 	 * @param cosHalfAngle
 	 */
-	public void setSpotLight(int idx, Vector3f direction, float cosHalfAngle) {
+	public void setSpotLight(int idx, Vector3fc direction, float cosHalfAngle) {
 		super.setUniform(POINT_LIGHT + "[" + idx + "].direction", direction);
 		super.setUniform(POINT_LIGHT + "[" + idx + "].cosHalfAngle", cosHalfAngle);
 		super.setUniform(POINT_LIGHT + "[" + idx + "].isSpot", true);
@@ -145,8 +149,19 @@ public class StandardShaderProgram extends ShaderProgram {
 	 * 
 	 * @param ambientLight
 	 */
-	public void setAmbientLight(Vector3f ambientLight) {
+	public void setAmbientLight(Vector3fc ambientLight) {
 		super.setUniform(AMBIENT_LIGHT, ambientLight);
+	}
+
+	/**
+	 * Sets the specular shininess & color
+	 * 
+	 * @param shininess
+	 * @param specularColor
+	 */
+	public void setSpecular(float shininess, Vector3fc specularColor) {
+		super.setUniform(SHININESS, shininess);
+		super.setUniform(SPECULAR_COLOR, specularColor);
 	}
 
 	/**
@@ -163,7 +178,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	 * 
 	 * @param projection
 	 */
-	public void setProjectionMatrix(Matrix4f projection) {
+	public void setProjectionMatrix(Matrix4fc projection) {
 		super.setUniform(PROJECTION_MATRIX, projection);
 	}
 
@@ -172,7 +187,7 @@ public class StandardShaderProgram extends ShaderProgram {
 	 * 
 	 * @param worldView
 	 */
-	public void setWorldViewMatrix(Matrix4f worldView) {
+	public void setWorldViewMatrix(Matrix4fc worldView) {
 		super.setUniform(WORLD_VIEW_MATRIX, worldView);
 	}
 }

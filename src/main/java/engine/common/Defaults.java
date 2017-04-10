@@ -1,6 +1,7 @@
 package engine.common;
 
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 /**
  * Contains any default values to be consumed by the engine or app
@@ -82,12 +83,49 @@ public class Defaults {
 		 * direction. This will be useful in determining direction vectors from
 		 * rotations
 		 */
-		public static final Vector3f OBJECT_FACING_DIRECTION = new Vector3f(0, 0, -1);
+		public static final Vector3fc OBJECT_FACING_DIRECTION = new Vector3f(0, 0, -1);
 
 		/*
 		 * Prevent outside classes from creating an instance
 		 */
 		private Scene() {
+		}
+	}
+
+	/**
+	 * Defaults for materials
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	public static class Materials {
+		/**
+		 * The default color of a non-textured material is White (255, 255, 255)
+		 */
+		public static final Vector3fc COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
+
+		/**
+		 * The default color of the material shininess when the light is shining
+		 * into it is black (which shows up as no reflectance since the final
+		 * specular calculated value is multiplied against the specular color)
+		 */
+		public static final Vector3fc SPECULAR_COLOR = new Vector3f(0.0f, 0.0f, 0.0f);
+
+		/**
+		 * The min the shininess factor for a material can be
+		 */
+		public static final float SHININESS_MIN = 0.01f;
+
+		/**
+		 * The max the shininess factor for a material can be
+		 */
+		public static final float SHININESS_MAX = 1.0f;
+
+		/*
+		 * Prevent outside classes from creating an instance
+		 */
+		private Materials() {
+
 		}
 	}
 
@@ -173,7 +211,7 @@ public class Defaults {
 		/**
 		 * The default color for any light in the scene
 		 */
-		public static final Vector3f LIGHT_COLOR = new Vector3f(1, 1, 1);
+		public static final Vector3fc LIGHT_COLOR = new Vector3f(1, 1, 1);
 
 		/**
 		 * The default range for any point light (the point light's range is
