@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL20;
 
 import engine.graphics.geometry.Texture;
 import engine.utils.math.MatrixUtils;
-import engine.utils.math.VectorUtils;
 
 public class UniformData {
 	private static final int NULL_TEXTURE = -1;
