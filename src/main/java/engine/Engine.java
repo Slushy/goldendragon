@@ -77,9 +77,6 @@ public class Engine {
 	 */
 	public Engine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options)
 			throws Exception {
-		// Create the runner
-		this._gameRunner = new GameRunner(gameInitializer, options);
-
 		// Create the display but don't show it
 		Display.MAIN.init(title, width, height, options.windowOptions, options.graphicsOptions);
 
@@ -93,6 +90,9 @@ public class Engine {
 		// We use this to determine what scenes to load when the game requests
 		// one
 		SceneManager.init(gameInitializer.getSceneLoaders());
+		
+		// Create the runner
+		this._gameRunner = new GameRunner(Display.MAIN, gameInitializer, options);
 	}
 
 	/**

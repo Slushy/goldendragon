@@ -75,12 +75,4 @@ public class PointLight extends Light {
 	public void setRange(float range) {
 		this._range = Math.max(0, range);
 	}
-
-	/*
-	 * Called once at the beginning of the scene
-	 */
-	@SuppressWarnings("unused")
-	private void start() {
-		this.getScene().getRenderer().addLightToScene(this);
-	}
 }

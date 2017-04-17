@@ -23,6 +23,7 @@ import engine.lighting.DirectionalLight;
 import engine.lighting.Light;
 import engine.lighting.PointLight;
 import engine.lighting.SpotLight;
+import engine.utils.Debug;
 import engine.utils.math.Transformation;
 
 /**
@@ -31,18 +32,7 @@ import engine.utils.math.Transformation;
  * @author brandon.porter
  *
  */
-public class SceneRenderer {
-	private static SceneRenderer _instance = null;
-
-	/**
-	 * @return current scenes renderer
-	 */
-	protected static SceneRenderer instance() {
-		if (_instance == null)
-			_instance = new SceneRenderer();
-		return _instance;
-	}
-
+class SceneRenderer {
 	// For each shader (indexed by shader priority) we will have a list of
 	// renderers
 	@SuppressWarnings("unchecked")
@@ -53,31 +43,20 @@ public class SceneRenderer {
 	private DirectionalLight _directionalLight = null;
 
 	// Singleton class
-	private SceneRenderer() {
+	protected SceneRenderer() {
 		for (int i = 0; i < _renderersPerShader.length; i++) {
 			_renderersPerShader[i] = new LinkedList<MeshRenderer>();
 		}
 	}
 
 	/**
-	 * Clears the stored objects for new scene
-	 */
-	public void reset() {
-		_pointLights.clear();
-		for (LinkedList<MeshRenderer> rendererList : _renderersPerShader)
-			rendererList.clear();
-	}
-
-	/**
 	 * Adds renderer to scene
-	 * 
-	 * INTERNAL USE ONLY
 	 * 
 	 * @param renderer
 	 *            the renderer to add to the rendering pipeline for the current
 	 *            scene
 	 */
-	public void submitRendererForRendering(MeshRenderer newRenderer) {
+	protected void addRendererToScene(MeshRenderer newRenderer) {
 		Material newMat = newRenderer.getMaterial();
 		MaterialPropertyBlock newProps = newRenderer.getProperties();
 
@@ -121,25 +100,24 @@ public class SceneRenderer {
 	}
 
 	/**
-	 * Adds a point light or spotlight to scene
+	 * Adds a point light, spotlight or directional light to scene
 	 * 
 	 * @param light
-	 *            a point light component
+	 *            a light component of any light type
 	 */
-	public void addLightToScene(PointLight light) {
-		_pointLights.add(light);
-	}
-
-	/**
-	 * Adds a directional light to scene. If two are added the last one to be
-	 * added becomes the current directional light. Currently we will only
-	 * support one directional light - why? do we have more than 1 sun?
-	 * 
-	 * @param dirLight
-	 *            the directional light component to be added
-	 */
-	public void setDirectionalLight(DirectionalLight dirLight) {
-		this._directionalLight = dirLight;
+	protected void addLightToScene(Light light) {
+		// Currently we only support 1 directional light (though this could
+		// probably easily be changed to support multiple), but having 1 is
+		// probably ok since.. we don't need more then 1 sun now do we?
+		if (light instanceof DirectionalLight)
+			this._directionalLight = (DirectionalLight) light;
+		
+		// Pointlight could also be a spotlight (We should probably change
+		// casting to spotlight to be here too instead of per frame)
+		else if (light instanceof PointLight)
+			_pointLights.add((PointLight) light);
+		else
+			Debug.error("Light not supported");
 	}
 
 	/**
@@ -149,35 +127,37 @@ public class SceneRenderer {
 	 * @param scene
 	 *            the scene to render to (i.e. the current active scene)
 	 */
-	protected void render(Scene scene) {
-		Camera camera = scene.getCamera();
+	protected void render(Display display, Camera camera) {
 		// Clear the current frame before we render the next frame
-		Display.MAIN.getGraphicsController().clearGraphics();
-		
-		// Loops over every shader in shader sort priority order and renders the list of renderers for each shader
+		display.getGraphicsController().clearGraphics();
+
+		// Loops over every shader in shader sort priority order and renders the
+		// list of renderers for each shader
 		for (LinkedList<MeshRenderer> similarRenderers : _renderersPerShader) {
 			if (similarRenderers.size() == 0)
 				continue;
-			
-			// Binds the newly active shader by getting the shader from the first renderer in the shader list
+
+			// Binds the newly active shader by getting the shader from the
+			// first renderer in the shader list
 			ShaderProgram shaderProgram = similarRenderers.getFirst().getMaterial().getShaderType().getShaderProgram();
 			shaderProgram.bind();
-			
-			// Sets the shader's "global" variables (uniforms that do not change between all game objects)
+
+			// Sets the shader's "global" variables (uniforms that do not change
+			// between all game objects)
 			UniformData uniformData = shaderProgram.getUniformData();
 			uniformData.set(UniformType.PROJECTION_MATRIX, camera.getProjectionMatrix());
-			
+
 			// Render the per-scene lighting like the sun & ambient light
 			// Point lights will eventually not be in this list because we
 			// have a limit on how many point lights we can render in a single
 			// pass. So we will eventually limit/change this based on lighting
 			// maps or game object position
 			renderLighting(uniformData, camera.getViewMatrix());
-			
+
 			// Delegate the material and entity rendering to each renderer
 			for (MeshRenderer currRenderer : similarRenderers)
 				currRenderer.render(_transformation, camera, uniformData);
-			
+
 			// Current shader is done
 			shaderProgram.unbind();
 		}
@@ -187,7 +167,9 @@ public class SceneRenderer {
 	 * Disposes the renderer
 	 */
 	protected void dispose() {
-		reset();
+		_pointLights.clear();
+		for (LinkedList<MeshRenderer> rendererList : _renderersPerShader)
+			rendererList.clear();
 	}
 
 	/*
@@ -217,8 +199,7 @@ public class SceneRenderer {
 
 		// Render each point light (or up until the max allowed point lights)
 		int maxLights = Defaults.Lighting.MAX_RENDERED_POINT_LIGHTS_PER_OBJECT;
-		int i = 0;
-		for (i = 0; i < maxLights && i < _pointLights.size(); i++) {
+		for (int i = 0; i < maxLights && i < _pointLights.size(); i++) {
 			PointLight pointLight = _pointLights.get(i);
 			Transform transform = pointLight.getGameObject().getTransform();
 

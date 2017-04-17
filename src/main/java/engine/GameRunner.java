@@ -15,6 +15,7 @@ class GameRunner {
 	
 	private final EngineOptions _options;
 	private final GameLoader _gameLoader;
+	private final Display _activeDisplay;
 	
 	/**
 	 * Constructs a game runner
@@ -24,7 +25,8 @@ class GameRunner {
 	 * @param options
 	 *            set options to initialize the engine with
 	 */
-	public GameRunner(IGameInitializer gameInitializer, EngineOptions options) {
+	public GameRunner(Display display, IGameInitializer gameInitializer, EngineOptions options) {
+		this._activeDisplay = display;
 		this._options = options;
 		this._gameLoader = new GameLoader(gameInitializer);
 	}
@@ -60,7 +62,7 @@ class GameRunner {
 		// Keep going until the display says we should close
 		// (i.e. they click the red x or closes it manually).
 		// This will be updated later to handle game closing logic
-		while (!Display.MAIN.shouldClose()) {
+		while (!_activeDisplay.shouldClose()) {
 			// 1. Process user input
 			processInput();
 
@@ -131,11 +133,11 @@ class GameRunner {
 		// Renders the currently active scene
 		Scene activeScene = SceneManager.getActiveScene();
 		if (activeScene != null) {
-			activeScene.render();
+			activeScene.render(_activeDisplay);
 		}
 
 		// Updates the display
-		Display.MAIN.refresh();
+		_activeDisplay.refresh();
 
 		// Executes any outstanding OpenGL requests
 		RequestManager.executeSomeGLRequests();

@@ -91,14 +91,6 @@ public class MeshRenderer extends Component {
 	}
 
 	/**
-	 * Add the mesh to the scene renderer
-	 */
-	@SuppressWarnings("unused")
-	private void start() {
-		this.getScene().getRenderer().submitRendererForRendering(this);
-	}
-
-	/**
 	 * Called when time to render the mesh by the scene
 	 *
 	 * INTERNAL USE ONLY

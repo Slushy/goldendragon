@@ -80,12 +80,4 @@ public class SpotLight extends PointLight {
 	public final float getCosHalfAngle() {
 		return _cosHalfAngle;
 	}
-
-	/*
-	 * Called once at the beginning of the scene
-	 */
-	@SuppressWarnings("unused")
-	private void start() {
-		this.getScene().getRenderer().addLightToScene(this);
-	}
 }

@@ -12,7 +12,7 @@ public class Display {
 	/**
 	 * The main display singleton
 	 */
-	public static final Display MAIN = new Display();
+	protected static final Display MAIN = new Display();
 	
 	private Window _window;
 	private GraphicsController _graphicsController;

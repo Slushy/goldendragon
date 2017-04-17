@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import engine.Display;
 import engine.common.Camera;
 import engine.common.Component;
 import engine.common.Entity;
 import engine.common.GameObject;
+import engine.graphics.components.MeshRenderer;
+import engine.lighting.Light;
 import engine.scenes.EventDispatcher.ExecutionEvent;
 
 /**
@@ -23,10 +26,13 @@ import engine.scenes.EventDispatcher.ExecutionEvent;
  */
 public class Scene extends Entity {
 	private final EventDispatcher _eventDispatcher = new EventDispatcher();
+	private final SceneRenderer _sceneRenderer = new SceneRenderer();
+	private final Camera _camera;
 
 	private SceneState _sceneState = SceneState.INACTIVE;
 	private Map<EventDispatcher.ExecutionEvent, Method> _compEvents = new HashMap<>();
 	private HashMap<String, ArrayList<GameObject>> _gameObjects = new HashMap<>();
+
 	/**
 	 * Constructs a new scene with the specified name
 	 * 
@@ -35,6 +41,9 @@ public class Scene extends Entity {
 	 */
 	public Scene(String name) {
 		super(name);
+
+		// Defaulting to using the main camera for now
+		this._camera = Camera.MAIN;
 	}
 
 	/**
@@ -48,7 +57,7 @@ public class Scene extends Entity {
 		ArrayList<GameObject> gameObjects = _gameObjects.get(name);
 		if (gameObjects == null)
 			return null;
-		
+
 		return gameObjects.get(0);
 	}
 
@@ -63,7 +72,7 @@ public class Scene extends Entity {
 		ArrayList<GameObject> gameObjects = _gameObjects.get(name);
 		if (gameObjects == null)
 			return null;
-		
+
 		return gameObjects;
 	}
 
@@ -75,15 +84,16 @@ public class Scene extends Entity {
 	 */
 	public void addGameObject(GameObject gameObject) {
 		ArrayList<GameObject> gameObjects = _gameObjects.get(gameObject.getName());
-		// Create the list with the name of the gameObject as key if it doesn't exist
+		// Create the list with the name of the gameObject as key if it doesn't
+		// exist
 		if (gameObjects == null) {
 			gameObjects = new ArrayList<GameObject>();
 			_gameObjects.put(gameObject.getName(), gameObjects);
-		} 
+		}
 		// If it's already been added to the scene then return
 		else if (gameObjects.contains(gameObject))
 			return;
-		
+
 		// Adds object to scene
 		gameObjects.add(gameObject);
 		gameObject.addedToScene(this, this::processComponent);
@@ -92,7 +102,7 @@ public class Scene extends Entity {
 		for (Component comp : gameObject.getComponents()) {
 			processComponent(comp);
 		}
-		
+
 		// Add each child to the scene
 		for (GameObject child : gameObject.getChildren())
 			addGameObject(child);
@@ -102,14 +112,7 @@ public class Scene extends Entity {
 	 * @return the camera for the scene
 	 */
 	public Camera getCamera() {
-		return Camera.MAIN;
-	}
-
-	/**
-	 * @return the renderer for the scene
-	 */
-	public SceneRenderer getRenderer() {
-		return SceneRenderer.instance();
+		return _camera;
 	}
 
 	/**
@@ -144,11 +147,6 @@ public class Scene extends Entity {
 		// We are now the active scene
 		this._sceneState = SceneState.ACTIVE;
 
-		// Reset the scene renderer to inform it a new scene is ready to start
-		// TODO: might want to make the scene renderer instanced per scene
-		// so we don't time stopping/starting rendering between scenes
-		SceneRenderer.instance().reset();
-
 		// Starts any components that require it
 		_eventDispatcher.dispatchEvent(ExecutionEvent.START);
 	}
@@ -171,10 +169,10 @@ public class Scene extends Entity {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+	public void render(Display display) throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		// Renders the necessary components
-		SceneRenderer.instance().render(this);
+		_sceneRenderer.render(display, getCamera());
 	}
 
 	/**
@@ -184,9 +182,10 @@ public class Scene extends Entity {
 	protected void onDispose() {
 		this._sceneState = SceneState.CLOSING;
 		_eventDispatcher.dispose();
+		_sceneRenderer.dispose();
 
 		for (ArrayList<GameObject> gameObjects : _gameObjects.values()) {
-			for(GameObject gameObject : gameObjects)
+			for (GameObject gameObject : gameObjects)
 				gameObject.dispose();
 			gameObjects.clear();
 		}
@@ -202,7 +201,7 @@ public class Scene extends Entity {
 	 */
 	private void processComponent(Component comp) {
 		_compEvents.clear();
-		
+
 		// TODO: Fix to only check classes we have not previously checked before
 		for (Method m : comp.getClass().getDeclaredMethods()) {
 
@@ -240,6 +239,25 @@ public class Scene extends Entity {
 
 		// Subscribe the component to the events
 		_eventDispatcher.subscribeComponent(comp, _compEvents);
+
+		// Any special components that need to be handled exclusively
+		// by the scene renderer we check here
+		checkComponentForSceneRendering(comp);
+	}
+
+	/**
+	 * If the component is of a "renderable" type then we add it to the scene
+	 * renderer
+	 * 
+	 * @param comp
+	 *            the component to check for special scene rendering
+	 *            requirements
+	 */
+	private void checkComponentForSceneRendering(Component comp) {
+		if (comp instanceof MeshRenderer)
+			_sceneRenderer.addRendererToScene((MeshRenderer) comp);
+		else if (comp instanceof Light)
+			_sceneRenderer.addLightToScene((Light) comp);
 	}
 
 	/**
