@@ -6,8 +6,10 @@ import org.lwjgl.opengl.GL13;
 
 import engine.common.Defaults;
 import engine.common.Entity;
+import engine.graphics.ShaderProgram;
 import engine.graphics.ShaderType;
-import engine.graphics.StandardShaderProgram;
+import engine.graphics.UniformData;
+import engine.graphics.UniformType;
 import engine.utils.math.MathUtils;
 
 /**
@@ -75,12 +77,13 @@ public class Material extends Entity {
 	 * 
 	 * @param shaderProgram
 	 */
-	public final void renderStart(StandardShaderProgram shaderProgram) {
-		shaderProgram.setColor(getColor());
+	public final void renderStart(ShaderProgram shaderProgram) {
+		UniformData data = shaderProgram.getUniformData();
+		data.set(UniformType.COLOR, getColor());
 
 		// Sets whether or not to use a texture
 		boolean hasTexture = hasTexture();
-		shaderProgram.useTexture(hasTexture);
+		data.set(UniformType.USE_TEXTURE, hasTexture);
 
 		if (hasTexture) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);

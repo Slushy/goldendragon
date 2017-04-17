@@ -18,35 +18,24 @@ public final class GraphicsManager {
 	 * Initializes all of our graphics classes dealt with in game (i.e. shaders,
 	 * materials)
 	 * 
+	 * INTERNAL USE ONLY
+	 * 
 	 * @throws Exception
 	 */
 	public static void init() throws Exception {
-		// Initialize shaders
-		StandardShaderProgram.init();
-	}
-
-	/**
-	 * Retrieves the singleton shader program
-	 * 
-	 * @param shaderType
-	 *            type of shader to receive
-	 * @return shader program
-	 */
-	public static StandardShaderProgram getShader(ShaderType shaderType) {
-		switch (shaderType) {
-		case STANDARD:
-			return StandardShaderProgram.getInstance();
-		}
-
-		Debug.error("Trying to retrieve unknown shader");
-		return null;
+		Debug.log("Initializing shader programs");
+		for (ShaderType shaderType : ShaderType.values())
+			shaderType.initialize();
 	}
 
 	/**
 	 * Disposes each shader program
+	 * 
+	 * INTERNAL USE ONLY
 	 */
 	public static void dispose() {
+		Debug.log("Disposing shader programs");
 		for (ShaderType shaderType : ShaderType.values())
-			getShader(shaderType).dispose();
+			shaderType.dispose();
 	}
 }

@@ -13,9 +13,10 @@ import engine.Display;
 import engine.common.Camera;
 import engine.common.Defaults;
 import engine.common.Transform;
-import engine.graphics.GraphicsManager;
+import engine.graphics.ShaderProgram;
 import engine.graphics.ShaderType;
-import engine.graphics.StandardShaderProgram;
+import engine.graphics.UniformData;
+import engine.graphics.UniformType;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Material;
 import engine.lighting.Attenuation;
@@ -133,7 +134,9 @@ public class SceneRenderer {
 	 */
 	protected void render(Scene scene) {
 		Camera camera = scene.getCamera();
-		StandardShaderProgram shaderProgram = GraphicsManager.getShader(ShaderType.STANDARD);
+		ShaderProgram shaderProgram = ShaderType.STANDARD.getShaderProgram();
+
+		UniformData uniformData = shaderProgram.getUniformData();
 
 		// Starts the rendering process
 		// Clear the current frame before we render the next frame
@@ -145,10 +148,9 @@ public class SceneRenderer {
 
 		// Viewport projection matrix (Camera bounds, field of view, display
 		// width/height)
-		shaderProgram.setProjectionMatrix(camera.getProjectionMatrix());
-
+		uniformData.set(UniformType.PROJECTION_MATRIX, camera.getProjectionMatrix());
 		// Adds the scene lightings to the shader
-		renderLighting(shaderProgram, camera.getViewMatrix());
+		renderLighting(uniformData, camera.getViewMatrix());
 
 		// For each similar mesh
 		for (long meshId : _meshMaterials.keySet()) {
@@ -158,11 +160,12 @@ public class SceneRenderer {
 				Material mat = _materialRenderers.get(matId).peekFirst().getMaterial();
 				mat.renderStart(shaderProgram);
 				// Specular/shininess component
-				shaderProgram.setSpecular(mat.getShininess(), mat.getSpecularColor());
-
+				uniformData.set(UniformType.SHININESS, mat.getShininess());
+				uniformData.set(UniformType.SPECULAR_COLOR, mat.getSpecularColor());
+				
 				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
 					// Set the transformation matrix
-					shaderProgram.setWorldViewMatrix(_transformation
+					uniformData.set(UniformType.WORLD_VIEW_MATRIX, _transformation
 							.buildWorldViewMatrix(renderer.getGameObject().getTransform(), camera.getViewMatrix()));
 					// Tell the renderer to render
 					renderer.render();
@@ -186,9 +189,9 @@ public class SceneRenderer {
 	 * Adds all lighting components that we are using in the scene to the shader
 	 * program
 	 */
-	private void renderLighting(StandardShaderProgram shaderProgram, Matrix4f viewMatrix) {
+	private void renderLighting(UniformData uniformData, Matrix4f viewMatrix) {
 		// Set ambient light - base color/brightness of every fragment
-		shaderProgram.setAmbientLight(Light.AMBIENT_LIGHT.getLight());
+		uniformData.set(UniformType.AMBIENT_LIGHT, Light.AMBIENT_LIGHT.getLight());
 
 		// Directional light (i.e. the sun)
 		if (_directionalLight != null && !_directionalLight.isDisposed()) {
@@ -196,8 +199,10 @@ public class SceneRenderer {
 			// its rotation, not the position
 			Vector3fc dirLightRotation = _directionalLight.getGameObject().getTransform().getRotation();
 			Vector3fc dirLightDirection = _transformation.getFacingDirection(dirLightRotation, viewMatrix);
-			shaderProgram.setDirectionalLight(_directionalLight.getColor(), dirLightDirection,
-					_directionalLight.getBrightness());
+
+			uniformData.set(UniformType.DIRECTIONAL_LIGHT_COLOR, _directionalLight.getColor());
+			uniformData.set(UniformType.DIRECTIONAL_LIGHT_DIRECTION, dirLightDirection);
+			uniformData.set(UniformType.DIRECTIONAL_LIGHT_INTENSITY, _directionalLight.getBrightness());
 		}
 
 		// TODO: This will have to change per game object eventually
@@ -210,11 +215,15 @@ public class SceneRenderer {
 		int i = 0;
 		for (i = 0; i < maxLights && i < _pointLights.size(); i++) {
 			PointLight pointLight = _pointLights.get(i);
+			Transform transform = pointLight.getGameObject().getTransform();
 
-			Vector3fc viewSpacePosition = _transformation
-					.buildWorldViewVector(pointLight.getGameObject().getTransform().getPosition(), viewMatrix, true);
-			shaderProgram.setPointLight(i, pointLight.getColor(), viewSpacePosition, pointLight.getBrightness(),
-					pointLight.getRange());
+			Vector3fc viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
+					true);
+
+			uniformData.set(String.format(UniformType.POINT_LIGHT_COLOR.getName(), i), pointLight.getColor());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_INTENSITY.getName(), i), pointLight.getBrightness());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_POSITION.getName(), i), viewSpacePosition);
+			uniformData.set(String.format(UniformType.POINT_LIGHT_RANGE.getName(), i), pointLight.getRange());
 		}
 
 		// Render each spot light (or up until the max allowed spot lights)
@@ -225,16 +234,22 @@ public class SceneRenderer {
 			// Set the point light of the spotlight first
 			Vector3fc viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
 					true);
-			shaderProgram.setPointLight(i, spotLight.getColor(), viewSpacePosition, spotLight.getBrightness(),
-					spotLight.getRange());
+			
+			uniformData.set(String.format(UniformType.POINT_LIGHT_COLOR.getName(), i), spotLight.getColor());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_INTENSITY.getName(), i), spotLight.getBrightness());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_POSITION.getName(), i), viewSpacePosition);
+			uniformData.set(String.format(UniformType.POINT_LIGHT_RANGE.getName(), i), spotLight.getRange());
 
 			// Then set spotlight specific
 			Vector3fc facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
-			shaderProgram.setSpotLight(i, facingDirection, spotLight.getCosHalfAngle());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_DIRECTION.getName(), i), facingDirection);
+			uniformData.set(String.format(UniformType.POINT_LIGHT_COS_HALF_ANGLE.getName(), i), spotLight.getCosHalfAngle());
+			uniformData.set(String.format(UniformType.POINT_LIGHT_IS_SPOT.getName(), i), true);
 		}
 
 		// Attenuation
 		Attenuation att = PointLight.ATTENUATION;
-		shaderProgram.setLightAttenuation(att.getConstant(), att.getQuadratic());
+		uniformData.set(UniformType.ATTENUATION_CONSTANT, att.getConstant());
+		uniformData.set(UniformType.ATTENUATION_QUADRATIC, att.getQuadratic());
 	}
 }
