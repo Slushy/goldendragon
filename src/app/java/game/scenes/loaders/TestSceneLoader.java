@@ -42,7 +42,7 @@ public class TestSceneLoader extends SceneLoader {
 		List<GameObject> gameObjects = new ArrayList<>();
 
 		GameObject cubes = new GameObject("Cubes");
-		
+
 		// Create mesh and set texture material
 		Mesh mesh = GameResources.Meshes.CUBE;
 		Material mat = new Material(GameResources.Textures.GRASS_BLOCK);
@@ -52,15 +52,22 @@ public class TestSceneLoader extends SceneLoader {
 		for (int i = 0; i < 100; i++) {
 			// Create game object with mesh renderer
 			GameObject cube = new GameObject(cubeName + i);
-			cube.addComponent(new MeshRenderer(mesh, mat));
+			MeshRenderer cubeRenderer = new MeshRenderer(mesh, mat);
+			cube.addComponent(cubeRenderer);
+
+			// Setting custom color properties per renderer
+			if (i < 50) {
+				cubeRenderer.getProperties().setColor(1, 0, 0);
+			} else if (i < 75) {
+				cubeRenderer.getProperties().setColor(0, 1, 0);
+			}
 
 			int randomX = ThreadLocalRandom.current().nextInt(-40, 40);
 			int randomY = ThreadLocalRandom.current().nextInt(-40, 40);
 			int randomZ = ThreadLocalRandom.current().nextInt(-40, 40);
 			cube.getTransform().setPosition(randomX, randomY, randomZ);
-			//cube.getTransform().rotate(45, 56, 2);
+			// cube.getTransform().rotate(45, 56, 2);
 			cube.setParent(cubes);
-			//gameObjects.add(cube);
 		}
 
 		// Create a bunny
@@ -72,13 +79,13 @@ public class TestSceneLoader extends SceneLoader {
 		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, bunnyMaterial));
 		bunny.getTransform().setPosZ(-10);
 		bunny.getTransform().setPosY(-0.5f);
-		
+
 		bunny.setParent(cubes);
-		
+
 		Debug.log("Cubes children before batch: " + cubes.getChildren().size());
 		SceneOptimizer.batchChildren(cubes, false);
 		Debug.log("Cubes children after batch: " + cubes.getChildren().size());
-		
+
 		gameObjects.add(cubes);
 
 		// Create our scene script
@@ -103,10 +110,10 @@ public class TestSceneLoader extends SceneLoader {
 		fakeLamp.addComponent(new MeshRenderer(mesh, mat));
 		fakeLamp.getTransform().setScale(0.3f);
 		gameObjects.add(fakeLamp);
-		
+
 		// Set the spotlight parent to be the bunny
 		fakeLamp.setParent(bunny);
-		
+
 		// Create another point light
 		PointLight pointLight2 = new PointLight();
 		pointLight2.setColor(0, 1, 0);
