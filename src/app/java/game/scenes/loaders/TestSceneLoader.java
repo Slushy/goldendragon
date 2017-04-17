@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import engine.common.GameObject;
 import engine.graphics.Material;
+import engine.graphics.MaterialPropertyBlock;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Mesh;
 import engine.lighting.DirectionalLight;
@@ -65,8 +66,9 @@ public class TestSceneLoader extends SceneLoader {
 		// Create a bunny
 		GameObject bunny = new GameObject("Bunny");
 		Material bunnyMaterial = new Material(Material.DEFAULT);
-		bunnyMaterial.setSpecularColor(0, 0, 1);
-		bunnyMaterial.setShininess(1);
+		MaterialPropertyBlock props = bunnyMaterial.getProperties();
+		props.setSpecularColor(0, 0, 1);
+		props.setShininess(1);
 		bunny.addComponent(new MeshRenderer(GameResources.Meshes.BUNNY, bunnyMaterial));
 		bunny.getTransform().setPosZ(-10);
 		bunny.getTransform().setPosY(-0.5f);

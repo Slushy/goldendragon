@@ -8,12 +8,15 @@ import java.util.Map;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import engine.Display;
 import engine.common.Camera;
 import engine.common.Defaults;
 import engine.common.Transform;
 import engine.graphics.Material;
+import engine.graphics.MaterialPropertyBlock;
 import engine.graphics.ShaderProgram;
 import engine.graphics.ShaderType;
 import engine.graphics.UniformData;
@@ -147,10 +150,20 @@ public class SceneRenderer {
 			for (long matId : _meshMaterials.get(meshId)) {
 				// For each renderer with the shared mesh & material
 				Material mat = _materialRenderers.get(matId).peekFirst().getMaterial();
-				mat.renderStart(shaderProgram);
+				MaterialPropertyBlock props = mat.getProperties();
+				
+				// Taken from Material.RenderStart before refactor
+				uniformData.set(UniformType.COLOR, props.getColor());
+				uniformData.set(UniformType.USE_TEXTURE, mat.hasTexture());
+				
+				if (mat.hasTexture()) {
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, props.getMainTexture().getTextureId());
+				}
+				
 				// Specular/shininess component
-				uniformData.set(UniformType.SHININESS, mat.getShininess());
-				uniformData.set(UniformType.SPECULAR_COLOR, mat.getSpecularColor());
+				uniformData.set(UniformType.SHININESS, props.getShininess());
+				uniformData.set(UniformType.SPECULAR_COLOR, props.getSpecularColor());
 				
 				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
 					// Set the transformation matrix
@@ -159,7 +172,10 @@ public class SceneRenderer {
 					// Tell the renderer to render
 					renderer.render();
 				}
-				mat.renderEnd();
+				// Taken from Material.RenderEnd before refactor
+				if (mat.hasTexture()) {
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+				}
 			}
 		}
 

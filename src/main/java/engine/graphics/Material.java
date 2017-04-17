@@ -1,13 +1,10 @@
 package engine.graphics;
 
-import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
+import org.joml.Vector3fc;
 
 import engine.common.Defaults;
 import engine.common.Entity;
 import engine.graphics.geometry.Texture;
-import engine.utils.math.MathUtils;
 
 /**
  * A material is representative of how a game object looks; e.g. with textures,
@@ -18,20 +15,20 @@ import engine.utils.math.MathUtils;
  */
 public class Material extends Entity {
 	public static final Material DEFAULT = new Material();
-
+	private static final String ENTITY_NAME = "Material";
+	
+	private final MaterialPropertyBlock _properties = new MaterialPropertyBlock();
 	private ShaderType _shaderType = ShaderType.STANDARD;
-	private Texture _texture = null;
-	private Vector3f _color = new Vector3f(Defaults.Materials.COLOR);
-	private Vector3f _specularColor = new Vector3f(Defaults.Materials.SPECULAR_COLOR);
-	private float _shininess = Defaults.Materials.SHININESS_MIN;
-
+	
 	/**
-	 * Constructs a new material with a default color
+	 * Constructs a new material with no texture, default color and the standard
+	 * shader
 	 */
 	public Material() {
-		super("Material");
+		super(ENTITY_NAME);
+		setDefaults();
 	}
-
+	
 	/**
 	 * Copy Constructor to construct a new material from an existing one
 	 * 
@@ -39,62 +36,50 @@ public class Material extends Entity {
 	 *            material to copy
 	 */
 	public Material(Material material) {
-		this();
-		this.setColor(material.getColor().x, material.getColor().y, material.getColor().z);
-		this.setTexture(material.getTexture());
-		this.setSpecularColor(material.getSpecularColor().x, material.getSpecularColor().y,
-				material.getSpecularColor().z);
-		this.setShininess(material.getShininess());
+		super(material.getName());
+		this._shaderType = material.getShaderType();
+		this._properties.cloneFrom(material.getProperties());
 	}
 
 	/**
-	 * Constructs a new textured material
+	 * Constructs a new material with the main texture
 	 * 
-	 * @param texture
-	 *            texture to initialize material with
+	 * @param mainTexture
+	 *            the main texture to render the mesh using this material
 	 */
-	public Material(Texture texture) {
+	public Material(Texture mainTexture) {
 		this();
-		this._texture = texture;
+		_properties.setMainTexture(mainTexture);
 	}
-
+	
 	/**
-	 * Constructs a new colored material
+	 * Constructs a new material with a new color
 	 * 
 	 * @param color
-	 *            color of the material
+	 *            the color to render the mesh using this material
 	 */
-	public Material(Vector3f color) {
+	public Material(Vector3fc color) {
 		this();
-		this.setColor(color.x, color.y, color.z);
+		_properties.setColor(color);
 	}
 
 	/**
-	 * TEMPORARY
+	 * Constructs a new material with the specified shader type
 	 * 
-	 * @param shaderProgram
+	 * @param shaderType
+	 *            the type of shader to use when rendering this material
 	 */
-	public final void renderStart(ShaderProgram shaderProgram) {
-		UniformData data = shaderProgram.getUniformData();
-		data.set(UniformType.COLOR, getColor());
-
-		// Sets whether or not to use a texture
-		boolean hasTexture = hasTexture();
-		data.set(UniformType.USE_TEXTURE, hasTexture);
-
-		if (hasTexture) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, getTexture().getTextureId());
-		}
+	public Material(ShaderType shaderType) {
+		this();
+		this._shaderType = shaderType;
 	}
 
+
 	/**
-	 * TEMPORARY
+	 * @return the properties being used to render this material
 	 */
-	public final void renderEnd() {
-		if (hasTexture()) {
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		}
+	public final MaterialPropertyBlock getProperties() {
+		return _properties;
 	}
 
 	/**
@@ -105,91 +90,10 @@ public class Material extends Entity {
 	}
 
 	/**
-	 * @return the color that represents this material as a 3D vector
-	 */
-	public Vector3f getColor() {
-		return _color;
-	}
-
-	/**
-	 * Sets the color of this material
-	 * 
-	 * @param r
-	 *            RED-value [0-1]
-	 * @param g
-	 *            GREEN-value [0-1]
-	 * @param b
-	 *            BLUE-value [0-1]
-	 */
-	public void setColor(float r, float g, float b) {
-		this._color.set(r, g, b);
-	}
-
-	/**
-	 * Sets the texture of the mesh
-	 * 
-	 * @param texture
-	 *            texture to display on mesh
-	 */
-	public void setTexture(Texture texture) {
-		this._texture = texture;
-	}
-
-	/**
-	 * @return texture of the mesh
-	 */
-	public Texture getTexture() {
-		return _texture;
-	}
-
-	/**
 	 * @return true if the mesh has a texture, false otherwise
 	 */
 	public boolean hasTexture() {
-		return _texture != null;
-	}
-
-	/**
-	 * @return The shininess factor of the material [0.01 - 1.0]
-	 */
-	public float getShininess() {
-		return _shininess;
-	}
-
-	/**
-	 * Sets the shininess factor of this material [0.01 - 1.0]
-	 * 
-	 * @param shininess
-	 *            the closer to 1 the value is the more shiny the material
-	 *            appears in the light
-	 */
-	public void setShininess(float shininess) {
-		this._shininess = MathUtils.clamp(shininess, Defaults.Materials.SHININESS_MIN,
-				Defaults.Materials.SHININESS_MAX);
-	}
-
-	/**
-	 * @return the specular color for this material
-	 */
-	public Vector3f getSpecularColor() {
-		return _specularColor;
-	}
-
-	/**
-	 * Sets the specular color for this material is the color that appears when
-	 * the light is shining into it by calculating the specular value and
-	 * multiplying it against the color. For no additional shining color this
-	 * should be black (0, 0, 0)
-	 * 
-	 * @param r
-	 *            RED-value [0-1]
-	 * @param g
-	 *            GREEN-value [0-1]
-	 * @param b
-	 *            BLUE-value [0-1]
-	 */
-	public void setSpecularColor(float r, float g, float b) {
-		this._specularColor.set(r, g, b);
+		return _properties.getMainTexture() != null;
 	}
 
 	/**
@@ -197,10 +101,14 @@ public class Material extends Entity {
 	 * 
 	 * @param mat
 	 *            the material to compare
-	 * @return true if they are equal in content
+	 * @return true if they are equal in instance or properties
 	 */
 	public boolean compare(Material mat) {
-		return false;
+		if (this == mat)
+			return true;
+
+		// If both the properties and shader type are the same, then return true
+		return _properties.compare(mat.getProperties()) && _shaderType == mat.getShaderType();
 	}
 
 	/**
@@ -212,5 +120,14 @@ public class Material extends Entity {
 		// a shared element, so it should dispose itself
 		// if (hasTexture())
 		// _texture.dispose();
+	}
+
+	/*
+	 * Initializes this material with default property values
+	 */
+	private void setDefaults() {
+		_properties.setColor(Defaults.Materials.COLOR);
+		_properties.setSpecularColor(Defaults.Materials.SPECULAR_COLOR);
+		_properties.setShininess(Defaults.Materials.SHININESS_MIN);
 	}
 }
