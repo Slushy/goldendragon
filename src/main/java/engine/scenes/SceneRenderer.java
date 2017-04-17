@@ -48,7 +48,6 @@ public class SceneRenderer {
 	private final Map<Long, LinkedList<Long>> _meshMaterials = new LinkedHashMap<>();
 	private final Map<Long, LinkedList<MeshRenderer>> _materialRenderers = new LinkedHashMap<>();
 	private final List<PointLight> _pointLights = new ArrayList<PointLight>();
-	private final List<SpotLight> _spotLights = new ArrayList<SpotLight>();
 
 	private DirectionalLight _directionalLight = null;
 
@@ -94,23 +93,13 @@ public class SceneRenderer {
 	}
 
 	/**
-	 * Adds a point light to scene
+	 * Adds a point light or spotlight to scene
 	 * 
 	 * @param light
 	 *            a point light component
 	 */
 	public void addLightToScene(PointLight light) {
 		_pointLights.add(light);
-	}
-
-	/**
-	 * Adds a spot light to scene
-	 * 
-	 * @param light
-	 *            a spot light component
-	 */
-	public void addLightToScene(SpotLight light) {
-		_spotLights.add(light);
 	}
 
 	/**
@@ -224,29 +213,16 @@ public class SceneRenderer {
 			uniformData.set(String.format(UniformType.POINT_LIGHT_INTENSITY.getName(), i), pointLight.getBrightness());
 			uniformData.set(String.format(UniformType.POINT_LIGHT_POSITION.getName(), i), viewSpacePosition);
 			uniformData.set(String.format(UniformType.POINT_LIGHT_RANGE.getName(), i), pointLight.getRange());
-		}
-
-		// Render each spot light (or up until the max allowed spot lights)
-		for (int j = 0; i < maxLights && j < _spotLights.size(); i++, j++) {
-			SpotLight spotLight = _spotLights.get(j);
-			Transform transform = spotLight.getGameObject().getTransform();
-
-			// Set the point light of the spotlight first
-			Vector3fc viewSpacePosition = _transformation.buildWorldViewVector(transform.getPosition(), viewMatrix,
-					true);
 			
-			uniformData.set(String.format(UniformType.POINT_LIGHT_COLOR.getName(), i), spotLight.getColor());
-			uniformData.set(String.format(UniformType.POINT_LIGHT_INTENSITY.getName(), i), spotLight.getBrightness());
-			uniformData.set(String.format(UniformType.POINT_LIGHT_POSITION.getName(), i), viewSpacePosition);
-			uniformData.set(String.format(UniformType.POINT_LIGHT_RANGE.getName(), i), spotLight.getRange());
-
-			// Then set spotlight specific
-			Vector3fc facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
-			uniformData.set(String.format(UniformType.POINT_LIGHT_DIRECTION.getName(), i), facingDirection);
-			uniformData.set(String.format(UniformType.POINT_LIGHT_COS_HALF_ANGLE.getName(), i), spotLight.getCosHalfAngle());
-			uniformData.set(String.format(UniformType.POINT_LIGHT_IS_SPOT.getName(), i), true);
+			// If it's a spotlight, register spotlight specific uniforms
+			if (pointLight instanceof SpotLight) {
+				Vector3fc facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
+				uniformData.set(String.format(UniformType.POINT_LIGHT_DIRECTION.getName(), i), facingDirection);
+				uniformData.set(String.format(UniformType.POINT_LIGHT_COS_HALF_ANGLE.getName(), i), ((SpotLight)pointLight).getCosHalfAngle());
+				uniformData.set(String.format(UniformType.POINT_LIGHT_IS_SPOT.getName(), i), true);
+			}
 		}
-
+		
 		// Attenuation
 		Attenuation att = PointLight.ATTENUATION;
 		uniformData.set(UniformType.ATTENUATION_CONSTANT, att.getConstant());
