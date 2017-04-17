@@ -10,6 +10,7 @@ import org.joml.Vector4f;
 
 import engine.common.GameObject;
 import engine.graphics.Material;
+import engine.graphics.MaterialPropertyBlock;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Mesh;
 import engine.resources.loaders.MeshLoader;
@@ -36,7 +37,7 @@ public final class SceneOptimizer {
 	 * objects that are within the same area in the game; the reason is because
 	 * each individual object cannot be culled anymore, as the whole object must
 	 * be culled as one. Each merged game object also loses its mobility and can
-	 * longer be referenced by itself.
+	 * no longer be referenced by itself.
 	 * 
 	 * It only merges meshes that are on the same level of child. For example, a
 	 * game object's children will be checked for merging, but their children
@@ -74,10 +75,10 @@ public final class SceneOptimizer {
 	 */
 	private static ArrayList<GameObject> buildBatches(GameObject root) {
 		ArrayList<GameObject> batchedGameObjects = new ArrayList<>();
-		HashMap<Material, List<GameObject>> materialObjectMap = new HashMap<>();
+		HashMap<MeshRenderer, List<GameObject>> rendererObjectMap = new HashMap<>();
 
-		// Build the material renderer map by combining like materials. So each
-		// similar material will have a list of game objects to combine
+		// Build the renderer game object map by combining like renderers. So each
+		// similar renderer will have a list of game objects to combine
 		for (GameObject obj : root.getChildren()) {
 
 			// For objects with no renderers, they cannot be batched so we just
@@ -87,35 +88,35 @@ public final class SceneOptimizer {
 				continue;
 			}
 
-			List<GameObject> matList = materialObjectMap.get(obj.getRenderer().getMaterial());
-			if (matList == null) {
+			List<GameObject> similarRenderedGameObjects = rendererObjectMap.get(obj.getRenderer());
+			if (similarRenderedGameObjects == null) {
 				// We couldn't find same instance, so lets compare for same data
-				for (Material mat : materialObjectMap.keySet()) {
-					if (obj.getRenderer().getMaterial().compare(mat)) {
-						matList = materialObjectMap.get(mat);
+				for (MeshRenderer renderer : rendererObjectMap.keySet()) {
+					if (obj.getRenderer().compare(renderer)) {
+						similarRenderedGameObjects = rendererObjectMap.get(renderer);
 					}
 				}
 			}
 
-			// If we couldn't find a like material, create a new spot
-			if (matList == null) {
-				matList = new ArrayList<GameObject>();
-				materialObjectMap.put(obj.getRenderer().getMaterial(), matList);
+			// If we couldn't find a like renderer, create a new spot
+			if (similarRenderedGameObjects == null) {
+				similarRenderedGameObjects = new ArrayList<GameObject>();
+				rendererObjectMap.put(obj.getRenderer(), similarRenderedGameObjects);
 			}
 
-			// Finally, add that game object to the material
-			matList.add(obj);
+			// Finally, add that game object to the renderer object map
+			similarRenderedGameObjects.add(obj);
 		}
 
-		// Loop over each material batchable set
-		for (Entry<Material, List<GameObject>> entry : materialObjectMap.entrySet()) {
-			Material mat = entry.getKey();
-			List<GameObject> matObjects = entry.getValue();
+		// Batch each set of game objects by their like renderer
+		for (Entry<MeshRenderer, List<GameObject>> entry : rendererObjectMap.entrySet()) {
+			MeshRenderer renderer = entry.getKey();
+			List<GameObject> rendererObjects = entry.getValue();
 
 			// If we only have one game object, then just add it to the list and
 			// continue
-			if (matObjects.size() == 1) {
-				batchedGameObjects.add(matObjects.get(0));
+			if (rendererObjects.size() == 1) {
+				batchedGameObjects.add(rendererObjects.get(0));
 				continue;
 			}
 			
@@ -123,10 +124,14 @@ public final class SceneOptimizer {
 			GameObject newObj = new GameObject("Batched Game Object");
 			
 			// Get 1 mesh from the list of game objects
-			Mesh combinedMesh = combineMeshes(newObj, matObjects);
+			Mesh combinedMesh = combineMeshes(newObj, rendererObjects);
+			
+			// Copy the material and property overrides to pass into the new renderer
+			Material material = new Material(renderer.getMaterial());
+			MaterialPropertyBlock propertyOverrides = new MaterialPropertyBlock(renderer.getProperties());
 			
 			// Add the renderer
-			newObj.addComponent(new MeshRenderer(combinedMesh, mat));
+			newObj.addComponent(new MeshRenderer(combinedMesh, material, propertyOverrides));
 			newObj.setParent(root);
 			
 			// Add the new game object to the return list
