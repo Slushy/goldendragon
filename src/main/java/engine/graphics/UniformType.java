@@ -19,7 +19,7 @@ public class UniformType {
 		// ======================
 		// Material specific
 		// ======================
-		public static final UniformType MODEL_TEXTURE = new UniformType("modelTexture");
+		public static final UniformType MAIN_TEXTURE = new UniformType("mainTexture");
 		public static final UniformType COLOR = new UniformType("color");
 		public static final UniformType USE_TEXTURE = new UniformType("useTexture");
 		public static final UniformType SHININESS = new UniformType("shininess");

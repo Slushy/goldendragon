@@ -34,7 +34,7 @@ struct DirectionalLight {
     vec3 direction;
 };
 
-uniform sampler2D modelTexture;
+uniform sampler2D mainTexture;
 uniform vec3 color;
 uniform bool useTexture;
 
@@ -93,6 +93,7 @@ vec4 calcAppliedLighting(vec3 ambientLight, DirectionalLight directionalLight, P
 	// Calculate each point light (includes spot lights)
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		PointLight pointLight = pointLights[i];
+		// This should probably be controlled on CPU not GPU
 		if (pointLight.intensity <= 0 || pointLight.range <= 0) {
 			continue;
 		}
@@ -146,7 +147,7 @@ void main() {
 	
 	if (useTexture) {
 		// Set the texture for the pixel
-		baseColor = texture(modelTexture, pass_textureCoords);
+		baseColor = texture(mainTexture, pass_textureCoords);
 	} else {
 		// Set each fragments color
 		baseColor = vec4(color, 1.0);

@@ -16,10 +16,6 @@ void main() {
 	// The position in view space
 	vec4 worldViewPosition = worldViewMatrix * vec4(position, 1.0);
 	
-	// Set the position for each vertex 
-	// ORDER MATTERS - projection must be first
-	gl_Position = projectionMatrix * worldViewPosition;
-	
 	// Pass along our texture coordinates to our fragment shader
 	pass_textureCoords = textureCoords;
 	
@@ -29,4 +25,8 @@ void main() {
 	
 	// Pass along our transformed position 
 	pass_viewSpacePosition = worldViewPosition.xyz;
+	
+	// Set the position for each vertex 
+	// ORDER MATTERS - projection must be first
+	gl_Position = projectionMatrix * worldViewPosition;
 }

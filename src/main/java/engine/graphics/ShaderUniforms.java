@@ -16,7 +16,7 @@ public abstract class ShaderUniforms {
 	 *
 	 */
 	public static class Standard extends ShaderUniforms {
-		private final UniformType[] UNIFORMS = { UniformType.MODEL_TEXTURE, UniformType.COLOR, UniformType.USE_TEXTURE,
+		private final UniformType[] UNIFORMS = { UniformType.MAIN_TEXTURE, UniformType.COLOR, UniformType.USE_TEXTURE,
 				UniformType.PROJECTION_MATRIX, UniformType.WORLD_VIEW_MATRIX, UniformType.AMBIENT_LIGHT,
 				UniformType.DIRECTIONAL_LIGHT_COLOR, UniformType.DIRECTIONAL_LIGHT_INTENSITY,
 				UniformType.DIRECTIONAL_LIGHT_DIRECTION, UniformType.POINT_LIGHT_COLOR,
