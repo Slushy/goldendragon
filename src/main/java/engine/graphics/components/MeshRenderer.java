@@ -3,7 +3,7 @@ package engine.graphics.components;
 import org.lwjgl.opengl.GL11;
 
 import engine.common.Component;
-import engine.graphics.geometry.Material;
+import engine.graphics.Material;
 import engine.graphics.geometry.Mesh;
 import engine.utils.Debug;
 

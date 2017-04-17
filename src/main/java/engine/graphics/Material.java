@@ -1,4 +1,4 @@
-package engine.graphics.geometry;
+package engine.graphics;
 
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -6,10 +6,7 @@ import org.lwjgl.opengl.GL13;
 
 import engine.common.Defaults;
 import engine.common.Entity;
-import engine.graphics.ShaderProgram;
-import engine.graphics.ShaderType;
-import engine.graphics.UniformData;
-import engine.graphics.UniformType;
+import engine.graphics.geometry.Texture;
 import engine.utils.math.MathUtils;
 
 /**

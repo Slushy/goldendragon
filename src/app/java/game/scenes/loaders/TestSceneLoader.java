@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import engine.common.GameObject;
+import engine.graphics.Material;
 import engine.graphics.components.MeshRenderer;
-import engine.graphics.geometry.Material;
 import engine.graphics.geometry.Mesh;
 import engine.lighting.DirectionalLight;
 import engine.lighting.PointLight;

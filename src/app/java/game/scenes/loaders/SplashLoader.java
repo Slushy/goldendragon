@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import engine.common.GameObject;
+import engine.graphics.Material;
 import engine.graphics.components.MeshRenderer;
-import engine.graphics.geometry.Material;
 import engine.resources.loaders.MeshLoader;
 import engine.resources.loaders.TextureLoader;
 import engine.scenes.ApplicationSplashLoader;
