@@ -9,13 +9,18 @@ import engine.utils.Debug;
  * @author brandon.porter
  *
  */
+/**
+ * @author Brandon Porter
+ *
+ */
 public class Mesh extends Entity {
 	private static final String ENTITY_NAME = "Mesh";
 
 	private VAO _vao;
 	private MeshVBOData _vboData;
-	private int _vertexCount = -1;
+	private int _renderableVertexCount = -1;
 	private int _triangleCount = -1;
+	private int _uniqueVertexCount = -1;
 
 	public Mesh() {
 		super(ENTITY_NAME);
@@ -42,10 +47,22 @@ public class Mesh extends Entity {
 	}
 
 	/**
-	 * @return the number of vertices for this mesh
+	 * @return the number of vertices required to render this mesh completely
+	 *         (should be 3 per triangle). Although in theory connected
+	 *         triangles share vertices, for rendering purposes each triangle
+	 *         will have its own vertex and this number represents that value.
 	 */
-	public int getVertexCount() {
-		return _vertexCount;
+	public int getRenderableVertexCount() {
+		return _renderableVertexCount;
+	}
+
+	/**
+	 * @return the number of unique vertices as determined by the mesh model.
+	 *         This is calculated knowing triangles do share vertices, although
+	 *         this value is rarely used.
+	 */
+	public int getUniqueVertexCount() {
+		return _uniqueVertexCount;
 	}
 
 	/**
@@ -64,11 +81,13 @@ public class Mesh extends Entity {
 	 */
 	public void loadVAO(MeshVBOData vboData) {
 		this._vboData = vboData;
-		this._vertexCount = vboData.indices.length;
-		this._triangleCount = vboData.indices.length / 3;
+		this._renderableVertexCount = vboData.indices.length;
+		this._triangleCount = _renderableVertexCount / 3;
+		this._uniqueVertexCount = vboData.vertexPositions.length / 3;
 
-		Debug.log("Loading new mesh with Triangles: " + _triangleCount + ", Vertices: " + _vertexCount);
-		
+		Debug.log("Loading new mesh with Triangles: " + _triangleCount + ", Renderable Vertices: "
+				+ _renderableVertexCount + ", Unique Vertices: " + _uniqueVertexCount);
+
 		// Create and bind new VAO
 		this._vao = new VAO();
 		_vao.use();

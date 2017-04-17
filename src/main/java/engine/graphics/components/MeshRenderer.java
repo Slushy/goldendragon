@@ -74,7 +74,7 @@ public class MeshRenderer extends Component {
 		_mesh.getVAO().use();
 
 		// Draw game object
-		GL11.glDrawElements(GL11.GL_TRIANGLES, _mesh.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+		GL11.glDrawElements(GL11.GL_TRIANGLES, _mesh.getRenderableVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 
 		// Unbind
 		_mesh.getVAO().done();
