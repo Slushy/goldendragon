@@ -1,24 +1,20 @@
 package engine.scenes;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
 import engine.Display;
 import engine.common.Camera;
 import engine.common.Defaults;
 import engine.common.Transform;
+import engine.graphics.GraphicsManager;
 import engine.graphics.Material;
 import engine.graphics.MaterialPropertyBlock;
 import engine.graphics.ShaderProgram;
-import engine.graphics.ShaderType;
 import engine.graphics.UniformData;
 import engine.graphics.UniformType;
 import engine.graphics.components.MeshRenderer;
@@ -47,52 +43,81 @@ public class SceneRenderer {
 		return _instance;
 	}
 
+	// For each shader (indexed by shader priority) we will have a list of
+	// renderers
+	@SuppressWarnings("unchecked")
+	private final LinkedList<MeshRenderer>[] _renderersPerShader = (LinkedList<MeshRenderer>[]) new LinkedList<?>[GraphicsManager.TOTAL_SHADERS];
 	private final Transformation _transformation = new Transformation();
-	private final Map<Long, LinkedList<Long>> _meshMaterials = new LinkedHashMap<>();
-	private final Map<Long, LinkedList<MeshRenderer>> _materialRenderers = new LinkedHashMap<>();
 	private final List<PointLight> _pointLights = new ArrayList<PointLight>();
 
 	private DirectionalLight _directionalLight = null;
 
 	// Singleton class
 	private SceneRenderer() {
+		for (int i = 0; i < _renderersPerShader.length; i++) {
+			_renderersPerShader[i] = new LinkedList<MeshRenderer>();
+		}
 	}
 
 	/**
 	 * Clears the stored objects for new scene
 	 */
 	public void reset() {
-		_meshMaterials.clear();
-		_materialRenderers.clear();
 		_pointLights.clear();
+		for (LinkedList<MeshRenderer> rendererList : _renderersPerShader)
+			rendererList.clear();
 	}
 
 	/**
 	 * Adds renderer to scene
 	 * 
+	 * INTERNAL USE ONLY
+	 * 
 	 * @param renderer
+	 *            the renderer to add to the rendering pipeline for the current
+	 *            scene
 	 */
-	public void submitRendererForRenderering(MeshRenderer renderer) {
-		long meshId = renderer.getMesh().getInstanceId();
-		long matId = renderer.getMaterial().getInstanceId();
+	public void submitRendererForRendering(MeshRenderer newRenderer) {
+		Material newMat = newRenderer.getMaterial();
+		MaterialPropertyBlock newProps = newRenderer.getProperties();
 
-		// Check if mesh exists
-		LinkedList<Long> materials = _meshMaterials.get(meshId);
-		if (materials == null) {
-			materials = new LinkedList<>();
-			_meshMaterials.put(meshId, materials);
+		// Get the list of renderers based on the current material's shader sort
+		// priority as key
+		LinkedList<MeshRenderer> similarRenderers = _renderersPerShader[newMat.getShaderType().getSort()];
+
+		// Find the place in the linked list where the renderer should be added
+		int placementIdx = 0;
+		boolean hasSameMaterial = false;
+		for (MeshRenderer existingRenderer : similarRenderers) {
+			// Return early if the new renderer already exists
+			if (existingRenderer == newRenderer)
+				return;
+
+			Material existingMat = existingRenderer.getMaterial();
+			MaterialPropertyBlock existingProps = existingRenderer.getProperties();
+
+			// If mats are equal then next compare renderer-specific overrides
+			if (existingMat.compare(newMat)) {
+				hasSameMaterial = true;
+
+				// If the existing renderer material overrides equal the new
+				// renderer material overrides, then we've found our best
+				// placement in the rendering list
+				if (existingProps.compare(newProps))
+					break;
+			}
+			// If the materials are not equal, but the previous one was then
+			// break because we want to keep like materials together even if the
+			// renderer specific overrides do not match
+			else if (hasSameMaterial)
+				break;
+
+			placementIdx++;
 		}
 
-		// Check if material exists
-		LinkedList<MeshRenderer> renderers = _materialRenderers.get(matId);
-		if (renderers == null) {
-			materials.add(matId);
-			renderers = new LinkedList<>();
-			_materialRenderers.put(matId, renderers);
-		}
-
-		// Add Renderer to list
-		renderers.add(renderer);
+		// Adds the renderer to the list at the most performant rendering
+		// position
+		similarRenderers.add(placementIdx, newRenderer);
 	}
 
 	/**
@@ -126,61 +151,36 @@ public class SceneRenderer {
 	 */
 	protected void render(Scene scene) {
 		Camera camera = scene.getCamera();
-		ShaderProgram shaderProgram = ShaderType.STANDARD.getShaderProgram();
-
-		UniformData uniformData = shaderProgram.getUniformData();
-
-		// Starts the rendering process
 		// Clear the current frame before we render the next frame
 		Display.MAIN.getGraphicsController().clearGraphics();
-		shaderProgram.bind();
-
-		// Sets the variables that will not change between render cycles here to
-		// reduce the amount of opengl calls
-
-		// Viewport projection matrix (Camera bounds, field of view, display
-		// width/height)
-		uniformData.set(UniformType.PROJECTION_MATRIX, camera.getProjectionMatrix());
-		// Adds the scene lightings to the shader
-		renderLighting(uniformData, camera.getViewMatrix());
-
-		// For each similar mesh
-		for (long meshId : _meshMaterials.keySet()) {
-			// For each similar material
-			for (long matId : _meshMaterials.get(meshId)) {
-				// For each renderer with the shared mesh & material
-				Material mat = _materialRenderers.get(matId).peekFirst().getMaterial();
-				MaterialPropertyBlock props = mat.getProperties();
-				
-				// Taken from Material.RenderStart before refactor
-				uniformData.set(UniformType.COLOR, props.getColor());
-				uniformData.set(UniformType.USE_TEXTURE, mat.hasTexture());
-				
-				if (mat.hasTexture()) {
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, props.getMainTexture().getTextureId());
-				}
-				
-				// Specular/shininess component
-				uniformData.set(UniformType.SHININESS, props.getShininess());
-				uniformData.set(UniformType.SPECULAR_COLOR, props.getSpecularColor());
-				
-				for (MeshRenderer renderer : _materialRenderers.get(matId)) {
-					// Set the transformation matrix
-					uniformData.set(UniformType.WORLD_VIEW_MATRIX, _transformation
-							.buildWorldViewMatrix(renderer.getGameObject().getTransform(), camera.getViewMatrix()));
-					// Tell the renderer to render
-					renderer.render();
-				}
-				// Taken from Material.RenderEnd before refactor
-				if (mat.hasTexture()) {
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-				}
-			}
+		
+		// Loops over every shader in shader sort priority order and renders the list of renderers for each shader
+		for (LinkedList<MeshRenderer> similarRenderers : _renderersPerShader) {
+			if (similarRenderers.size() == 0)
+				continue;
+			
+			// Binds the newly active shader by getting the shader from the first renderer in the shader list
+			ShaderProgram shaderProgram = similarRenderers.getFirst().getMaterial().getShaderType().getShaderProgram();
+			shaderProgram.bind();
+			
+			// Sets the shader's "global" variables (uniforms that do not change between all game objects)
+			UniformData uniformData = shaderProgram.getUniformData();
+			uniformData.set(UniformType.PROJECTION_MATRIX, camera.getProjectionMatrix());
+			
+			// Render the per-scene lighting like the sun & ambient light
+			// Point lights will eventually not be in this list because we
+			// have a limit on how many point lights we can render in a single
+			// pass. So we will eventually limit/change this based on lighting
+			// maps or game object position
+			renderLighting(uniformData, camera.getViewMatrix());
+			
+			// Delegate the material and entity rendering to each renderer
+			for (MeshRenderer currRenderer : similarRenderers)
+				currRenderer.render(_transformation, camera, uniformData);
+			
+			// Current shader is done
+			shaderProgram.unbind();
 		}
-
-		// Ends the rendering process
-		shaderProgram.unbind();
 	}
 
 	/**
@@ -229,16 +229,17 @@ public class SceneRenderer {
 			uniformData.set(String.format(UniformType.POINT_LIGHT_INTENSITY.getName(), i), pointLight.getBrightness());
 			uniformData.set(String.format(UniformType.POINT_LIGHT_POSITION.getName(), i), viewSpacePosition);
 			uniformData.set(String.format(UniformType.POINT_LIGHT_RANGE.getName(), i), pointLight.getRange());
-			
+
 			// If it's a spotlight, register spotlight specific uniforms
 			if (pointLight instanceof SpotLight) {
 				Vector3fc facingDirection = _transformation.getFacingDirection(transform.getRotation(), viewMatrix);
 				uniformData.set(String.format(UniformType.POINT_LIGHT_DIRECTION.getName(), i), facingDirection);
-				uniformData.set(String.format(UniformType.POINT_LIGHT_COS_HALF_ANGLE.getName(), i), ((SpotLight)pointLight).getCosHalfAngle());
+				uniformData.set(String.format(UniformType.POINT_LIGHT_COS_HALF_ANGLE.getName(), i),
+						((SpotLight) pointLight).getCosHalfAngle());
 				uniformData.set(String.format(UniformType.POINT_LIGHT_IS_SPOT.getName(), i), true);
 			}
 		}
-		
+
 		// Attenuation
 		Attenuation att = PointLight.ATTENUATION;
 		uniformData.set(UniformType.ATTENUATION_CONSTANT, att.getConstant());

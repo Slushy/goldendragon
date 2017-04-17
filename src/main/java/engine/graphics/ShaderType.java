@@ -7,7 +7,7 @@ package engine.graphics;
  *
  */
 public enum ShaderType {
-	STANDARD(1, new ShaderUniforms.Standard());
+	STANDARD(0, new ShaderUniforms.Standard());
 
 	private final int _sort;
 	private final ShaderUniforms _shaderUniforms;
@@ -23,7 +23,7 @@ public enum ShaderType {
 	}
 
 	/**
-	 * @return the 1-indexed sort value for the shader. Defines what order
+	 * @return the 0-indexed sort value for the shader. Defines what order
 	 *         multiple shaders should be rendered in.
 	 */
 	public int getSort() {

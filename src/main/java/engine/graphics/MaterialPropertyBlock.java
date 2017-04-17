@@ -32,6 +32,18 @@ public class MaterialPropertyBlock {
 	}
 
 	/**
+	 * Creates a new properties block by copying the properties from the passed
+	 * in block
+	 * 
+	 * @param materialPropertyBlock
+	 *            the property block to clone from, its contents will not be
+	 *            changed
+	 */
+	public MaterialPropertyBlock(MaterialPropertyBlock materialPropertyBlock) {
+		cloneFrom(materialPropertyBlock);
+	}
+
+	/**
 	 * Clones all the values from the passed in properties to this current
 	 * instance
 	 * 
@@ -91,7 +103,7 @@ public class MaterialPropertyBlock {
 	 * @return current texture if not null otherwise the fallback texture
 	 */
 	public Texture getMainTextureOr(Texture texture) {
-		return _mainTexture == null ? texture : _mainTexture.value;
+		return _mainTexture == null || _mainTexture.value == null ? texture : _mainTexture.value;
 	}
 
 	/**
@@ -103,7 +115,10 @@ public class MaterialPropertyBlock {
 	 *            copied.
 	 */
 	public void setColor(Vector3fc color) {
-		setColor(color.x(), color.y(), color.z());
+		if (color == null)
+			this._color = null;
+		else
+			setColor(color.x(), color.y(), color.z());
 	}
 
 	/**
@@ -137,7 +152,7 @@ public class MaterialPropertyBlock {
 	 * @return current color if not null otherwise the fallback color
 	 */
 	public Vector3fc getColorOr(Vector3fc color) {
-		return _color == null ? color : _color.value;
+		return _color == null || _color.value == null ? color : _color.value;
 	}
 
 	/**
@@ -152,7 +167,10 @@ public class MaterialPropertyBlock {
 	 *            copied.
 	 */
 	public void setSpecularColor(Vector3fc color) {
-		setSpecularColor(color.x(), color.y(), color.z());
+		if (color == null)
+			this._specularColor = null;
+		else
+			setSpecularColor(color.x(), color.y(), color.z());
 	}
 
 	/**
@@ -191,7 +209,7 @@ public class MaterialPropertyBlock {
 	 *         specular color
 	 */
 	public Vector3fc getSpeculaColorOr(Vector3fc color) {
-		return _specularColor == null ? color : _specularColor.value;
+		return _specularColor == null || _specularColor.value == null ? color : _specularColor.value;
 	}
 
 	/**

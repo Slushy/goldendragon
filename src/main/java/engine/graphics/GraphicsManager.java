@@ -9,7 +9,11 @@ import engine.utils.Debug;
  *
  */
 public final class GraphicsManager {
-
+	/**
+	 * The total amount of shaders we can have being rendered per frame
+	 */
+	public final static int TOTAL_SHADERS = ShaderType.values().length;
+	
 	// Static class
 	private GraphicsManager() {
 	}
