@@ -1,6 +1,7 @@
 package engine.utils.math;
 
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 
 /**
@@ -10,7 +11,9 @@ import org.joml.Vector3fc;
  *
  */
 public final class MatrixUtils {
-
+	public static final int MATRIX_4D_SIZE = 16;
+	public static final int MATRIX_3D_SIZE = 9;
+	
 	/*
 	 * Static class
 	 */
@@ -79,5 +82,25 @@ public final class MatrixUtils {
 		// data
 		return matrix.rotationXYZ((float) Math.toRadians(rotation.x()), (float) Math.toRadians(rotation.y()),
 				(float) Math.toRadians(rotation.z())).translate(-position.x(), -position.y(), -position.z());
+	}
+	
+	/**
+	 * Compares the two matrixes for equality in instance or values
+	 * 
+	 * @param m1
+	 * @param m2
+	 * @return true if the matrixes are the same or have the same values
+	 */
+	public static boolean compare(Matrix4fc m1, Matrix4fc m2) {
+		if (m1 == m2)
+			return true;
+
+		if (m1 == null || m2 == null)
+			return false;
+
+		return m1.m00() == m2.m00() && m1.m01() == m2.m01() && m1.m02() == m2.m02() && m1.m03() == m2.m03()
+				&& m1.m10() == m2.m10() && m1.m11() == m2.m11() && m1.m12() == m2.m12() && m1.m13() == m2.m13()
+				&& m1.m20() == m2.m20() && m1.m21() == m2.m21() && m1.m22() == m2.m22() && m1.m23() == m2.m23()
+				&& m1.m30() == m2.m30() && m1.m31() == m2.m31() && m1.m32() == m2.m32() && m1.m33() == m2.m33();
 	}
 }
