@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import engine.common.GameObject;
-import engine.graphics.Material;
 import engine.graphics.MaterialPropertyBlock;
+import engine.graphics.MeshMaterial;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Mesh;
 import engine.lighting.DirectionalLight;
@@ -45,7 +45,7 @@ public class TestSceneLoader extends SceneLoader {
 
 		// Create mesh and set texture material
 		Mesh mesh = GameResources.Meshes.CUBE;
-		Material mat = new Material(GameResources.Textures.GRASS_BLOCK);
+		MeshMaterial mat = new MeshMaterial(GameResources.Textures.GRASS_BLOCK);
 
 		String cubeName = "Cube";
 		// Create dynamic placed cubes
@@ -72,7 +72,7 @@ public class TestSceneLoader extends SceneLoader {
 
 		// Create a bunny
 		GameObject bunny = new GameObject("Bunny");
-		Material bunnyMaterial = new Material(Material.DEFAULT);
+		MeshMaterial bunnyMaterial = new MeshMaterial(MeshMaterial.DEFAULT);
 		MaterialPropertyBlock props = bunnyMaterial.getProperties();
 		props.setSpecularColor(0, 0, 1);
 		props.setShininess(1);

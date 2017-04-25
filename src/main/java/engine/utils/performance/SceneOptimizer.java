@@ -9,8 +9,8 @@ import org.joml.Matrix4fc;
 import org.joml.Vector4f;
 
 import engine.common.GameObject;
-import engine.graphics.Material;
 import engine.graphics.MaterialPropertyBlock;
+import engine.graphics.MeshMaterial;
 import engine.graphics.components.MeshRenderer;
 import engine.graphics.geometry.Mesh;
 import engine.resources.loaders.MeshLoader;
@@ -127,7 +127,7 @@ public final class SceneOptimizer {
 			Mesh combinedMesh = combineMeshes(newObj, rendererObjects);
 			
 			// Copy the material and property overrides to pass into the new renderer
-			Material material = new Material(renderer.getMaterial());
+			MeshMaterial material = new MeshMaterial(renderer.getMaterial());
 			MaterialPropertyBlock propertyOverrides = new MaterialPropertyBlock(renderer.getProperties());
 			
 			// Add the renderer

@@ -6,8 +6,8 @@ import org.lwjgl.opengl.GL11;
 import engine.common.Camera;
 import engine.common.Component;
 import engine.graphics.IRenderer;
-import engine.graphics.Material;
 import engine.graphics.MaterialPropertyBlock;
+import engine.graphics.MeshMaterial;
 import engine.graphics.UniformData;
 import engine.graphics.UniformType;
 import engine.graphics.geometry.Mesh;
@@ -23,7 +23,7 @@ import engine.utils.math.Transformation;
  */
 public class MeshRenderer extends Component implements IRenderer {
 	private final Mesh _mesh;
-	private final Material _material;
+	private final MeshMaterial _material;
 	private final MaterialPropertyBlock _propertyOverrides;
 
 	/**
@@ -34,7 +34,7 @@ public class MeshRenderer extends Component implements IRenderer {
 	 * @param material
 	 *            material to render the mesh
 	 */
-	public MeshRenderer(Mesh mesh, Material material) {
+	public MeshRenderer(Mesh mesh, MeshMaterial material) {
 		this(mesh, material, new MaterialPropertyBlock());
 	}
 
@@ -48,7 +48,7 @@ public class MeshRenderer extends Component implements IRenderer {
 	 * @param materialPropertyOverrides
 	 *            specific material property overrides for this renderer
 	 */
-	public MeshRenderer(Mesh mesh, Material material, MaterialPropertyBlock materialPropertyOverrides) {
+	public MeshRenderer(Mesh mesh, MeshMaterial material, MaterialPropertyBlock materialPropertyOverrides) {
 		super("Mesh Renderer");
 		this._mesh = mesh;
 		this._material = material;
@@ -66,7 +66,7 @@ public class MeshRenderer extends Component implements IRenderer {
 	 * @return the material being used by the mesh renderer
 	 */
 	@Override
-	public Material getMaterial() {
+	public MeshMaterial getMaterial() {
 		return _material;
 	}
 

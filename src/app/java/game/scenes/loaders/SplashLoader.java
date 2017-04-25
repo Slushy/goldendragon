@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import engine.common.GameObject;
-import engine.graphics.Material;
+import engine.graphics.MeshMaterial;
 import engine.graphics.components.MeshRenderer;
 import engine.resources.loaders.MeshLoader;
 import engine.resources.loaders.TextureLoader;
@@ -41,7 +41,7 @@ public class SplashLoader extends ApplicationSplashLoader {
 		// Set a cube in middle of screen slanted
 		GameObject cube = new GameObject("Cube");
 		cube.addComponent(
-				new MeshRenderer(GameResources.Meshes.CUBE, new Material(GameResources.Textures.GRASS_BLOCK)));
+				new MeshRenderer(GameResources.Meshes.CUBE, new MeshMaterial(GameResources.Textures.GRASS_BLOCK)));
 		cube.getTransform().setPosition(0, 0.2f, -5);
 		cube.getTransform().setRotX(-45);
 
