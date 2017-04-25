@@ -7,7 +7,7 @@ package engine.graphics;
  *
  */
 public enum ShaderType {
-	STANDARD(0, new ShaderUniforms.Standard());
+	STANDARD(0, new ShaderUniforms.Standard()), GUI(1, new ShaderUniforms.Gui());
 
 	private final int _sort;
 	private final ShaderUniforms _shaderUniforms;

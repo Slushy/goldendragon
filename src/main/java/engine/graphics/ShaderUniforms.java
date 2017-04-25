@@ -29,7 +29,28 @@ public abstract class ShaderUniforms {
 		 * Constructs a standard shader uniform wrapper
 		 */
 		protected Standard() {
+		}
 
+		@Override
+		protected UniformType[] getUniforms() {
+			return UNIFORMS;
+		}
+	}
+
+	/**
+	 * Holds all of the uniform types for the GUI Shader
+	 * 
+	 * @author Brandon Porter
+	 *
+	 */
+	public static class Gui extends ShaderUniforms {
+		private final UniformType[] UNIFORMS = { UniformType.MAIN_TEXTURE, UniformType.COLOR, UniformType.USE_TEXTURE,
+				UniformType.PROJECTION_MATRIX, UniformType.WORLD_VIEW_MATRIX };
+
+		/**
+		 * Constructs a gui shader uniform wrapper
+		 */
+		protected Gui() {
 		}
 
 		@Override
