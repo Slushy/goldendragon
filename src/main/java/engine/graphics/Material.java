@@ -1,34 +1,31 @@
 package engine.graphics;
 
-import org.joml.Vector3fc;
-
-import engine.common.Defaults;
 import engine.common.Entity;
-import engine.graphics.geometry.Texture;
 
 /**
  * A material is representative of how a game object looks; e.g. with textures,
  * lighting, colors, etc.
  * 
- * @author Brandon
+ * @author Brandon Porter
  *
  */
-public class Material extends Entity {
-	public static final Material DEFAULT = new Material();
-	private static final String ENTITY_NAME = "Material";
-	
-	private final MaterialPropertyBlock _properties = new MaterialPropertyBlock();
-	private ShaderType _shaderType = ShaderType.STANDARD;
-	
+public abstract class Material extends Entity {
+	private final ShaderType _shaderType;
+
 	/**
-	 * Constructs a new material with no texture, default color and the standard
-	 * shader
+	 * Constructs a new material with with the specified entity name and shader
+	 * type
+	 * 
+	 * @param entityName
+	 *            default name of the entity
+	 * @param shaderType
+	 *            the type of shader to use when rendering this material
 	 */
-	public Material() {
-		super(ENTITY_NAME);
-		setDefaults();
+	public Material(String entityName, ShaderType shaderType) {
+		super(entityName);
+		this._shaderType = shaderType;
 	}
-	
+
 	/**
 	 * Copy Constructor to construct a new material from an existing one
 	 * 
@@ -36,50 +33,7 @@ public class Material extends Entity {
 	 *            material to copy
 	 */
 	public Material(Material material) {
-		super(material.getName());
-		this._shaderType = material.getShaderType();
-		this._properties.cloneFrom(material.getProperties());
-	}
-
-	/**
-	 * Constructs a new material with the main texture
-	 * 
-	 * @param mainTexture
-	 *            the main texture to render the mesh using this material
-	 */
-	public Material(Texture mainTexture) {
-		this();
-		_properties.setMainTexture(mainTexture);
-	}
-	
-	/**
-	 * Constructs a new material with a new color
-	 * 
-	 * @param color
-	 *            the color to render the mesh using this material
-	 */
-	public Material(Vector3fc color) {
-		this();
-		_properties.setColor(color);
-	}
-
-	/**
-	 * Constructs a new material with the specified shader type
-	 * 
-	 * @param shaderType
-	 *            the type of shader to use when rendering this material
-	 */
-	public Material(ShaderType shaderType) {
-		this();
-		this._shaderType = shaderType;
-	}
-
-
-	/**
-	 * @return the properties being used to render this material
-	 */
-	public final MaterialPropertyBlock getProperties() {
-		return _properties;
+		this(material.getName(), material.getShaderType());
 	}
 
 	/**
@@ -90,25 +44,18 @@ public class Material extends Entity {
 	}
 
 	/**
-	 * @return true if the mesh has a texture, false otherwise
-	 */
-	public boolean hasTexture() {
-		return _properties.getMainTexture() != null;
-	}
-
-	/**
 	 * Compares the material for equality against the current material
 	 * 
 	 * @param mat
 	 *            the material to compare
-	 * @return true if they are equal in instance or properties
+	 * @return true if they are equal in instance or shader
 	 */
 	public boolean compare(Material mat) {
 		if (this == mat)
 			return true;
 
-		// If both the properties and shader type are the same, then return true
-		return _properties.compare(mat.getProperties()) && _shaderType == mat.getShaderType();
+		// If the shader type are the same, then return true
+		return _shaderType == mat.getShaderType();
 	}
 
 	/**
@@ -120,14 +67,5 @@ public class Material extends Entity {
 		// a shared element, so it should dispose itself
 		// if (hasTexture())
 		// _texture.dispose();
-	}
-
-	/*
-	 * Initializes this material with default property values
-	 */
-	private void setDefaults() {
-		_properties.setColor(Defaults.Materials.COLOR);
-		_properties.setSpecularColor(Defaults.Materials.SPECULAR_COLOR);
-		_properties.setShininess(Defaults.Materials.SHININESS_MIN);
 	}
 }
