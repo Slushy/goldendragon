@@ -12,12 +12,12 @@ import engine.common.Camera;
 import engine.common.Defaults;
 import engine.common.Transform;
 import engine.graphics.GraphicsManager;
+import engine.graphics.IRenderer;
 import engine.graphics.Material;
 import engine.graphics.MaterialPropertyBlock;
 import engine.graphics.ShaderProgram;
 import engine.graphics.UniformData;
 import engine.graphics.UniformType;
-import engine.graphics.components.MeshRenderer;
 import engine.lighting.Attenuation;
 import engine.lighting.DirectionalLight;
 import engine.lighting.Light;
@@ -36,7 +36,7 @@ class SceneRenderer {
 	// For each shader (indexed by shader priority) we will have a list of
 	// renderers
 	@SuppressWarnings("unchecked")
-	private final LinkedList<MeshRenderer>[] _renderersPerShader = (LinkedList<MeshRenderer>[]) new LinkedList<?>[GraphicsManager.TOTAL_SHADERS];
+	private final LinkedList<IRenderer>[] _renderersPerShader = (LinkedList<IRenderer>[]) new LinkedList<?>[GraphicsManager.TOTAL_SHADERS];
 	private final Transformation _transformation = new Transformation();
 	private final List<PointLight> _pointLights = new ArrayList<PointLight>();
 
@@ -45,7 +45,7 @@ class SceneRenderer {
 	// Singleton class
 	protected SceneRenderer() {
 		for (int i = 0; i < _renderersPerShader.length; i++) {
-			_renderersPerShader[i] = new LinkedList<MeshRenderer>();
+			_renderersPerShader[i] = new LinkedList<IRenderer>();
 		}
 	}
 
@@ -56,18 +56,18 @@ class SceneRenderer {
 	 *            the renderer to add to the rendering pipeline for the current
 	 *            scene
 	 */
-	protected void addRendererToScene(MeshRenderer newRenderer) {
+	protected void addRendererToScene(IRenderer newRenderer) {
 		Material newMat = newRenderer.getMaterial();
 		MaterialPropertyBlock newProps = newRenderer.getProperties();
 
 		// Get the list of renderers based on the current material's shader sort
 		// priority as key
-		LinkedList<MeshRenderer> similarRenderers = _renderersPerShader[newMat.getShaderType().getSort()];
+		LinkedList<IRenderer> similarRenderers = _renderersPerShader[newMat.getShaderType().getSort()];
 
 		// Find the place in the linked list where the renderer should be added
 		int placementIdx = 0;
 		boolean hasSameMaterial = false;
-		for (MeshRenderer existingRenderer : similarRenderers) {
+		for (IRenderer existingRenderer : similarRenderers) {
 			// Return early if the new renderer already exists
 			if (existingRenderer == newRenderer)
 				return;
@@ -133,7 +133,7 @@ class SceneRenderer {
 
 		// Loops over every shader in shader sort priority order and renders the
 		// list of renderers for each shader
-		for (LinkedList<MeshRenderer> similarRenderers : _renderersPerShader) {
+		for (LinkedList<IRenderer> similarRenderers : _renderersPerShader) {
 			if (similarRenderers.size() == 0)
 				continue;
 
@@ -155,7 +155,7 @@ class SceneRenderer {
 			renderLighting(uniformData, camera.getViewMatrix());
 
 			// Delegate the material and entity rendering to each renderer
-			for (MeshRenderer currRenderer : similarRenderers)
+			for (IRenderer currRenderer : similarRenderers)
 				currRenderer.render(_transformation, camera, uniformData);
 
 			// Current shader is done
@@ -168,7 +168,7 @@ class SceneRenderer {
 	 */
 	protected void dispose() {
 		_pointLights.clear();
-		for (LinkedList<MeshRenderer> rendererList : _renderersPerShader)
+		for (LinkedList<IRenderer> rendererList : _renderersPerShader)
 			rendererList.clear();
 	}
 

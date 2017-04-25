@@ -12,7 +12,7 @@ import engine.common.Camera;
 import engine.common.Component;
 import engine.common.Entity;
 import engine.common.GameObject;
-import engine.graphics.components.MeshRenderer;
+import engine.graphics.IRenderer;
 import engine.lighting.Light;
 import engine.scenes.EventDispatcher.ExecutionEvent;
 
@@ -254,8 +254,8 @@ public class Scene extends Entity {
 	 *            requirements
 	 */
 	private void checkComponentForSceneRendering(Component comp) {
-		if (comp instanceof MeshRenderer)
-			_sceneRenderer.addRendererToScene((MeshRenderer) comp);
+		if (comp instanceof IRenderer)
+			_sceneRenderer.addRendererToScene((IRenderer) comp);
 		else if (comp instanceof Light)
 			_sceneRenderer.addLightToScene((Light) comp);
 	}

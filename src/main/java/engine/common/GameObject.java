@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import engine.graphics.components.MeshRenderer;
+import engine.graphics.IRenderer;
 import engine.guis.RectTransform;
 import engine.scenes.Scene;
 
@@ -28,7 +28,7 @@ public class GameObject extends Entity {
 	private Scene _scene = null;
 	private Consumer<Component> _onAddedComponentCallback;
 	private GameObject _parent = null;
-	private MeshRenderer _renderer = null;
+	private IRenderer _renderer = null;
 
 	/**
 	 * Constructs a new game object entity
@@ -97,8 +97,8 @@ public class GameObject extends Entity {
 	 *            component to attach to this game object
 	 */
 	public void addComponent(Component component) {
-		if (component instanceof MeshRenderer)
-			this._renderer = (MeshRenderer) component;
+		if (component instanceof IRenderer)
+			this._renderer = (IRenderer) component;
 
 		// TODO: Throw exception later if duplicate component exists
 		_components.add(component);
@@ -163,7 +163,7 @@ public class GameObject extends Entity {
 	 * @return the current renderer of the game object, or null if it doesn't
 	 *         have one
 	 */
-	public final MeshRenderer getRenderer() {
+	public final IRenderer getRenderer() {
 		return _renderer;
 	}
 

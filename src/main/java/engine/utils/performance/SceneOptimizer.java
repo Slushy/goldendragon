@@ -81,9 +81,9 @@ public final class SceneOptimizer {
 		// similar renderer will have a list of game objects to combine
 		for (GameObject obj : root.getChildren()) {
 
-			// For objects with no renderers, they cannot be batched so we just
+			// For objects with no MESH renderers, they cannot be batched so we just
 			// add them to the return list
-			if (obj.getRenderer() == null || obj.getRenderer().getMaterial() == null) {
+			if (obj.getRenderer() == null || !(obj.getRenderer() instanceof MeshRenderer) || obj.getRenderer().getMaterial() == null) {
 				batchedGameObjects.add(obj);
 				continue;
 			}
@@ -101,7 +101,7 @@ public final class SceneOptimizer {
 			// If we couldn't find a like renderer, create a new spot
 			if (similarRenderedGameObjects == null) {
 				similarRenderedGameObjects = new ArrayList<GameObject>();
-				rendererObjectMap.put(obj.getRenderer(), similarRenderedGameObjects);
+				rendererObjectMap.put((MeshRenderer)obj.getRenderer(), similarRenderedGameObjects);
 			}
 
 			// Finally, add that game object to the renderer object map
@@ -152,7 +152,7 @@ public final class SceneOptimizer {
 		
 		for (int i = 0; i < gameObjects.size(); i++) {
 			GameObject gameObj = gameObjects.get(i);
-			Mesh.MeshVBOData vboData = gameObj.getRenderer().getMesh().getVBOData();
+			Mesh.MeshVBOData vboData = ((MeshRenderer)gameObj.getRenderer()).getMesh().getVBOData();
 
 			// 1. Copying vbo data from current mesh
 			float[] positions = vboData.vertexPositions.clone();

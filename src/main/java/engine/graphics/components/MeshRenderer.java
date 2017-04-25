@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 
 import engine.common.Camera;
 import engine.common.Component;
+import engine.graphics.IRenderer;
 import engine.graphics.Material;
 import engine.graphics.MaterialPropertyBlock;
 import engine.graphics.UniformData;
@@ -20,7 +21,7 @@ import engine.utils.math.Transformation;
  * @author Brandon Porter
  *
  */
-public class MeshRenderer extends Component {
+public class MeshRenderer extends Component implements IRenderer {
 	private final Mesh _mesh;
 	private final Material _material;
 	private final MaterialPropertyBlock _propertyOverrides;
@@ -64,6 +65,7 @@ public class MeshRenderer extends Component {
 	/**
 	 * @return the material being used by the mesh renderer
 	 */
+	@Override
 	public Material getMaterial() {
 		return _material;
 	}
@@ -71,6 +73,7 @@ public class MeshRenderer extends Component {
 	/**
 	 * @return the material properties only affecting this renderer instance
 	 */
+	@Override
 	public MaterialPropertyBlock getProperties() {
 		return _propertyOverrides;
 	}
@@ -83,7 +86,8 @@ public class MeshRenderer extends Component {
 	 * @return true if they are equal in instance and material and material
 	 *         property overrides
 	 */
-	public boolean compare(MeshRenderer renderer) {
+	@Override
+	public boolean compare(IRenderer renderer) {
 		if (this == renderer)
 			return true;
 
@@ -99,6 +103,7 @@ public class MeshRenderer extends Component {
 	 * @param camera
 	 * @param uniformData
 	 */
+	@Override
 	public void render(Transformation transformation, Camera camera, UniformData uniformData) {
 		if (!_mesh.isLoaded()) {
 			Debug.error("Trying to render a mesh that isn't loaded yet: " + _mesh.getName());
