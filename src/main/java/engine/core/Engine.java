@@ -79,10 +79,10 @@ public class Engine {
 	public Engine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options)
 			throws Exception {
 		// Create the display but don't show it
-		Display.MAIN.init(title, width, height, options.windowOptions, options.graphicsOptions);
+		getDisplay().init(title, width, height, options.windowOptions, options.graphicsOptions);
 
 		// Initialize input
-		Input.init(Display.MAIN.getWindow());
+		Input.init(getDisplay().getWindow());
 
 		// Initialize our graphics
 		ShaderInitializer.init();
@@ -91,9 +91,9 @@ public class Engine {
 		// We use this to determine what scenes to load when the game requests
 		// one
 		SceneManager.init(gameInitializer.getSceneLoaders());
-		
+
 		// Create the runner
-		this._gameRunner = new GameRunner(Display.MAIN, gameInitializer, options);
+		this._gameRunner = new GameRunner(getDisplay(), gameInitializer, options);
 	}
 
 	/**
@@ -104,8 +104,8 @@ public class Engine {
 	 */
 	public void run() throws Exception {
 		// Show and clear the screen
-		Display.MAIN.show();
-		Display.MAIN.getGraphicsController().clearColor(0, 0, 0, 0);
+		getDisplay().show();
+		getDisplay().getGraphicsController().clearColor(0, 0, 0, 0);
 
 		// Start the game timer
 		TimeManager.start();
@@ -133,7 +133,7 @@ public class Engine {
 		// Cleans up our shaders & other graphics
 		ShaderInitializer.dispose();
 		// Cleans up our window and callbacks
-		Display.MAIN.dispose();
+		getDisplay().dispose();
 		// Finish up all graphics requests created by disposing
 		RequestManager.executeAllGLRequests();
 
@@ -152,6 +152,16 @@ public class Engine {
 	 */
 	public static void crash(String crashFailureMsg) {
 		GameRunner.abort(crashFailureMsg);
+	}
+
+	/**
+	 * Gets the active display, for now just returning the main until we support
+	 * multiple
+	 * 
+	 * @return the display to launch and run the application on
+	 */
+	private Display getDisplay() {
+		return Display.MAIN;
 	}
 
 	/**
