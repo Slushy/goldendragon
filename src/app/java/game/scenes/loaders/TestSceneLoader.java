@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import engine.common.GameObject;
-import engine.graphics.MaterialPropertyBlock;
-import engine.graphics.MeshMaterial;
-import engine.graphics.components.MeshRenderer;
-import engine.graphics.geometry.Mesh;
-import engine.lighting.DirectionalLight;
-import engine.lighting.PointLight;
-import engine.lighting.SpotLight;
-import engine.scenes.SceneLoader;
+import engine.app.SceneLoader;
+import engine.assets.Mesh;
+import engine.rendering.MeshRenderer;
+import engine.rendering.material.MaterialPropertyBlock;
+import engine.rendering.material.MeshMaterial;
+import engine.scene.GameObject;
+import engine.scene.lighting.DirectionalLight;
+import engine.scene.lighting.PointLight;
+import engine.scene.lighting.SpotLight;
+import engine.scene.performance.SceneOptimizer;
 import engine.utils.Debug;
-import engine.utils.performance.SceneOptimizer;
 import game.GameResources;
 import game.scenes.TestSceneBehavior;
 

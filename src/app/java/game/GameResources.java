@@ -1,9 +1,9 @@
 package game;
 
-import engine.graphics.geometry.Mesh;
-import engine.graphics.geometry.Texture;
-import engine.resources.loaders.MeshLoader;
-import engine.resources.loaders.TextureLoader;
+import engine.assets.Mesh;
+import engine.assets.Texture;
+import engine.assets.loaders.MeshLoader;
+import engine.assets.loaders.TextureLoader;
 
 /**
  * Static class to reference game resources

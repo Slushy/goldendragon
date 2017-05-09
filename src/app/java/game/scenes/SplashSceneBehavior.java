@@ -1,8 +1,8 @@
 package game.scenes;
 
-import engine.TimeManager;
-import engine.common.Behavior;
-import engine.common.GameObject;
+import engine.core.TimeManager;
+import engine.scene.Behavior;
+import engine.scene.GameObject;
 import game.scenes.loaders.TestSceneLoader;
 
 /**

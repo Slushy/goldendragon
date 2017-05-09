@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import engine.common.GameObject;
-import engine.graphics.MeshMaterial;
-import engine.graphics.components.MeshRenderer;
-import engine.resources.loaders.MeshLoader;
-import engine.resources.loaders.TextureLoader;
-import engine.scenes.ApplicationSplashLoader;
+import engine.app.ApplicationSplashLoader;
+import engine.assets.loaders.MeshLoader;
+import engine.assets.loaders.TextureLoader;
+import engine.rendering.MeshRenderer;
+import engine.rendering.material.MeshMaterial;
+import engine.scene.GameObject;
 import game.GameResources;
 import game.scenes.SplashSceneBehavior;
 

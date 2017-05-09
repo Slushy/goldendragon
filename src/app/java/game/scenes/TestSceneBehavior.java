@@ -7,14 +7,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import engine.Input;
-import engine.TimeManager;
-import engine.common.Behavior;
-import engine.common.Camera;
-import engine.common.GameObject;
-import engine.graphics.components.MeshRenderer;
-import engine.lighting.Light;
-import engine.utils.inputs.Key;
+import engine.core.Input;
+import engine.core.TimeManager;
+import engine.input.Key;
+import engine.rendering.MeshRenderer;
+import engine.scene.Behavior;
+import engine.scene.GameObject;
+import engine.scene.gameobjects.Camera;
+import engine.scene.lighting.Light;
 import game.scenes.loaders.TestSceneLoader;
 
 /**

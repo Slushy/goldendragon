@@ -1,8 +1,8 @@
 package game;
 
-import engine.IGameInitializer;
-import engine.scenes.ApplicationSplashLoader;
-import engine.scenes.SceneLoader;
+import engine.app.ApplicationSplashLoader;
+import engine.app.IGameInitializer;
+import engine.app.SceneLoader;
 import engine.utils.Debug;
 import game.scenes.loaders.SplashLoader;
 import game.scenes.loaders.TestSceneLoader;
