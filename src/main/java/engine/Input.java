@@ -1,4 +1,4 @@
-package engine.core;
+package engine;
 
 import engine.input.InputHandler;
 import engine.input.Key;

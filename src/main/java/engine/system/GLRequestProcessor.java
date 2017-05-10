@@ -1,6 +1,6 @@
 package engine.system;
 
-import engine.core.TimeManager;
+import engine.TimeManager;
 
 /**
  * Manages and processes GL-only related requests on the main thread

@@ -1,4 +1,4 @@
-package engine.core;
+package engine;
 
 import engine.scene.Scene;
 

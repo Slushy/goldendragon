@@ -1,6 +1,6 @@
 package engine.system;
 
-import engine.core.Engine;
+import engine.Engine;
 import engine.utils.Debug;
 
 /**

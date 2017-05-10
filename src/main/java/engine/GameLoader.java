@@ -1,4 +1,4 @@
-package engine.core;
+package engine;
 
 import java.util.function.Consumer;
 

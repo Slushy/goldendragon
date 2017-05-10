@@ -7,8 +7,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import engine.core.Input;
-import engine.core.TimeManager;
+import engine.Input;
+import engine.TimeManager;
 import engine.input.Key;
 import engine.rendering.MeshRenderer;
 import engine.scene.Behavior;

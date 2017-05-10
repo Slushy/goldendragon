@@ -1,4 +1,4 @@
-package engine.core;
+package engine;
 
 import engine.app.IGameInitializer;
 import engine.app.config.Defaults;

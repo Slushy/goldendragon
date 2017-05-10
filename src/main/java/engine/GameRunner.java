@@ -1,7 +1,7 @@
-package engine.core;
+package engine;
 
+import engine.Engine.EngineOptions;
 import engine.app.IGameInitializer;
-import engine.core.Engine.EngineOptions;
 import engine.scene.Scene;
 import engine.system.RequestManager;
 

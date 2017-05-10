@@ -7,8 +7,8 @@ import java.util.List;
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
 
+import engine.Display;
 import engine.app.config.Defaults;
-import engine.core.Display;
 import engine.rendering.material.Material;
 import engine.rendering.material.MaterialPropertyBlock;
 import engine.rendering.shader.ShaderInitializer;

@@ -1,4 +1,4 @@
-package engine.core;
+package engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;

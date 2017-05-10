@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import engine.core.Display;
+import engine.Display;
 import engine.rendering.IRenderer;
 import engine.rendering.SceneRenderer;
 import engine.scene.EventDispatcher.ExecutionEvent;

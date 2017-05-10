@@ -1,6 +1,6 @@
 package engine.input;
 
-import engine.core.Window;
+import engine.Window;
 
 /**
  * Handles any keyboard/mouse/gamepad input for our game engine
