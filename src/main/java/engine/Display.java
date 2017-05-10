@@ -1,5 +1,7 @@
 package engine;
 
+import engine.app.config.GraphicsConfig;
+import engine.app.config.WindowConfig;
 import engine.scene.Scene;
 
 /**
@@ -30,18 +32,18 @@ public class Display {
 	 *            starting width of the window
 	 * @param height
 	 *            starting height of the window
-	 * @param windowOptions
-	 *            additional options to initialize the window
-	 * @param graphicsOptions
-	 *            additional options to initialize the graphics
+	 * @param windowConfig
+	 *            additional configuration options to initialize the window
+	 * @param graphicsConfig
+	 *            additional configuration options to initialize the graphics
 	 */
-	protected void init(String title, int width, int height, Window.WindowOptions windowOptions,
-			GraphicsController.GraphicsOptions graphicsOptions) {
-		_window = new OpenGLWindow(title, width, height, windowOptions);
+	protected void init(String title, int width, int height, WindowConfig windowConfig,
+			GraphicsConfig graphicsConfig) {
+		_window = new OpenGLWindow(title, width, height, windowConfig);
 		_window.init();
 		_window.setWindowResizedCallback(this::onWindowResized);
 
-		_graphicsController = new OpenGLGraphicsController(graphicsOptions);
+		_graphicsController = new OpenGLGraphicsController(graphicsConfig);
 		_graphicsController.init();
 	}
 

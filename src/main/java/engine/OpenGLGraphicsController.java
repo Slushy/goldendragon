@@ -6,6 +6,8 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
+import engine.app.config.GraphicsConfig;
+
 /**
  * Controls the graphics for an OpenGL display
  * 
@@ -16,11 +18,11 @@ public class OpenGLGraphicsController extends GraphicsController {
 	/**
 	 * Construct an OpenGL graphics controller
 	 * 
-	 * @param graphicsOptions
+	 * @param graphicsConfig
 	 *            additional options to initialize the graphics
 	 */
-	public OpenGLGraphicsController(GraphicsOptions graphicsOptions) {
-		super(graphicsOptions);
+	protected OpenGLGraphicsController(GraphicsConfig graphicsConfig) {
+		super(graphicsConfig);
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class OpenGLGraphicsController extends GraphicsController {
 
 		// Enabling polygon mode shows all the lines that compose a
 		// model
-		setPolygonMode(graphicsOptions.polygonMode);
+		setPolygonMode(graphicsConfig.polygonMode);
 
 		// Support for transparencies
 		GL11.glEnable(GL11.GL_BLEND);

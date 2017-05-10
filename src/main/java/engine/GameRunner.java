@@ -1,7 +1,7 @@
 package engine;
 
-import engine.Engine.EngineOptions;
 import engine.app.IGameInitializer;
+import engine.app.config.AppLaunchConfig;
 import engine.scene.Scene;
 import engine.system.RequestManager;
 
@@ -14,7 +14,7 @@ import engine.system.RequestManager;
 class GameRunner {
 	private static String ABORT_MSG = null;
 
-	private final EngineOptions _options;
+	private final AppLaunchConfig _launchConfig;
 	private final GameLoader _gameLoader;
 	private final Display _activeDisplay;
 
@@ -23,12 +23,12 @@ class GameRunner {
 	 * 
 	 * @param gameInitializer
 	 *            game-specific instance to load various scenes of the game
-	 * @param options
-	 *            set options to initialize the engine with
+	 * @param launchConfig
+	 *            set of config settings to initialize the engine with
 	 */
-	public GameRunner(Display display, IGameInitializer gameInitializer, EngineOptions options) {
+	public GameRunner(Display display, IGameInitializer gameInitializer, AppLaunchConfig launchConfig) {
 		this._activeDisplay = display;
-		this._options = options;
+		this._launchConfig = launchConfig;
 		this._gameLoader = new GameLoader(gameInitializer);
 	}
 
@@ -58,7 +58,7 @@ class GameRunner {
 	protected void run() throws Exception {
 		float runTime = 0f;
 		// TODO: Move interval to timer
-		float interval = 1f / _options.maxUPS;
+		float interval = 1f / _launchConfig.maxUPS;
 
 		// Keep going until the display says we should close
 		// (i.e. they click the red x or closes it manually).

@@ -1,6 +1,6 @@
 package engine;
 
-import engine.app.config.Defaults;
+import engine.app.config.WindowConfig;
 
 /**
  * Base implementation of all windows
@@ -9,7 +9,7 @@ import engine.app.config.Defaults;
  *
  */
 public abstract class Window {
-	protected final WindowOptions windowOptions;
+	protected final WindowConfig windowConfig;
 	protected float sizeScale = 1;
 
 	protected String title;
@@ -31,14 +31,14 @@ public abstract class Window {
 	 *            starting width of the game window
 	 * @param height
 	 *            starting height of the game window
-	 * @param options
-	 *            additional options to initialize the window
+	 * @param windowConfig
+	 *            additional configuration options to initialize the window
 	 */
-	public Window(String title, int width, int height, WindowOptions options) {
+	protected Window(String title, int width, int height, WindowConfig windowConfig) {
 		this.title = title;
 		this.width = width;
 		this.height = height;
-		this.windowOptions = options;
+		this.windowConfig = windowConfig;
 	}
 
 	/**
@@ -123,7 +123,7 @@ public abstract class Window {
 	 * @return true or false if the window is vSync enabled
 	 */
 	public boolean isVSync() {
-		return windowOptions.vSync;
+		return windowConfig.vSync;
 	}
 
 	/**
@@ -221,31 +221,6 @@ public abstract class Window {
 	 *            updated title of the window
 	 */
 	protected abstract void updateWindowTitle(String title);
-
-	/**
-	 * Additional options to initialize a window
-	 * 
-	 * @author brandon.porter
-	 *
-	 */
-	public static class WindowOptions {
-		/**
-		 * Whether the window is resizable
-		 */
-		public boolean resizable = Defaults.Window.RESIZABLE;
-
-		/**
-		 * Whether to limit the GPU to output frames as high as the refresh rate
-		 * of the monitor. If enabled it prevents screen tearing but can also
-		 * introduce minor input lag.
-		 */
-		public boolean vSync = Defaults.Window.VSYNC;
-		
-		/**
-		 * Whether or not to display the FPS (frames per second) on the window title bar
-		 */
-		public boolean showFPS = Defaults.Window.SHOW_FPS;
-	}
 
 	@FunctionalInterface
 	public static interface WindowKeyCallback {

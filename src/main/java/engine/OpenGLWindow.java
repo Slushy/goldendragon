@@ -11,6 +11,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
+import engine.app.config.WindowConfig;
+
 /**
  * An OpenGL window that the user sees when interacting with the game
  * 
@@ -21,7 +23,9 @@ public class OpenGLWindow extends Window {
 	// Store references to callbacks to prevent java from doing any
 	// garbage collection on them while they are still in use
 	private GLFWErrorCallback _errorCallback;
+	@SuppressWarnings("unused")
 	private GLFWKeyCallback _keyCallback;
+	@SuppressWarnings("unused")
 	private GLFWWindowSizeCallback _windowSizeCallback;
 
 	/**
@@ -33,11 +37,11 @@ public class OpenGLWindow extends Window {
 	 *            starting width of the game window
 	 * @param height
 	 *            starting height of the game window
-	 * @param options
-	 *            additional options to initialize the window
+	 * @param windowConfig
+	 *            additional configuration options to initialize the window
 	 */
-	public OpenGLWindow(String title, int width, int height, WindowOptions windowOptions) {
-		super(title, width, height, windowOptions);
+	protected OpenGLWindow(String title, int width, int height, WindowConfig windowConfig) {
+		super(title, width, height, windowConfig);
 	}
 
 	@Override
@@ -53,7 +57,7 @@ public class OpenGLWindow extends Window {
 	@Override
 	public void refresh() {
 		// If enabled, show the FPS in the title bar
-		if (windowOptions.showFPS) {
+		if (windowConfig.showFPS) {
 			int fps = TimeManager.getFPS();
 			if (fps > -1) {
 				updateWindowTitle(getTitle() + " - " + fps + " FPS");
@@ -149,7 +153,7 @@ public class OpenGLWindow extends Window {
 		// Override the important window hints
 		// TODO: More information
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, this.windowOptions.resizable ? GL_TRUE : GL_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, this.windowConfig.resizable ? GL_TRUE : GL_FALSE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		if (System.getProperty("os.name").contains("Mac")) {

@@ -1,6 +1,6 @@
 package engine;
 
-import engine.app.config.Defaults;
+import engine.app.config.GraphicsConfig;
 
 /**
  * Base class for controlling the graphics on displays
@@ -9,17 +9,17 @@ import engine.app.config.Defaults;
  *
  */
 public abstract class GraphicsController {
-	protected final GraphicsOptions graphicsOptions;
+	protected final GraphicsConfig graphicsConfig;
 	protected boolean inPolygonMode = false;
 	
 	/**
 	 * Construct a graphics controller
 	 * 
-	 * @param graphicsOptions
-	 *            additional options to initialize the graphics
+	 * @param graphicsConfig
+	 *            additional configuration options to initialize the graphics
 	 */
-	public GraphicsController(GraphicsOptions graphicsOptions) {
-		this.graphicsOptions = graphicsOptions;
+	protected GraphicsController(GraphicsConfig graphicsConfig) {
+		this.graphicsConfig = graphicsConfig;
 	}
 
 	/**
@@ -82,18 +82,5 @@ public abstract class GraphicsController {
 	 */
 	public boolean inPolygonMode() {
 		return inPolygonMode;
-	}
-
-	/**
-	 * Additional options to initialize the graphics
-	 * 
-	 * @author brandon.porter
-	 *
-	 */
-	public static class GraphicsOptions {
-		/**
-		 * Whether to display every model's vertex without applied texturing
-		 */
-		public boolean polygonMode = Defaults.Graphics.POLYGON_MODE;
 	}
 }

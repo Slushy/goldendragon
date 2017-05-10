@@ -1,6 +1,7 @@
 package engine;
 
 import engine.app.IGameInitializer;
+import engine.app.config.AppLaunchConfig;
 import engine.app.config.Defaults;
 import engine.rendering.shader.ShaderInitializer;
 import engine.system.RequestManager;
@@ -58,7 +59,7 @@ public class Engine {
 	 * @throws Exception
 	 */
 	public Engine(IGameInitializer game, String title, int width, int height) throws Exception {
-		this(game, title, width, height, new EngineOptions());
+		this(game, title, width, height, new AppLaunchConfig());
 	}
 
 	/**
@@ -72,14 +73,14 @@ public class Engine {
 	 *            starting width of the game window
 	 * @param height
 	 *            starting height of the game window
-	 * @param options
-	 *            set options to initialize the engine with
+	 * @param launchConfig
+	 *            set of config settings to initialize the engine with
 	 * @throws Exception
 	 */
-	public Engine(IGameInitializer gameInitializer, String title, int width, int height, EngineOptions options)
+	public Engine(IGameInitializer gameInitializer, String title, int width, int height, AppLaunchConfig launchConfig)
 			throws Exception {
 		// Create the display but don't show it
-		getDisplay().init(title, width, height, options.windowOptions, options.graphicsOptions);
+		getDisplay().init(title, width, height, launchConfig.window, launchConfig.graphics);
 
 		// Initialize input
 		Input.init(getDisplay().getWindow());
@@ -93,7 +94,7 @@ public class Engine {
 		SceneManager.init(gameInitializer.getSceneLoaders());
 
 		// Create the runner
-		this._gameRunner = new GameRunner(getDisplay(), gameInitializer, options);
+		this._gameRunner = new GameRunner(getDisplay(), gameInitializer, launchConfig);
 	}
 
 	/**
@@ -162,33 +163,5 @@ public class Engine {
 	 */
 	private Display getDisplay() {
 		return Display.MAIN;
-	}
-
-	/**
-	 * Defines the starting values to initialize the engine
-	 * 
-	 * @author brandon.porter
-	 *
-	 */
-	public static class EngineOptions {
-		/**
-		 * The options for the window
-		 */
-		public final Window.WindowOptions windowOptions = new Window.WindowOptions();
-
-		/**
-		 * The options for the graphics
-		 */
-		public final GraphicsController.GraphicsOptions graphicsOptions = new GraphicsController.GraphicsOptions();
-
-		/**
-		 * The max frames per second to render the screen at
-		 */
-		public int maxFPS = Defaults.Engine.MAX_FPS;
-
-		/**
-		 * The max amount of times game state can be updated per second
-		 */
-		public int maxUPS = Defaults.Engine.MAX_UPS;
 	}
 }
