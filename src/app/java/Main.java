@@ -1,6 +1,7 @@
 
 
 import engine.Engine;
+import engine.app.config.AppLaunchConfig;
 import engine.utils.Debug;
 import game.GameInitializer;
 
@@ -21,13 +22,13 @@ public class Main {
 		
 		Engine engine = null;
 		try {
-			Engine.EngineOptions options = new Engine.EngineOptions();
-			options.windowOptions.resizable = true;
-			options.windowOptions.showFPS = true;
-			options.windowOptions.vSync = true;
-			options.graphicsOptions.polygonMode = false;
+			AppLaunchConfig config = new AppLaunchConfig();
+			config.window.resizable = true;
+			config.window.showFPS = true;
+			config.window.vSync = true;
+			config.graphics.polygonMode = false;
 			
-			engine = new Engine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, options);
+			engine = new Engine(new GameInitializer(), GAME_TITLE, WIDTH, HEIGHT, config);
 			engine.run();
 		} catch (Exception e) {
 			// TODO: Catch a specific exception, possibly implement a restart
