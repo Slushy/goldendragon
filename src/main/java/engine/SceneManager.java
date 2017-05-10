@@ -6,6 +6,7 @@ import engine.app.ApplicationSplashLoader;
 import engine.app.SceneLoader;
 import engine.scene.Scene;
 import engine.system.RequestManager;
+import engine.system.Timer;
 import engine.utils.Debug;
 
 /**
@@ -16,7 +17,7 @@ import engine.utils.Debug;
  */
 public final class SceneManager {
 	private static final SceneHandler _sceneHandler = new SceneHandler();
-	private static final TimeManager.Timer _splashTimer = TimeManager.CreateTimer();
+	private static final Timer _splashTimer = new Timer();
 
 	private static boolean _newSceneLoaded = false;
 
@@ -171,7 +172,7 @@ public final class SceneManager {
 		display.updateCameraProjectionMatrix();
 
 		// The new scene is now active
-		getActiveScene().start();
+		getActiveScene().start(display);
 
 		// If we had an old active scene, dispose it asynchronously (so
 		// our new scene is not waiting for it to unload)

@@ -3,6 +3,7 @@ package engine;
 import engine.app.config.GraphicsConfig;
 import engine.app.config.WindowConfig;
 import engine.scene.Scene;
+import engine.system.Stopwatch;
 
 /**
  * Our game display that represents a game window and graphics controller
@@ -15,9 +16,14 @@ public class Display {
 	 * The main display singleton
 	 */
 	protected static final Display MAIN = new Display();
-	
+
 	private Window _window;
 	private GraphicsController _graphicsController;
+
+	// Keep track of FPS info
+	private int _fpsCounter = 0;
+	private boolean _showFPS = false;
+	private Stopwatch _fpsStopwatch = new Stopwatch();
 
 	// Singleton class
 	private Display() {
@@ -37,14 +43,15 @@ public class Display {
 	 * @param graphicsConfig
 	 *            additional configuration options to initialize the graphics
 	 */
-	protected void init(String title, int width, int height, WindowConfig windowConfig,
-			GraphicsConfig graphicsConfig) {
+	protected void init(String title, int width, int height, WindowConfig windowConfig, GraphicsConfig graphicsConfig) {
 		_window = new OpenGLWindow(title, width, height, windowConfig);
 		_window.init();
 		_window.setWindowResizedCallback(this::onWindowResized);
 
 		_graphicsController = new OpenGLGraphicsController(graphicsConfig);
 		_graphicsController.init();
+
+		this._showFPS = windowConfig.showFPS;
 	}
 
 	/**
@@ -104,7 +111,7 @@ public class Display {
 	public GraphicsController getGraphicsController() {
 		return _graphicsController;
 	}
-	
+
 	/**
 	 * Updates the camera projection to the aspect ratio change of the window
 	 */
@@ -129,6 +136,14 @@ public class Display {
 	 * second
 	 */
 	protected void refresh() {
+		// Update the window title with FPS info if enabled
+		if (_showFPS && updateFPS()) {
+			// updateWindowTitle does not set the new title on the state, so
+			// getTitle() will return the original title
+			_window.updateWindowTitle(String.format("%s - %d FPS", _window.getTitle(), _fpsCounter));
+			_fpsCounter = 0;
+		}
+
 		_window.refresh();
 	}
 
@@ -155,5 +170,20 @@ public class Display {
 	private void onWindowResized() {
 		fixViewportToWindow();
 		updateCameraProjectionMatrix();
+	}
+
+	/**
+	 * Updates the FPS counter and checks to see if 1 second has passed so we
+	 * can update the window title bar with the new FPS information
+	 * 
+	 * @return true if new FPS counter has elapsed a second since last update
+	 */
+	private boolean updateFPS() {
+		_fpsCounter++;
+
+		boolean secondHasPassed = _fpsStopwatch.getTimeSinceLastBenchmark() > 1.0;
+		if (secondHasPassed)
+			_fpsStopwatch.benchmark();
+		return secondHasPassed;
 	}
 }

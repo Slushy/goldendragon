@@ -1,6 +1,6 @@
 package game.scenes;
 
-import engine.TimeManager;
+import engine.GameTime;
 import engine.scene.Behavior;
 import engine.scene.GameObject;
 import game.scenes.loaders.TestSceneLoader;
@@ -30,6 +30,6 @@ public class SplashSceneBehavior extends Behavior {
 
 	@SuppressWarnings("unused")
 	private void update() {
-		_cube.getTransform().rotate(0, CUBE_SPEED * TimeManager.getDeltaTime(), 0);
+		_cube.getTransform().rotate(0, CUBE_SPEED * GameTime.getDeltaTime(), 0);
 	}
 }

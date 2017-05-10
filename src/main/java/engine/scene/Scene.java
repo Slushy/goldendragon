@@ -27,6 +27,7 @@ public final class Scene extends Entity {
 	private final SceneRenderer _sceneRenderer = new SceneRenderer();
 	private final Camera _camera;
 
+	private Display _display = null;
 	private SceneState _sceneState = SceneState.INACTIVE;
 	private Map<EventDispatcher.ExecutionEvent, Method> _compEvents = new HashMap<>();
 	private HashMap<String, ArrayList<GameObject>> _gameObjects = new HashMap<>();
@@ -162,10 +163,14 @@ public final class Scene extends Entity {
 
 	/**
 	 * When the scene first starts (becomes the active scene) this is fired
+	 * 
+	 * @param display
+	 *            the display the initialize the scene on
 	 */
-	public void start() {
+	public void start(Display display) {
 		// We are now the active scene
 		this._sceneState = SceneState.ACTIVE;
+		this._display = display;
 
 		// Starts any components that require it
 		_eventDispatcher.dispatchEvent(ExecutionEvent.START);
@@ -179,20 +184,26 @@ public final class Scene extends Entity {
 	}
 
 	/**
+	 * @return the active display for this scene. Can be null if scene has not
+	 *         been loaded yet.
+	 */
+	public Display getDisplay() {
+		return _display;
+	}
+
+	/**
 	 * Renders the scene
 	 * 
-	 * @param graphics
-	 *            the graphics controller for the current display
 	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public void render(Display display) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+	public void render() throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		// Renders the necessary components
-		_sceneRenderer.render(display, getCamera());
+		_sceneRenderer.render(_display, getCamera());
 	}
 
 	/**

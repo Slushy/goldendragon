@@ -109,7 +109,7 @@ public class Engine {
 		getDisplay().getGraphicsController().clearColor(0, 0, 0, 0);
 
 		// Start the game timer
-		TimeManager.start();
+		GameTime.start();
 
 		// Runs the main loop
 		_gameRunner.loadAndRun();

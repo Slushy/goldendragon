@@ -1,7 +1,5 @@
 package engine.system;
 
-import engine.TimeManager;
-
 /**
  * Manages and processes GL-only related requests on the main thread
  * 
@@ -12,13 +10,13 @@ final class GLRequestProcessor implements IRequestProcessor {
 	private static final double MAX_TIME_MS = 8.0;
 
 	private final RequestQueue _requestQueue = new RequestQueue();
-	private final TimeManager.Timer _timer;
+	private final Timer _timer;
 
 	/*
 	 * Constructs the GL request processor and creates a new timer
 	 */
 	protected GLRequestProcessor() {
-		this._timer = TimeManager.CreateTimer(MAX_TIME_MS);
+		this._timer = new Timer(MAX_TIME_MS);
 	}
 	
 	/**

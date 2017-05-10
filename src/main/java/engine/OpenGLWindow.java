@@ -56,14 +56,6 @@ public class OpenGLWindow extends Window {
 
 	@Override
 	public void refresh() {
-		// If enabled, show the FPS in the title bar
-		if (windowConfig.showFPS) {
-			int fps = TimeManager.getFPS();
-			if (fps > -1) {
-				updateWindowTitle(getTitle() + " - " + fps + " FPS");
-			}
-		}
-
 		// Updates the window with the new drawn buffer
 		glfwSwapBuffers(getWindowId());
 		glfwPollEvents();

@@ -17,7 +17,7 @@ class GameRunner {
 	private final AppLaunchConfig _launchConfig;
 	private final GameLoader _gameLoader;
 	private final Display _activeDisplay;
-
+	
 	/**
 	 * Constructs a game runner
 	 * 
@@ -68,7 +68,7 @@ class GameRunner {
 			processInput();
 
 			// 2. Physics/AI fixed update logic
-			runTime += TimeManager.getBenchmark();
+			runTime += GameTime.benchmark();
 			for (; runTime >= interval; runTime -= interval) {
 				fixedUpdate();
 			}
@@ -134,7 +134,7 @@ class GameRunner {
 		// Renders the currently active scene
 		Scene activeScene = SceneManager.getActiveScene();
 		if (activeScene != null) {
-			activeScene.render(_activeDisplay);
+			activeScene.render();
 		}
 
 		// Updates the display

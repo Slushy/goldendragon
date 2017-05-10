@@ -44,4 +44,20 @@ public final class TimeUtils {
 	public static final double NanoToSeconds(double ns) {
 		return ns / 1_000_000_000.0;
 	}
+	
+	/**
+	 * Gets the overall time in seconds
+	 * 
+	 * @return overall clock time
+	 */
+	public static double getSystemTimeSeconds() {
+		return NanoToSeconds(getSystemTimeNS());
+	}
+
+	/**
+	 * @return the overall time in nanoseconds
+	 */
+	public static long getSystemTimeNS() {
+		return System.nanoTime();
+	}
 }

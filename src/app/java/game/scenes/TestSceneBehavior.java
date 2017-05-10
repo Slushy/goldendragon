@@ -8,7 +8,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import engine.Input;
-import engine.TimeManager;
+import engine.GameTime;
 import engine.input.Key;
 import engine.rendering.MeshRenderer;
 import engine.scene.Behavior;
@@ -72,7 +72,7 @@ public class TestSceneBehavior extends Behavior {
 	 */
 	@SuppressWarnings("unused")
 	private void update() {
-		float deltaTime = TimeManager.getDeltaTime();
+		float deltaTime = GameTime.getDeltaTime();
 
 		// Lets us move around our test scene
 		moveCamera(deltaTime);
