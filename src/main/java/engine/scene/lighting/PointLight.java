@@ -1,6 +1,6 @@
 package engine.scene.lighting;
 
-import engine.app.config.Defaults;
+import engine.system.Defaults;
 
 /**
  * A point light represents a light source that sends out light in all

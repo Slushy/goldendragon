@@ -8,7 +8,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3fc;
 
 import engine.Display;
-import engine.app.config.Defaults;
 import engine.rendering.material.Material;
 import engine.rendering.material.MaterialPropertyBlock;
 import engine.rendering.shader.ShaderInitializer;
@@ -23,6 +22,7 @@ import engine.scene.lighting.DirectionalLight;
 import engine.scene.lighting.Light;
 import engine.scene.lighting.PointLight;
 import engine.scene.lighting.SpotLight;
+import engine.system.Defaults;
 import engine.utils.Debug;
 
 /**

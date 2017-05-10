@@ -2,8 +2,8 @@ package engine;
 
 import engine.app.IGameInitializer;
 import engine.app.config.AppLaunchConfig;
-import engine.app.config.Defaults;
 import engine.rendering.shader.ShaderInitializer;
+import engine.system.Defaults;
 import engine.system.RequestManager;
 
 /**

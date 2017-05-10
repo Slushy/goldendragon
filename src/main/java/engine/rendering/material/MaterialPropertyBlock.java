@@ -2,12 +2,12 @@ package engine.rendering.material;
 
 import org.joml.Vector3fc;
 
-import engine.app.config.Defaults;
 import engine.assets.Texture;
 import engine.rendering.material.MaterialProperty.FloatProperty;
 import engine.rendering.material.MaterialProperty.TextureProperty;
 import engine.rendering.material.MaterialProperty.Vector3fProperty;
 import engine.rendering.shader.UniformType;
+import engine.system.Defaults;
 import engine.utils.math.MathUtils;
 import engine.utils.math.VectorUtils;
 

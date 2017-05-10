@@ -2,8 +2,8 @@ package engine.scene.lighting;
 
 import org.joml.Vector3f;
 
-import engine.app.config.Defaults;
 import engine.scene.Component;
+import engine.system.Defaults;
 
 /**
  * Represents a light source in our scene

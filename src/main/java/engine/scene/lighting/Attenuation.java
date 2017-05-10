@@ -1,6 +1,6 @@
 package engine.scene.lighting;
 
-import engine.app.config.Defaults;
+import engine.system.Defaults;
 
 /**
  * Attenuation is a function of the distance and light - the intensity

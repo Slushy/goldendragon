@@ -1,6 +1,6 @@
 package engine.rendering.shader;
 
-import engine.app.config.Defaults;
+import engine.system.Defaults;
 
 /**
  * A uniform represents a global shader variable. This is essentially only used

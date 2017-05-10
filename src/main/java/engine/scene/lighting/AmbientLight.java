@@ -2,7 +2,7 @@ package engine.scene.lighting;
 
 import org.joml.Vector3f;
 
-import engine.app.config.Defaults;
+import engine.system.Defaults;
 import engine.utils.math.MathUtils;
 
 /**

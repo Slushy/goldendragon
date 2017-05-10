@@ -1,5 +1,7 @@
 package engine.app.config;
 
+import engine.system.Defaults;
+
 /**
  * Configurable graphics settings at app launch
  * 

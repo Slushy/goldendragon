@@ -2,9 +2,9 @@ package engine.scene.gameobjects;
 
 import org.joml.Matrix4f;
 
-import engine.app.config.Defaults;
 import engine.scene.GameObject;
 import engine.scene.Transform;
+import engine.system.Defaults;
 import engine.utils.math.MatrixUtils;
 
 /**

@@ -1,5 +1,7 @@
 package engine.app.config;
 
+import engine.system.Defaults;
+
 /**
  * Defines starting configuration settings to initialize the app
  * 

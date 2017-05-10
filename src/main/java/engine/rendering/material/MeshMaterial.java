@@ -2,9 +2,9 @@ package engine.rendering.material;
 
 import org.joml.Vector3fc;
 
-import engine.app.config.Defaults;
 import engine.assets.Texture;
 import engine.rendering.shader.ShaderType;
+import engine.system.Defaults;
 
 /**
  * A material is representative of how a game object looks; e.g. with textures,

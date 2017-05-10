@@ -1,6 +1,6 @@
 package engine.scene.lighting;
 
-import engine.app.config.Defaults;
+import engine.system.Defaults;
 import engine.utils.math.MathUtils;
 
 /**
